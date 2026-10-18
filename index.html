@@ -1,0 +1,1182 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#16141f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TV">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<!-- Built from app.html by tools/build-pages.py. Edit app.html, not this file. -->
+<title>TV Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Figtree:wght@400;500;600&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+/* Layout: one column on phone, two on laptop. Proton Seasons: dark-only, one soft colour per month in --accent. */
+:root{
+  --bg:#16141f; --surface:#1e1b2b; --raise:#2a2640; --line:#353050;
+  --fg:#f1effa; --muted:#a49fbf; --accent:#5591e0; --accent-next:#6a7ff0; --accent-ink:#ffffff; --accent-2:#c4f04a;
+  --danger:#ff7a7a;
+  --display:"Atkinson Hyperlegible",ui-sans-serif,system-ui,sans-serif;
+  --body:"Figtree",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--fg);font:15px/1.5 var(--body);margin:0;overflow-x:hidden}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:20px 48px}
+h1,h2,.num{font-family:var(--display)}
+#todayLabel{color:var(--accent)}
+h1{font-size:clamp(26px,4vw,34px);font-weight:700;letter-spacing:-.02em;margin:0;text-wrap:balance}
+.lockup{--mk:44px;display:flex;align-items:center;gap:calc(var(--mk)*.22);margin-top:6px}
+.tv-mark{width:var(--mk);height:var(--mk);flex:none;color:var(--accent);display:block}
+.jm-wordmark{font-family:"Atkinson Hyperlegible",var(--body);font-weight:700;font-size:calc(var(--mk)*.62);line-height:1.06;letter-spacing:-.01em;color:#eef0fa}
+h2{font-size:17px;font-weight:700;margin:0;letter-spacing:-.01em}
+.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:600}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.tnum{font-variant-numeric:tabular-nums}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:20px}
+.status{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex:none}
+.status[data-state="live"] .dot{background:var(--accent)}
+.status[data-state="error"] .dot{background:var(--danger)}
+.status[data-state="loading"] .dot{background:var(--accent);animation:pulse 1s infinite alternate}
+@keyframes pulse{to{opacity:.3}}
+button{font:inherit;cursor:pointer}
+.btn{border:1px solid var(--line);background:var(--raise);color:var(--fg);border-radius:8px;padding:7px 12px;font-weight:600;font-size:13px}
+.btn:hover{border-color:var(--muted)}
+.btn-primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn-primary:hover{filter:brightness(1.08);border-color:var(--accent)}
+.btn:disabled{opacity:.5;cursor:default}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.notice{background:var(--raise);border:1px solid var(--line);border-left:3px solid var(--accent);padding:10px 14px;border-radius:8px;margin-bottom:18px;font-size:14px}
+.notice[data-kind="error"]{border-left-color:var(--danger)}
+
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:20px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.stat .num{font-size:clamp(28px,4vw,40px);font-weight:700;line-height:1.05;letter-spacing:-.02em}
+.stat .sub{font-size:13px;color:var(--muted)}
+.stat.streak{background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 20%,var(--surface)),color-mix(in srgb,var(--accent-next) 8%,var(--surface)) 75%);border-color:color-mix(in srgb,var(--accent) 45%,var(--line))}
+.stat.streak .num{color:color-mix(in srgb,var(--accent) 70%,#fff)}
+.goalbar{height:6px;border-radius:3px;background:var(--raise);overflow:hidden;margin-top:6px}
+.goalbar > i{display:block;height:100%;background:var(--accent-2);border-radius:3px;transition:width .4s}
+
+.grid{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:20px;align-items:start}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;min-width:0}
+.panel + .panel{margin-top:20px}
+.grid .panel + .panel{margin-top:20px}
+.panel-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.reading-now{margin-bottom:20px}
+.empty{color:var(--muted);font-size:14px;margin:0}
+
+.logday{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.logday button{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:999px;padding:4px 11px;cursor:pointer}
+.logday button[aria-pressed="true"]{background:color-mix(in srgb,var(--accent) 22%,transparent);border-color:var(--accent);color:var(--fg)}
+.logday input[type=date]{font:inherit;font-size:12px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:999px;padding:3px 10px;color-scheme:dark;max-width:100%}
+.logday-banner{margin:-4px 0 12px;padding:8px 12px;border-radius:10px;font-size:13px;font-weight:600;background:color-mix(in srgb,var(--accent) 16%,transparent);border:1px solid color-mix(in srgb,var(--accent) 45%,transparent)}
+
+/* watching rows */
+.nb{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) auto;gap:8px 22px;align-items:center;padding:14px 0;border-top:1px solid var(--line)}
+.nb:first-child{border-top:0;padding-top:4px}
+.nb-title{font-weight:600;line-height:1.3;font-size:16px;overflow-wrap:anywhere}
+.nb-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:4px;font-size:13px;color:var(--muted)}
+.nb-se{font-family:var(--display);font-weight:700;color:var(--fg);font-size:15px}
+.pchip{font-size:11px;font-weight:600;padding:1px 9px;border-radius:999px;background:var(--raise);color:var(--fg);white-space:nowrap}
+.nb-prog{display:flex;flex-direction:column;gap:6px;min-width:0}
+.nb-prog .nb-sub{font-size:12px;color:var(--muted)}
+.prog{height:6px;background:var(--raise);border-radius:3px;overflow:hidden}
+.prog > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-next));border-radius:3px}
+.nb-act{display:flex;align-items:center;gap:8px}
+.btn-plus{font-family:var(--display);font-size:18px;font-weight:700;padding:12px 22px;border-radius:12px;min-width:104px}
+.nb-more{grid-column:1/-1}
+.nb-more:empty{display:none}
+.more-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:12px;border-radius:10px;background:var(--raise)}
+.more-block{display:flex;flex-direction:column;gap:6px;min-width:0}
+.more-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.more-grid input,.more-grid select,.edit input{font:inherit;font-size:14px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:6px 8px;color-scheme:dark;min-width:0}
+input[type="number"]{font-variant-numeric:tabular-nums}
+.more-grid input[type=number]{width:64px}
+.stepper{display:inline-flex;align-items:center;gap:4px}
+.stepper button{width:32px;height:32px;padding:0;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--fg);font-weight:700}
+.flabel{font-size:12px;color:var(--muted);font-weight:600}
+
+.pick-list,.recent-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.pick-list li,.recent-list li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.pick-list li:first-child,.recent-list li:first-child{border-top:0}
+.pick-list .t,.recent-list .t{font-weight:600;overflow-wrap:anywhere}
+.pick-list .m,.recent-list .m{font-size:12px;color:var(--muted)}
+.recent-list .acts button{font:inherit;font-size:12px;background:none;border:0;color:var(--muted);cursor:pointer;padding:2px 4px;text-decoration:underline}
+.recent-list .edit{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.recent-list .edit input[type=number]{width:72px}
+.recent-list .edit input[type=date]{max-width:100%}
+.chart-box{position:relative;height:240px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:10px;height:10px;border-radius:2px;display:inline-block}
+
+/* tabs */
+.tabs{display:flex;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:4px;margin-bottom:20px;width:max-content;max-width:100%;overflow-x:auto}
+.tab{border:0;background:transparent;color:var(--muted);border-radius:8px;padding:7px 16px;font-weight:600;font-size:14px;white-space:nowrap}
+.tab[aria-selected="true"]{background:color-mix(in srgb,var(--accent) 24%,var(--surface));color:var(--fg);box-shadow:inset 0 -2px 0 var(--accent)}
+
+/* library */
+.lib-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
+.lib-bar input[type="search"],.field input,.field select,.field textarea{font:inherit;font-size:14px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:7px 10px;color-scheme:dark}
+.lib-bar input[type="search"]{flex:1 1 220px;min-width:0}
+.lib-bar input:focus,.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);outline:none}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.chip{border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:999px;padding:4px 12px;font-size:13px;font-weight:600}
+.chip[aria-pressed="true"]{background:color-mix(in srgb,var(--accent) 24%,var(--surface));border-color:var(--accent);color:var(--fg)}
+.chip[data-st]:not([data-st="All"])::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--sc);margin-right:6px}
+.chip .n{font-variant-numeric:tabular-nums;opacity:.7;margin-left:4px;font-weight:500}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table.lib{width:100%;border-collapse:collapse;font-size:14px;min-width:620px}
+.lib th{position:sticky;top:0;background:var(--raise);text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600;padding:9px 10px;white-space:nowrap;cursor:pointer;user-select:none}
+.lib th[aria-sort="ascending"]::after{content:" ↑";color:var(--accent)} .lib th[aria-sort="descending"]::after{content:" ↓";color:var(--accent)}
+.lib th.num,.lib td.num{text-align:right}
+.lib td{padding:9px 10px;border-top:1px solid var(--line);vertical-align:top}
+.lib tbody tr.row{cursor:pointer}
+.lib tbody tr.row:hover td{background:color-mix(in srgb,var(--accent) 6%,var(--surface))}
+.lib tr.open td{background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+.lib .t{font-weight:600;line-height:1.3;overflow-wrap:anywhere}
+.pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;white-space:nowrap;border:1px solid var(--sb,var(--line));color:var(--sc,var(--muted));background:color-mix(in srgb,var(--sc,transparent) 12%,transparent)}
+[data-s="Watching"],[data-st="Watching"]{--sc:#8fb8f2;--sb:#34507a}
+[data-s="Watched"],[data-st="Watched"]{--sc:#8fd6a4;--sb:#2f6b45}
+[data-s="Watchlist"],[data-st="Watchlist"]{--sc:#cdbcf5;--sb:#5a4d80}
+[data-s="Next Up"],[data-st="Next Up"]{--sc:#a77bf0;--sb:#5a3f9a}
+[data-s="Coming Soon"],[data-st="Coming Soon"]{--sc:#f2c46d;--sb:#6b5631}
+[data-s="New Season"],[data-st="New Season"]{--sc:#f4a066;--sb:#7a4a2a}
+[data-s="Rewatch"],[data-st="Rewatch"]{--sc:#dba8ec;--sb:#5e3f6c}
+[data-s="DNF"],[data-st="DNF"]{--sc:#f29a9a;--sb:#6b3a3a}
+[data-s="Paused"],[data-st="Paused"]{--sc:#b3b0c2;--sb:#4a475c}
+.detail td{padding:4px 16px 16px;cursor:default}
+.kv{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;font-size:13px;margin:0}
+.kv dt{color:var(--muted)} .kv dd{margin:0;overflow-wrap:anywhere}
+.lib-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:12px;font-size:13px;color:var(--muted);flex-wrap:wrap}
+
+/* dialogs */
+dialog{background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:16px;padding:0;width:min(760px,calc(100vw - 32px));max-height:calc(100vh - 40px)}
+dialog::backdrop{background:rgba(8,6,14,.65)}
+.dlg-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--surface);z-index:1}
+.dlg-head h2{font-size:20px}
+.dlg-body{padding:16px 20px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.dlg-foot{display:flex;justify-content:space-between;gap:10px;padding:14px 20px;border-top:1px solid var(--line);position:sticky;bottom:0;background:var(--surface)}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field label{font-size:12px;color:var(--muted);font-weight:600}
+.field input,.field select,.field textarea{width:100%;min-width:0}
+.field.w2{grid-column:span 2} .field.w4{grid-column:1/-1}
+.field textarea{min-height:84px;resize:vertical}
+.sec-label{grid-column:1/-1;font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--accent);font-weight:700;margin-top:6px}
+
+@media (max-width:899px){
+  .grid{grid-template-columns:minmax(0,1fr)}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .dlg-body{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .nb{grid-template-columns:minmax(0,1fr) auto}
+  .nb-prog{grid-column:1/-1;order:3}
+  .nb-more{order:4}
+}
+@media (max-width:560px){
+  .nb{grid-template-columns:minmax(0,1fr)}
+  .nb-prog{order:2}
+  .nb-act{order:3}
+  .nb-act .btn-plus{flex:1}
+  .more-grid{grid-template-columns:minmax(0,1fr)}
+  .hide-sm{display:none}
+  table.lib{min-width:0}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow" id="todayLabel">Today</div>
+      <h1 class="lockup"><svg class="tv-mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M17 6 24 14 31 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="5" y="14" width="38" height="26" rx="6" fill="none" stroke="currentColor" stroke-width="3.5"/><path d="M20 21.5v11l9-5.5z" fill="currentColor"/></svg><span class="jm-wordmark" id="wordmark">TV Tracker</span></h1>
+    </div>
+    <div class="status" id="status" data-state="loading" role="status">
+      <span class="dot"></span><span id="statusText">Connecting to your sheet…</span>
+      <button class="btn" id="refreshBtn" type="button">Refresh</button>
+    </div>
+  </header>
+
+  <div class="notice" id="notice" hidden></div>
+
+  <nav class="tabs" role="tablist" aria-label="Sections">
+    <button class="tab" role="tab" id="tab-log" aria-selected="true" aria-controls="view-log" type="button">Log</button>
+    <button class="tab" role="tab" id="tab-library" aria-selected="false" aria-controls="view-library" type="button">Library</button>
+    <!-- Later tabs slot in here: Plan, Dashboard, Tools, Discover (add a button + a #view-<name> panel, then add the name to TABS) -->
+  </nav>
+
+  <div id="view-log" role="tabpanel" aria-labelledby="tab-log">
+    <section class="stats" aria-label="Summary">
+      <div class="stat streak">
+        <span class="eyebrow">Watching streak</span>
+        <span class="num tnum" id="sStreak">–</span>
+        <span class="sub" id="sStreakSub">days</span>
+      </div>
+      <div class="stat">
+        <span class="eyebrow">This week</span>
+        <span class="num tnum" id="sWeek">0</span>
+        <span class="sub" id="sWeekSub">episodes</span>
+        <div class="goalbar" aria-hidden="true"><i id="sWeekBar" style="width:0"></i></div>
+      </div>
+      <div class="stat">
+        <span class="eyebrow" id="sMonthLabel">This month</span>
+        <span class="num tnum" id="sMonth">–</span>
+        <span class="sub" id="sMonthSub">episodes</span>
+      </div>
+      <div class="stat">
+        <span class="eyebrow">Watching</span>
+        <span class="num tnum" id="sWatching">–</span>
+        <span class="sub" id="sWatchingSub">shows in progress</span>
+      </div>
+    </section>
+
+    <section class="panel reading-now" aria-labelledby="logH">
+      <div class="panel-head">
+        <h2 id="logH">Watching now</h2>
+        <div class="logday" role="group" aria-label="Day you're logging for">
+          <button type="button" data-day="0" aria-pressed="true">Today</button>
+          <button type="button" data-day="-1" aria-pressed="false">Yesterday</button>
+          <input type="date" id="logDate" aria-label="Pick a day to log for">
+        </div>
+      </div>
+      <div class="logday-banner" id="logDayBanner" hidden></div>
+      <div id="watching"></div>
+    </section>
+
+    <div class="grid">
+      <div>
+        <section class="panel" aria-labelledby="pickH">
+          <div class="panel-head"><h2 id="pickH">Start watching</h2><span class="muted small" id="pickNote"></span></div>
+          <ul class="pick-list" id="pickList"></ul>
+          <button class="btn" type="button" id="pickMore" hidden style="margin-top:8px">Show all</button>
+        </section>
+        <section class="panel" aria-labelledby="recH">
+          <div class="panel-head"><h2 id="recH">Recent episodes</h2><span class="muted small">Last 20</span></div>
+          <ul class="recent-list" id="recentList"></ul>
+        </section>
+      </div>
+      <div>
+        <section class="panel" aria-labelledby="weekH">
+          <div class="panel-head"><h2 id="weekH">Episodes per week</h2><span class="muted small">Last 12 weeks</span></div>
+          <div class="chart-box"><canvas id="weekChart" aria-label="Episodes watched per week"></canvas></div>
+          <div class="legend" style="margin-top:8px">
+            <span><i class="sw" style="background:var(--accent)"></i>Weekly goal reached</span>
+            <span><i class="sw" id="lgUnder"></i>Under goal</span>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <div id="view-library" role="tabpanel" aria-labelledby="tab-library" hidden>
+    <div class="lib-bar">
+      <input type="search" id="libSearch" placeholder="Search title, genre, platform or starring" aria-label="Search shows">
+      <button class="btn btn-primary" id="addShowBtn" type="button">Add show</button>
+    </div>
+    <div class="chips" id="libChips" role="group" aria-label="Status"></div>
+    <div class="table-wrap">
+      <table class="lib">
+        <thead><tr id="libHead"></tr></thead>
+        <tbody id="libBody"></tbody>
+      </table>
+    </div>
+    <div class="lib-foot"><span><span id="libCount"></span> <button class="btn" id="libSheetOrder" type="button" hidden>Back to sheet order</button></span><button class="btn" id="libMore" type="button" hidden>Show 100 more</button></div>
+  </div>
+</div>
+
+<dialog id="gDlg" aria-labelledby="gTitle" style="width:min(520px,calc(100vw - 32px))">
+  <form id="gForm" method="dialog">
+    <div class="dlg-head"><h2 id="gTitle">Connect your Google Sheet</h2><button class="btn" type="button" id="gClose">Close</button></div>
+    <div style="padding:16px 20px;display:grid;gap:12px">
+      <p class="muted" style="margin:0;font-size:14px">Paste the OAuth Client ID from your Google Cloud project (the same one the book app uses). It's saved in this browser only.</p>
+      <div class="field"><label for="gClient">OAuth Client ID</label><input id="gClient" autocomplete="off" spellcheck="false" placeholder="1234…apps.googleusercontent.com"></div>
+    </div>
+    <div class="dlg-foot"><span class="muted" id="gMsg" style="font-size:13px;align-self:center"></span><button class="btn btn-primary" type="submit">Connect</button></div>
+  </form>
+</dialog>
+
+<dialog id="showDlg" aria-labelledby="dlgTitle">
+  <form id="showForm" method="dialog">
+    <div class="dlg-head"><h2 id="dlgTitle">Edit show</h2><button class="btn" type="button" id="dlgClose">Close</button></div>
+    <div class="dlg-body" id="dlgBody"></div>
+    <div class="dlg-foot"><span class="muted" id="dlgMsg" style="font-size:13px;align-self:center"></span><span><button class="btn btn-primary" type="submit" id="dlgSave">Save</button></span></div>
+  </form>
+</dialog>
+
+<script>
+const SHEET_ID = '1558jWeUc8gCzQuph6wOVyOocvTBhQf22UuCSXza8klc';
+const SERVER = 'Google Sheets';
+const T_SHOWS = "'📺'", T_LOG = "'📺 Log'", T_SEASONS = "'📺 Seasons'", T_SETTINGS = "'📺 Settings'";
+const TABS = ['log', 'library'];   // later: 'plan', 'dashboard', 'tools', 'discover'
+const TAB_KEY = 'tv-tab';
+
+/* ---------- dates (local time) ---------- */
+const pad = n => String(n).padStart(2, '0');
+const iso = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const fromIso = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+const addDays = (s, n) => { const d = fromIso(s); d.setDate(d.getDate() + n); return iso(d); };
+const daysBetween = (a, b) => Math.round((fromIso(b) - fromIso(a)) / 864e5);
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const fmt = n => Number(n).toLocaleString('en-AU');
+const today = () => iso(new Date());
+const toNum = v => { const n = parseFloat(String(v ?? '').replace(/,/g, '')); return Number.isFinite(n) ? n : 0; };
+const toDate = v => { const m = String(v ?? '').match(/^(\d{4})-(\d{2})-(\d{2})/); return m ? m[0] : null; };
+const weekStart = d => addDays(d, -((fromIso(d).getDay() + 6) % 7)); // Monday-first
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const $ = id => document.getElementById(id);
+
+/* ---------- Proton Seasons theme ---------- */
+// One soft colour per month through Melbourne's seasons (summer Dec–Feb … spring Sep–Nov).
+const MC = ['#e8935a','#e07a7a','#d9738f','#c573b4','#a674e0','#7f6cf5','#6a7ff0','#5591e0','#3fa4b8','#43ad8f','#7bae6a','#d6a345'];
+const SEASON = ['Summer','Summer','Autumn','Autumn','Autumn','Winter','Winter','Winter','Spring','Spring','Spring','Summer'];
+const BASE = { bg:'#16141f', surface:'#1e1b2b', raise:'#2a2640', line:'#353050' };
+const LIME = '#c4f04a';
+const hexRgb = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+const mix = (a, b, t) => '#' + hexRgb(a).map((v, i) => Math.round(v + (hexRgb(b)[i] - v) * t).toString(16).padStart(2, '0')).join('');
+// Drift: a day's colour slides up to 60% of the way toward next month's by month end.
+function dayColour(isoDate) {
+  const y = +isoDate.slice(0, 4), m = +isoDate.slice(5, 7) - 1, d = +isoDate.slice(8, 10);
+  const len = new Date(y, m + 1, 0).getDate();
+  return mix(MC[m], MC[(m + 1) % 12], ((d - 1) / (len - 1)) * 0.6);
+}
+const underColour = c => mix(BASE.raise, c, 0.42);
+function applyTheme() {
+  const t = today(), m = +t.slice(5, 7) - 1, c = dayColour(t), r = document.documentElement.style;
+  r.setProperty('--accent', c);
+  r.setProperty('--accent-next', MC[(m + 1) % 12]);
+  r.setProperty('--bg', mix(BASE.bg, c, 0.05));
+  r.setProperty('--surface', mix(BASE.surface, c, 0.05));
+  r.setProperty('--raise', mix(BASE.raise, c, 0.06));
+  r.setProperty('--line', mix(BASE.line, c, 0.08));
+  const u = $('lgUnder'); if (u) u.style.background = underColour(c);
+  setFavicon(c);
+}
+/* Favicon follows the month colour (used when hosted outside claude.ai) */
+function setFavicon(c) {
+  const m = document.querySelector('.tv-mark'); if (!m) return;
+  const svg = m.outerHTML.replace('class="tv-mark"', 'xmlns="http://www.w3.org/2000/svg"').replace(/currentColor/g, c);
+  let l = document.querySelector('link[rel="icon"]');
+  if (!l) { l = document.createElement('link'); l.rel = 'icon'; document.head.appendChild(l); }
+  l.type = 'image/svg+xml'; l.href = 'data:image/svg+xml,' + encodeURIComponent(svg);
+}
+
+/* ---------- state ---------- */
+const STATUSES = ['Watching', 'Next Up', 'Watchlist', 'Coming Soon', 'New Season', 'Rewatch', 'Watched', 'Paused', 'DNF'];
+const OPTS = {
+  status: ['Coming Soon', 'Rewatch', 'Watchlist', 'Watched', 'Watching', 'New Season', 'Next Up', 'DNF', 'Paused'],
+  howToWatch: ['NA', 'Owned', 'To Purchase', 'Subscription', 'Pirate'],
+  genre: ['Action', 'Animation', 'Comedy', 'Crime', 'Documentary', 'Drama', 'Fantasy', 'Historical', 'Horror', 'Mystery', 'Sci-Fi', 'Sitcom', 'Thriller'],
+  platform: ['Apple TV', 'Disney+', 'HBO', 'Netflix', 'Plex', 'Prime', 'Stan', 'Physical', 'Paramount'],
+  plan: ['Up next', 'Soon', 'Someday']
+};
+const state = {
+  entries: [],          // 📺 Log rows with eps > 0
+  shows: [],            // 📺 rows
+  showHeader: [],       // raw header of 📺
+  seasons: new Map(),   // "showId|season" -> episode count
+  settings: { weeklyGoalEps: 7, streakMinEps: 1, appName: 'TV Tracker' },
+  mcp: null, live: false, busy: false, logDate: null, editing: null, more: null, logN: 2,
+  pickAll: false, lib: { q: '', status: 'All', sort: 'sheet', dir: 1, limit: 100, open: null }
+};
+
+/* ---------- show columns, mapped by header name (never by position) ---------- */
+const SHOW_KEYS = { title: 'title', rating: 'rating', status: 'status', howtowatch: 'howToWatch', genre: 'genre', platform: 'platform',
+  starring: 'starring', releasedate: 'releaseDate', year: 'year', totalseasons: 'totalSeasons', totaleps: 'totalEps', notes: 'notes',
+  id: 'id', season: 'season', episode: 'episode', started: 'started', finished: 'finished', plan: 'plan', upnext: 'upNext', why: 'why', sorted: 'sorted' };
+const normH = h => String(h ?? '').replace(/\(.*?\)/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
+const keyOfHeader = h => SHOW_KEYS[normH(h)] || null;
+const NUM_FIELDS = ['rating', 'year', 'totalSeasons', 'totalEps', 'season', 'episode', 'upNext'];
+const DATE_FIELDS = ['started', 'finished'];
+const colLetter = i => { let s = ''; i++; while (i) { const r = (i - 1) % 26; s = String.fromCharCode(65 + r) + s; i = Math.floor((i - 1) / 26); } return s; };
+const showById = id => state.shows.find(s => s.id === String(id));
+
+/* ---------- derived numbers ---------- */
+function dailyTotals() {
+  const t = new Map();
+  for (const e of state.entries) t.set(e.date, (t.get(e.date) || 0) + e.eps);
+  return t;
+}
+// Streak = consecutive days with at least streakMinEps, counting back from today
+// (or from yesterday while today is still unlogged).
+function streakInfo(totals) {
+  const min = state.settings.streakMinEps || 1, t = today();
+  const firstLog = [...totals.keys()].sort()[0] || t;
+  const todayDone = (totals.get(t) || 0) >= min;
+  let d = todayDone ? t : addDays(t, -1), count = 0;
+  while (d >= firstLog && (totals.get(d) || 0) >= min) { count++; d = addDays(d, -1); }
+  return { count, todayDone };
+}
+const seasonCount = (id, s) => state.seasons.get(id + '|' + s) || 0;
+const loggedEps = id => state.entries.reduce((a, e) => a + (e.showId === String(id) ? e.eps : 0), 0);
+function curPos(show) { return { s: toNum(show.season) || 1, e: toNum(show.episode) || 0 }; }
+// The episode after p. A season known to be complete rolls over to the next season's first episode.
+function nextPos(show, p) {
+  const n = seasonCount(show.id, p.s);
+  return n && p.e >= n ? { s: p.s + 1, e: 1 } : { s: p.s, e: p.e + 1 };
+}
+function progressOf(show) {
+  const p = curPos(show), n = seasonCount(show.id, p.s);
+  if (n) return { pct: Math.min(100, p.e / n * 100), text: `Episode ${p.e} of ${n} this season` };
+  const total = toNum(show.totalEps), logged = loggedEps(show.id);
+  if (total) return { pct: Math.min(100, logged / total * 100), text: `${fmt(logged)} of ${fmt(total)} episodes` };
+  return null;
+}
+
+/* ---------- rendering: stats ---------- */
+const logDay = () => state.logDate || today();
+const dayLabel = d => d === today() ? 'Today' : d === addDays(today(), -1) ? 'Yesterday'
+  : fromIso(d).toLocaleDateString('en-AU', daysBetween(d, today()) < 7 ? { weekday: 'short' } : { day: 'numeric', month: 'short' });
+
+function renderStats(totals) {
+  const t = today(), goal = state.settings.weeklyGoalEps || 7;
+  const { count, todayDone } = streakInfo(totals);
+  $('sStreak').textContent = fmt(count);
+  $('sStreakSub').textContent = count === 0 ? 'Log an episode to start a streak'
+    : todayDone ? 'days, including today' : `days. Log today to make it ${fmt(count + 1)}`;
+  const ws = weekStart(t);
+  let week = 0, month = 0;
+  for (const [d, n] of totals) { if (d >= ws && d <= t) week += n; if (d.startsWith(t.slice(0, 7))) month += n; }
+  $('sWeek').textContent = fmt(week);
+  $('sWeekSub').textContent = week >= goal ? `Weekly goal of ${goal} reached` : `of ${goal} this week · ${goal - week} to go`;
+  $('sWeekBar').style.width = Math.min(100, week / goal * 100) + '%';
+  $('sMonthLabel').textContent = MONTHS[Number(t.slice(5, 7)) - 1] + ' so far';
+  $('sMonth').textContent = fmt(month);
+  const w = state.shows.filter(s => s.status === 'Watching').length;
+  $('sWatching').textContent = state.live ? fmt(w) : '–';
+  $('sWatchingSub').textContent = w === 1 ? 'show in progress' : 'shows in progress';
+  $('todayLabel').textContent = new Date().toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long' }) + ' · ' + SEASON[Number(t.slice(5, 7)) - 1];
+}
+
+function setLogDay(d) {
+  state.logDate = d && d < today() ? d : null;
+  const cur = logDay();
+  document.querySelectorAll('.logday button').forEach(b => b.setAttribute('aria-pressed', String(addDays(today(), Number(b.dataset.day)) === cur && (cur !== today() || b.dataset.day === '0'))));
+  $('logDate').max = today();
+  $('logDate').value = state.logDate || '';
+  const ban = $('logDayBanner');
+  ban.hidden = !state.logDate;
+  if (state.logDate) ban.textContent = `Logging for ${fromIso(cur).toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long' })}. New episodes and finished shows go on that day.`;
+}
+
+const emptyMsg = () => 'Open in Claude, or press Connect to sign in to Google.';
+
+/* ---------- rendering: watching now ---------- */
+function renderWatching() {
+  const box = $('watching');
+  box.textContent = '';
+  if (!state.live) { box.innerHTML = `<p class="empty">${esc(emptyMsg())}</p>`; return; }
+  const list = state.shows.filter(s => s.status === 'Watching');
+  if (!list.length) { box.innerHTML = '<p class="empty">Nothing is marked Watching. Start one from the list below.</p>'; return; }
+  for (const s of list) {
+    const p = curPos(s), pr = progressOf(s), nx = nextPos(s, p);
+    const el = document.createElement('div');
+    el.className = 'nb'; el.dataset.id = s.id;
+    el.innerHTML = `
+      <div><div class="nb-title"></div><div class="nb-meta"><span class="pchip"></span><span class="nb-se tnum"></span></div></div>
+      <div class="nb-prog">${pr ? `<div class="prog" aria-hidden="true"><i style="width:${pr.pct}%"></i></div><span class="nb-sub tnum">${esc(pr.text)}</span>` : '<span class="nb-sub">No episode count yet</span>'}</div>
+      <div class="nb-act"><button class="btn btn-primary btn-plus" type="button" data-a="plus" title="Log S${nx.s} · E${nx.e}" aria-label="Log one episode"></button><button class="btn" type="button" data-a="more" aria-expanded="${state.more === s.id}">More</button></div>
+      <div class="nb-more"></div>`;
+    el.querySelector('.nb-title').textContent = s.title;
+    const chip = el.querySelector('.pchip'); if (s.platform) chip.textContent = s.platform; else chip.remove();
+    el.querySelector('.nb-se').textContent = `S${p.s} · E${p.e}`;
+    el.querySelector('[data-a="plus"]').textContent = '+1 ep';
+    if (state.more === s.id) el.querySelector('.nb-more').appendChild(morePanel(s, p));
+    box.appendChild(el);
+  }
+}
+function morePanel(s, p) {
+  const w = document.createElement('div');
+  w.className = 'more-grid';
+  w.innerHTML = `
+    <div class="more-block"><span class="flabel">Log several episodes</span>
+      <div class="more-row"><span class="stepper"><button type="button" data-a="nminus" aria-label="Fewer">−</button><input type="number" min="1" max="50" inputmode="numeric" data-n aria-label="Number of episodes" value="${state.logN}"><button type="button" data-a="nplus" aria-label="More">+</button></span><button class="btn btn-primary" type="button" data-a="logn">Log episodes</button></div></div>
+    <div class="more-block"><span class="flabel">Set season and episode</span>
+      <div class="more-row"><input type="number" min="1" inputmode="numeric" data-s aria-label="Season" value="${p.s}"><input type="number" min="0" inputmode="numeric" data-e aria-label="Episode" value="${p.e}"><button class="btn" type="button" data-a="setpos">Set</button></div></div>
+    <div class="more-block"><span class="flabel">Season and status</span>
+      <div class="more-row"><button class="btn" type="button" data-a="nextseason">Next season</button><button class="btn" type="button" data-a="pause">Pause</button></div></div>
+    <div class="more-block"><span class="flabel">Finished the show</span>
+      <div class="more-row"><select data-r aria-label="Rating out of 10"><option value="">No rating</option>${[10,9,8,7,6,5,4,3,2,1].map(n => `<option>${n}</option>`).join('')}</select><button class="btn" type="button" data-a="finish">Finished show</button></div></div>`;
+  return w;
+}
+
+function renderPick() {
+  const list = state.shows.filter(s => s.status === 'Next Up').sort((a, b) => (toNum(a.upNext) || 9999) - (toNum(b.upNext) || 9999) || a._row - b._row);
+  const ul = $('pickList'); ul.textContent = '';
+  $('pickNote').textContent = state.live && list.length ? `${list.length} Next Up` : '';
+  if (!state.live) { ul.innerHTML = `<li><span class="empty">${esc(emptyMsg())}</span></li>`; $('pickMore').hidden = true; return; }
+  if (!list.length) { ul.innerHTML = '<li><span class="empty">No shows are set to Next Up.</span></li>'; $('pickMore').hidden = true; return; }
+  const shown = state.pickAll ? list : list.slice(0, 6);
+  for (const s of shown) {
+    const li = document.createElement('li');
+    li.innerHTML = '<span class="t"></span><button class="btn" type="button">Start</button><span class="m"></span>';
+    li.querySelector('.t').textContent = s.title;
+    li.querySelector('.m').textContent = [s.platform, s.genre, s.year].filter(Boolean).join(' · ');
+    li.querySelector('button').dataset.start = s.id;
+    li.querySelector('button').setAttribute('aria-label', 'Start watching ' + s.title);
+    ul.appendChild(li);
+  }
+  $('pickMore').hidden = list.length <= 6;
+  $('pickMore').textContent = state.pickAll ? 'Show fewer' : `Show all ${list.length}`;
+}
+
+function renderRecent() {
+  const ul = $('recentList'); ul.textContent = '';
+  if (!state.live) { ul.innerHTML = `<li><span class="empty">${esc(emptyMsg())}</span></li>`; return; }
+  const list = [...state.entries].sort((a, b) => a.date < b.date ? 1 : a.date > b.date ? -1 : (b._row || 0) - (a._row || 0)).slice(0, 20);
+  if (!list.length) { ul.innerHTML = '<li><span class="empty">No episodes logged yet.</span></li>'; return; }
+  for (const e of list) {
+    const li = document.createElement('li');
+    li.innerHTML = '<span class="t"></span><span class="acts"><button type="button" data-a="edit">Edit</button></span><span class="m tnum"></span>';
+    li.querySelector('.t').textContent = e.title || (showById(e.showId) || {}).title || 'Show ' + e.showId;
+    li.querySelector('.m').textContent = `S${e.season} · E${e.episode}${e.eps > 1 ? ' ×' + e.eps : ''} · ${dayLabel(e.date)}`;
+    li.dataset.row = e._row;
+    if (state.editing === e._row && e._row) li.appendChild(entryEditor(e));
+    ul.appendChild(li);
+  }
+}
+function entryEditor(e) {
+  const f = document.createElement('div');
+  f.className = 'edit';
+  f.innerHTML = `<input type="date" aria-label="Day" max="${today()}"><input type="number" min="1" inputmode="numeric" aria-label="Season"><input type="number" min="0" inputmode="numeric" aria-label="Episode">
+    <button class="btn btn-primary" type="button" data-a="save">Save</button><button class="btn" type="button" data-a="del">Delete</button><button class="btn" type="button" data-a="cancel">Cancel</button>`;
+  const [dIn, sIn, eIn] = f.querySelectorAll('input');
+  dIn.value = e.date; sIn.value = e.season; eIn.value = e.episode;
+  f.addEventListener('click', ev => {
+    const btn = ev.target.closest('button'); if (!btn) return;
+    const a = btn.dataset.a;
+    if (a === 'cancel') { state.editing = null; renderRecent(); }
+    if (a === 'save') {
+      const d = toDate(dIn.value), s = parseInt(sIn.value, 10), n = parseInt(eIn.value, 10);
+      if (!d || d > today() || !(s > 0) || !(n >= 0)) { notice('Pick a day up to today, a season of 1 or more and an episode number.', 'error'); return; }
+      editEntry(e, { date: d, season: s, episode: n }, btn);
+    }
+    if (a === 'del') {
+      if (!confirm(`Delete ${e.title || 'this episode'} S${e.season} E${e.episode} from ${e.date}?`)) return;
+      editEntry(e, { del: true }, btn);
+    }
+  });
+  return f;
+}
+
+// Change one 📺 Log row. The row is checked against the sheet right before writing, so if the log was
+// edited elsewhere nothing is overwritten. The connector can't remove rows, so a delete sets eps to 0
+// and source to "deleted"; the app ignores rows with 0 episodes.
+async function editEntry(e, change, btn) {
+  if (state.busy) return;
+  if (!isLive()) { notice('Editing needs the live connection. ' + connectHint(), 'error'); return; }
+  state.busy = true; btn.disabled = true; const old = btn.textContent; btn.textContent = 'Saving…';
+  try {
+    const r = e._row, L = state.logCols;
+    const cur = (await readRange(`${T_LOG}!A${r}:I${r}`))[0] || [];
+    const g = k => cur[L[k]];
+    if (toDate(g('date')) !== e.date || String(g('showId') ?? '').trim() !== e.showId || toNum(g('season')) !== e.season || toNum(g('episode')) !== e.episode || toNum(g('eps')) !== e.eps) {
+      state.editing = null; await refresh();
+      notice('That entry changed in the sheet since the app loaded it. The list has been reloaded, so you can try again.', 'error');
+      return;
+    }
+    const put = (k, v) => state.mcp.callTool(SERVER, 'update_values', { spreadsheetId: SHEET_ID, range: `${T_LOG}!${colLetter(L[k])}${r}`, values: [[v]] }, { cache: false });
+    if (change.del) {
+      await put('eps', 0); await put('source', "'deleted");
+      state.entries = state.entries.filter(x => x !== e);
+      setStatus('live', 'Entry deleted'); notice('');
+      try { await rollBackProgress(e); } catch (err) { notice('The entry was deleted, but the show\'s season and episode weren\'t rolled back: ' + (err.message || explain(err)), 'error'); }
+    } else {
+      if (change.date !== e.date) await put('date', change.date);
+      if (change.season !== e.season) await put('season', change.season);
+      if (change.episode !== e.episode) await put('episode', change.episode);
+      Object.assign(e, change);
+      setStatus('live', 'Entry updated');
+    }
+    state.editing = null;
+    renderAll();
+  } catch (err) {
+    notice('Couldn\'t change that entry: ' + (err.message || explain(err)), 'error');
+  } finally {
+    state.busy = false; btn.disabled = false; btn.textContent = old;
+  }
+}
+// If the deleted entry is exactly where the show is up to, step the show back one episode.
+async function rollBackProgress(e) {
+  const s = showById(e.showId); if (!s) return;
+  const p = curPos(s);
+  if (p.s !== e.season || p.e !== e.episode) return;
+  let back;
+  if (p.e > 1) back = { s: p.s, e: p.e - 1 };
+  else if (p.s > 1 && seasonCount(s.id, p.s - 1)) back = { s: p.s - 1, e: seasonCount(s.id, p.s - 1) };
+  else if (p.s === 1) back = { s: 1, e: 0 };
+  else return;
+  await writeShowFields(s.id, { season: back.s, episode: back.e });
+}
+
+/* ---------- charts ---------- */
+const css = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+let weekChart;
+function chartBase() {
+  if (!window.Chart) return;
+  Chart.defaults.font.family = css('--body');
+  Chart.defaults.color = css('--muted');
+  Chart.defaults.borderColor = css('--line');
+}
+const goalLinePlugin = {
+  id: 'goalLine',
+  afterDatasetsDraw(chart, _a, opts) {
+    const y = chart.scales.y.getPixelForValue(opts.value);
+    const { left, right } = chart.chartArea;
+    const ctx = chart.ctx;
+    ctx.save();
+    ctx.strokeStyle = opts.color; ctx.setLineDash([4, 4]); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(right, y); ctx.stroke();
+    ctx.setLineDash([]); ctx.fillStyle = opts.color; ctx.font = '11px ' + css('--body');
+    ctx.textAlign = 'right'; ctx.fillText(`Goal ${opts.value}`, right, y - 4);
+    ctx.restore();
+  }
+};
+function renderWeekly(totals) {
+  if (!window.Chart || !$('weekChart')) return;
+  const goal = state.settings.weeklyGoalEps || 7, t = today(), cur = weekStart(t);
+  const labels = [], data = [];
+  for (let i = 11; i >= 0; i--) {
+    const ws = addDays(cur, -7 * i); labels.push(ws);
+    let n = 0; for (let d = 0; d < 7; d++) n += totals.get(addDays(ws, d)) || 0;
+    data.push(n);
+  }
+  const muted = css('--muted');
+  const cfg = {
+    type: 'bar',
+    data: { labels, datasets: [{ label: 'Episodes', data,
+      backgroundColor: data.map((v, i) => { const c = dayColour(labels[i]); return v >= goal ? c : underColour(c); }),
+      borderRadius: 3, barPercentage: .9, categoryPercentage: .95 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false, animation: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: {
+          title: items => 'Week of ' + fromIso(items[0].label).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }),
+          label: c => `${fmt(c.raw)} episode${c.raw === 1 ? '' : 's'}`
+        } },
+        goalLine: { value: goal, color: muted }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 6,
+          callback: function (v) { const d = fromIso(this.getLabelForValue(v)); return `${d.getDate()} ${MONTHS[d.getMonth()]}`; } } },
+        y: { beginAtZero: true, grid: { color: css('--line') }, ticks: { maxTicksLimit: 5, precision: 0 } }
+      }
+    },
+    plugins: [goalLinePlugin]
+  };
+  if (weekChart) weekChart.destroy();
+  weekChart = new Chart($('weekChart'), cfg);
+}
+
+function renderAll() {
+  applyTheme();
+  const totals = dailyTotals();
+  renderStats(totals);
+  renderWatching();
+  renderPick();
+  renderRecent();
+  chartBase();
+  renderWeekly(totals);
+  if (!$('view-library').hidden) renderLibrary();
+  $('wordmark').textContent = state.settings.appName || 'TV Tracker';
+  document.title = state.settings.appName || 'TV Tracker';
+}
+
+/* ---------- connection ---------- */
+const isLive = () => !!state.mcp && !(state.google && !google_.valid());
+const connectHint = () => state.google ? 'Press Connect at the top to sign in to Google.' : 'Open this page in Claude to connect it.';
+function setStatus(kind, text) { $('status').dataset.state = kind; $('statusText').textContent = text; }
+function notice(text, kind) { const n = $('notice'); if (!text) { n.hidden = true; return; } n.textContent = text; n.dataset.kind = kind || ''; n.hidden = false; }
+
+function explain(err) {
+  switch (err && err.code) {
+    case 'server_not_connected': return 'Google Sheets isn\'t connected for your account. Add it in claude.ai Settings → Connectors, then press Refresh.';
+    case 'google_signin': return 'Your Google sign-in has expired. Press Connect to sign in again.';
+    case 'needs_reauth': return 'Your Google Sheets connection has expired. Reconnect it in claude.ai Settings → Connectors, then press Refresh.';
+    case 'selection_required': return 'You have more than one Google Sheets connector. Choose one when Claude asks, then press Refresh.';
+    case 'not_in_manifest': case 'consent_required': return 'This page isn\'t allowed to use Google Sheets yet. Allow it from the page\'s permissions, then press Refresh.';
+    case 'blocked_by_policy': return 'Your organisation blocks Google Sheets for this page.';
+    case 'server_unavailable': return 'Google Sheets didn\'t answer in time. Press Refresh to try again.';
+    case 'tool_error': return 'Google Sheets reported a problem: ' + (err.message || 'unknown error') + '.';
+    case 'not_granted': case 'capability_disabled': case 'capability_removed': return 'This view can\'t reach your connectors. Open the page in Claude to connect your sheet.';
+    default: return 'Couldn\'t reach your sheet' + (err && err.message ? ': ' + err.message : '') + '. Press Refresh to try again.';
+  }
+}
+
+async function readRange(range) {
+  const res = await state.mcp.callTool(SERVER, 'get_values', { spreadsheetId: SHEET_ID, range }, { cache: false });
+  const p = res.payload;
+  return (p && Array.isArray(p.values)) ? p.values : [];
+}
+const writeCell = (range, v) => state.mcp.callTool(SERVER, 'update_values', { spreadsheetId: SHEET_ID, range, values: [[v]] }, { cache: false });
+
+async function refresh() {
+  if (!state.mcp) return;
+  setStatus('loading', 'Loading from your sheet…');
+  $('refreshBtn').disabled = true;
+  try {
+    const [shows, log, seasons, settings] = await Promise.all([
+      readRange(`${T_SHOWS}!A2:U`),
+      readRange(`${T_LOG}!A1:I`),
+      readRange(`${T_SEASONS}!A1:H`),
+      readRange(`${T_SETTINGS}!A1:C`)
+    ]);
+    // 📺: header on sheet row 2; columns found by header name
+    state.showHeader = (shows[0] || []).map(h => String(h).trim());
+    const keys = state.showHeader.map(keyOfHeader);
+    state.shows = shows.slice(1).map((r, idx) => {
+      const o = { _row: idx + 3 };
+      keys.forEach((k, i) => { if (k) o[k] = String(r[i] ?? '').trim(); });
+      for (const k of Object.values(SHOW_KEYS)) if (o[k] == null) o[k] = '';
+      return o;
+    }).filter(o => o.id && o.title);
+    // 📺 Log: header on row 1, one row per episode
+    const lh = (log[0] || []).map(h => String(h).trim());
+    const L = {}; for (const k of ['date', 'showId', 'title', 'season', 'episode', 'eps', 'loggedAt', 'source', 'note']) L[k] = lh.indexOf(k);
+    state.logCols = L;
+    state.entries = log.slice(1).map((r, i) => ({
+      date: toDate(r[L.date]), showId: String(r[L.showId] ?? '').trim(), title: String(r[L.title] ?? ''),
+      season: toNum(r[L.season]), episode: toNum(r[L.episode]), eps: toNum(r[L.eps]),
+      loggedAt: String(r[L.loggedAt] ?? ''), source: String(r[L.source] ?? ''), _row: i + 2
+    })).filter(e => e.date && e.eps > 0);
+    state.editing = null;
+    // 📺 Seasons
+    const sh = (seasons[0] || []).map(h => String(h).trim()), si = k => sh.indexOf(k);
+    state.seasons = new Map();
+    for (const r of seasons.slice(1)) {
+      const id = String(r[si('showId')] ?? '').trim(), s = toNum(r[si('season')]), n = toNum(r[si('episodes')]);
+      if (id && s && n) state.seasons.set(id + '|' + s, n);
+    }
+    // 📺 Settings
+    for (const r of settings.slice(1)) {
+      const k = String(r[0] ?? '').trim(), v = r[1];
+      if (k === 'weeklyGoalEps') state.settings.weeklyGoalEps = toNum(v) || 7;
+      else if (k === 'streakMinEps') state.settings.streakMinEps = toNum(v) || 1;
+      else if (k === 'appName' && String(v ?? '').trim()) state.settings.appName = String(v).trim();
+    }
+    state.live = true;
+    notice('');
+    setStatus('live', 'Live from your sheet · ' + new Date().toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit' }));
+    renderAll();
+  } catch (err) {
+    setStatus('error', state.live ? 'Showing the last data loaded' : 'Not connected');
+    notice(explain(err), 'error');
+  } finally {
+    $('refreshBtn').disabled = false;
+  }
+}
+
+/* ---------- 📺 sheet writes (changed cells only, row found by id just before writing) ---------- */
+function cellValue(field, v) {
+  v = String(v ?? '').trim();
+  if (!v) return '';
+  if (NUM_FIELDS.includes(field)) { const n = toNum(v); return Number.isFinite(n) ? n : ''; }
+  if (DATE_FIELDS.includes(field)) return toDate(v) || '';
+  return "'" + v; // keep text as text
+}
+async function showHeaderNow() {
+  const h = ((await readRange(`${T_SHOWS}!A2:U2`))[0] || []).map(x => String(x).trim());
+  return h;
+}
+async function findShowRow(id) {
+  const header = await showHeaderNow();
+  const idCol = header.findIndex(h => keyOfHeader(h) === 'id');
+  if (idCol < 0) throw { code: 'tool_error', message: 'The 📺 tab has no id column' };
+  const L = colLetter(idCol);
+  const ids = await readRange(`${T_SHOWS}!${L}1:${L}`);
+  const hits = ids.map((r, i) => String(r[0] ?? '').trim() === String(id) ? i + 1 : 0).filter(Boolean);
+  if (hits.length !== 1) throw { code: 'tool_error', message: hits.length ? `ID ${id} appears ${hits.length} times in 📺` : `ID ${id} isn't in 📺 any more` };
+  return { header, row: hits[0], ids };
+}
+async function writeShowFields(id, fields) {
+  const { header, row } = await findShowRow(id);
+  for (const [k, v] of Object.entries(fields)) {
+    const c = header.findIndex(h => keyOfHeader(h) === k);
+    if (c < 0 || k === 'id') continue;
+    await writeCell(`${T_SHOWS}!${colLetter(c)}${row}`, cellValue(k, v));
+  }
+  const s = showById(id);
+  if (s) Object.assign(s, Object.fromEntries(Object.entries(fields).map(([k, v]) => [k, String(v ?? '').trim()])));
+}
+async function addShow(fields) {
+  const header = await showHeaderNow();
+  const idCol = header.findIndex(h => keyOfHeader(h) === 'id');
+  if (idCol < 0) throw { code: 'tool_error', message: 'The 📺 tab has no id column' };
+  const L = colLetter(idCol);
+  const ids = (await readRange(`${T_SHOWS}!${L}3:${L}`)).map(r => toNum(r[0]));
+  const id = Math.max(0, ...ids) + 1;
+  const row = header.map(h => { const k = keyOfHeader(h); return k === 'id' ? id : k ? cellValue(k, fields[k]) : ''; });
+  const res = await state.mcp.callTool(SERVER, 'append_values', { spreadsheetId: SHEET_ID, range: `${T_SHOWS}!A2`, values: [row] }, { cache: false });
+  const p = (res && res.payload) || {};
+  const m = String((p.updates && p.updates.updatedRange) || p.updatedRange || '').match(/![A-Z]+(\d+)/);
+  const show = Object.fromEntries(Object.values(SHOW_KEYS).map(k => [k, '']));
+  Object.assign(show, Object.fromEntries(Object.entries(fields).map(([k, v]) => [k, String(v ?? '').trim()])), { id: String(id), _row: m ? Number(m[1]) : 3 + state.shows.length });
+  state.shows.push(show);
+  return show;
+}
+
+/* ---------- logging episodes ---------- */
+// Run a write: one at a time, button shows progress, errors become a notice.
+async function act(btn, fn) {
+  if (state.busy) return;
+  if (!isLive()) { notice('Saving needs the live connection. ' + connectHint(), 'error'); return; }
+  state.busy = true;
+  const old = btn && btn.textContent;
+  if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+  try { await fn(); }
+  catch (err) {
+    const unsure = err && (err.code === 'server_unavailable' || err.code === 'upstream_error' || err.code === 'cancelled');
+    notice(unsure ? 'The save may or may not have gone through. Checking your sheet now so nothing is logged twice.' : (err && err.message && err.code === 'tool_error' ? err.message : explain(err)), 'error');
+    if (unsure) { state.busy = false; await refresh(); }
+  } finally {
+    state.busy = false;
+    if (btn && btn.isConnected) { btn.disabled = false; btn.textContent = old; }
+  }
+}
+
+async function logEpisodes(show, n, btn) {
+  return act(btn, async () => {
+    const now = new Date();
+    const loggedAt = `${iso(now)} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+    const start = curPos(show), blankSeason = show.season === '', blankEp = show.episode === '';
+    let p = start; const eps = [];
+    for (let i = 0; i < n; i++) { p = nextPos(show, p); eps.push(p); }
+    const day = logDay();
+    const rows = eps.map(q => [day, Number(show.id), "'" + show.title, q.s, q.e, 1, loggedAt, "'app", '']);
+    const res = await state.mcp.callTool(SERVER, 'append_values', { spreadsheetId: SHEET_ID, range: `${T_LOG}!A1`, values: rows }, { cache: false });
+    const pl = (res && res.payload) || {};
+    const m = String((pl.updates && pl.updates.updatedRange) || pl.updatedRange || '').match(/![A-Z]+(\d+)/);
+    eps.forEach((q, i) => state.entries.push({ date: day, showId: show.id, title: show.title, season: q.s, episode: q.e, eps: 1, loggedAt, source: 'app', _row: m ? Number(m[1]) + i : null }));
+    renderAll(); notice('');
+    // Progress only ever moves forward, even when backdating
+    const f = {};
+    if (p.s !== start.s || blankSeason) f.season = p.s;
+    if (p.e !== start.e || blankEp) f.episode = p.e;
+    if (!show.started) f.started = day;
+    try { if (Object.keys(f).length) await writeShowFields(show.id, f); renderAll(); }
+    catch (err) { notice(`Your episode${n > 1 ? 's were' : ' was'} logged, but the season and episode in the 📺 tab weren't updated: ${err.message || explain(err)}. You can change them in the sheet.`, 'error'); }
+    setStatus('live', `Logged ${n} episode${n > 1 ? 's' : ''} of ${show.title} · ` + now.toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit' }));
+  });
+}
+const saveFields = (show, fields, btn, msg) => act(btn, async () => {
+  await writeShowFields(show.id, fields); renderAll(); notice('');
+  setStatus('live', msg);
+});
+
+$('watching').addEventListener('click', ev => {
+  const btn = ev.target.closest('button'); if (!btn || !btn.dataset.a) return;
+  const row = btn.closest('.nb'); const s = showById(row.dataset.id); if (!s) return;
+  const a = btn.dataset.a, q = sel => row.querySelector(sel);
+  if (a === 'plus') logEpisodes(s, 1, btn);
+  else if (a === 'more') { state.more = state.more === s.id ? null : s.id; renderWatching(); }
+  else if (a === 'nminus' || a === 'nplus') {
+    const inp = q('[data-n]'); state.logN = Math.max(1, Math.min(50, (parseInt(inp.value, 10) || 1) + (a === 'nplus' ? 1 : -1))); inp.value = state.logN;
+  }
+  else if (a === 'logn') {
+    const n = Math.max(1, Math.min(50, parseInt(q('[data-n]').value, 10) || 0));
+    if (!n) return; state.logN = n; logEpisodes(s, n, btn);
+  }
+  else if (a === 'setpos') {
+    const ns = parseInt(q('[data-s]').value, 10), ne = parseInt(q('[data-e]').value, 10);
+    if (!(ns > 0) || !(ne >= 0)) { notice('Enter a season of 1 or more and an episode of 0 or more.', 'error'); return; }
+    const f = {}; if (String(ns) !== s.season) f.season = ns; if (String(ne) !== s.episode) f.episode = ne;
+    if (!Object.keys(f).length) return;
+    saveFields(s, f, btn, `${s.title} is now at S${ns} · E${ne}`);
+  }
+  else if (a === 'nextseason') { const p = curPos(s); saveFields(s, { season: p.s + 1, episode: 0 }, btn, `${s.title}: on to season ${p.s + 1}`); }
+  else if (a === 'pause') saveFields(s, { status: 'Paused' }, btn, `Paused “${s.title}”`);
+  else if (a === 'finish') {
+    const f = { status: 'Watched', finished: logDay() }, r = q('[data-r]').value; if (r) f.rating = r;
+    saveFields(s, f, btn, `Marked “${s.title}” as watched`);
+  }
+});
+$('pickList').addEventListener('click', ev => {
+  const btn = ev.target.closest('button[data-start]'); if (!btn) return;
+  const s = showById(btn.dataset.start); if (!s) return;
+  const f = { status: 'Watching' };
+  if (!s.started) f.started = logDay();
+  if (s.season === '') f.season = 1;
+  if (s.episode === '') f.episode = 0;
+  saveFields(s, f, btn, `Started “${s.title}”`);
+});
+$('pickMore').addEventListener('click', () => { state.pickAll = !state.pickAll; renderPick(); });
+$('recentList').addEventListener('click', ev => {
+  const b = ev.target.closest('button[data-a="edit"]'); if (!b) return;
+  const row = Number(b.closest('li').dataset.row);
+  state.editing = state.editing === row ? null : row; renderRecent();
+});
+
+/* ---------- library view ---------- */
+const LIB_COLS = [
+  { k: 'title', label: 'Title' }, { k: 'rating', label: 'Rating', num: true }, { k: 'status', label: 'Status' },
+  { k: 'genre', label: 'Genre', sm: true }, { k: 'platform', label: 'Platform', sm: true }, { k: 'year', label: 'Year', num: true, sm: true }
+];
+const sortKey = (b, k) => {
+  if (k === 'sheet') return b._row;
+  if (['rating', 'year'].includes(k)) return b[k] === '' || b[k] == null ? -1 : toNum(b[k]);
+  return String(b[k] || '').toLowerCase();
+};
+function libFiltered() {
+  const L = state.lib, q = L.q.toLowerCase();
+  return state.shows.filter(b =>
+    (L.status === 'All' || b.status === L.status) &&
+    (!q || [b.title, b.genre, b.platform, b.starring, b.status].some(v => String(v || '').toLowerCase().includes(q))));
+}
+function renderLibrary() {
+  const L = state.lib, body = $('libBody');
+  const counts = { All: state.shows.length };
+  for (const b of state.shows) counts[b.status] = (counts[b.status] || 0) + 1;
+  const extra = Object.keys(counts).filter(k => k !== 'All' && k && !STATUSES.includes(k));
+  $('libChips').innerHTML = ['All', ...STATUSES, ...extra].map(st => `<button class="chip" type="button" data-st="${esc(st)}" aria-pressed="${L.status === st}">${esc(st)}<span class="n">${fmt(counts[st] || 0)}</span></button>`).join('');
+  $('libHead').innerHTML = LIB_COLS.map(c => `<th scope="col" data-k="${c.k}" class="${c.num ? 'num ' : ''}${c.sm ? 'hide-sm' : ''}" ${L.sort === c.k ? `aria-sort="${L.dir > 0 ? 'ascending' : 'descending'}"` : ''}>${c.label}</th>`).join('');
+  body.textContent = '';
+  if (!state.live) {
+    body.innerHTML = `<tr><td colspan="${LIB_COLS.length}" class="muted" style="padding:18px">${esc(emptyMsg())}</td></tr>`;
+    $('libCount').textContent = ''; $('libMore').hidden = true; $('libSheetOrder').hidden = true; return;
+  }
+  const rows = libFiltered().sort((a, b) => { const x = sortKey(a, L.sort), y = sortKey(b, L.sort); return (x < y ? -1 : x > y ? 1 : 0) * L.dir; });
+  for (const b of rows.slice(0, L.limit)) {
+    const tr = document.createElement('tr');
+    tr.className = 'row' + (L.open === b.id ? ' open' : '');
+    tr.dataset.id = b.id;
+    const cells = {
+      title: '<span class="t"></span>', rating: b.rating === '' ? '' : esc(b.rating),
+      status: b.status ? `<span class="pill" data-s="${esc(b.status)}">${esc(b.status)}</span>` : '',
+      genre: esc(b.genre), platform: esc(b.platform), year: esc(b.year)
+    };
+    tr.innerHTML = LIB_COLS.map(c => `<td class="${c.num ? 'num tnum ' : ''}${c.sm ? 'hide-sm' : ''}">${cells[c.k]}</td>`).join('');
+    tr.querySelector('.t').textContent = b.title;
+    body.appendChild(tr);
+    if (L.open === b.id) body.appendChild(detailRow(b));
+  }
+  if (!rows.length) body.innerHTML = `<tr><td colspan="${LIB_COLS.length}" class="muted" style="padding:18px">No shows match.</td></tr>`;
+  $('libCount').textContent = `Showing ${fmt(Math.min(L.limit, rows.length))} of ${fmt(rows.length)} shows` + (L.sort === 'sheet' ? ' · in sheet order' : '');
+  $('libMore').hidden = rows.length <= L.limit;
+  $('libSheetOrder').hidden = L.sort === 'sheet';
+}
+function detailRow(b) {
+  const tr = document.createElement('tr');
+  tr.className = 'detail';
+  const td = document.createElement('td');
+  td.colSpan = LIB_COLS.length;
+  const p = b.season || b.episode ? `S${b.season || 1} · E${b.episode || 0}` : '';
+  const kv = [['Genre', b.genre], ['Platform', b.platform], ['Year', b.year], ['How to watch', b.howToWatch], ['Starring', b.starring], ['Release date', b.releaseDate],
+    ['Seasons', b.totalSeasons], ['Episodes', b.totalEps], ['Progress', p], ['Started', b.started], ['Finished', b.finished],
+    ['Plan', b.plan ? b.plan + (b.plan === 'Up next' && b.upNext ? ' #' + b.upNext : '') : (b.upNext ? '#' + b.upNext : '')],
+    ['Why', b.why], ['Notes', b.notes], ['Sorted', b.sorted], ['ID', b.id]].filter(([, v]) => v);
+  td.innerHTML = '<dl class="kv"></dl><div style="margin-top:12px"><button class="btn btn-primary" type="button" data-edit="' + esc(b.id) + '">Edit show</button></div>';
+  const dl = td.querySelector('.kv');
+  for (const [k, v] of kv) { const dt = document.createElement('dt'), dd = document.createElement('dd'); dt.textContent = k; dd.textContent = v; dl.append(dt, dd); }
+  tr.appendChild(td);
+  return tr;
+}
+
+/* ---------- edit / add dialog ---------- */
+const FORM = [
+  { sec: 'Show' }, { k: 'title', w: 'w2', req: true }, { k: 'status', type: 'select' }, { k: 'rating', type: 'number', label: 'Rating (/10)' },
+  { k: 'genre', type: 'select' }, { k: 'platform', type: 'select' }, { k: 'howToWatch', type: 'select', label: 'How to watch' }, { k: 'year', type: 'number' },
+  { k: 'starring', w: 'w2' }, { k: 'releaseDate', label: 'Release date' }, { k: 'plan', type: 'select' },
+  { sec: 'Progress' }, { k: 'totalSeasons', type: 'number', label: 'Total seasons' }, { k: 'totalEps', type: 'number', label: 'Total episodes' },
+  { k: 'season', type: 'number' }, { k: 'episode', type: 'number' },
+  { k: 'started', type: 'date' }, { k: 'finished', type: 'date' }, { k: 'upNext', type: 'number', label: 'Up next #' },
+  { sec: 'Notes' }, { k: 'why', w: 'w4', label: 'Why it\'s on the list' }, { k: 'notes', type: 'textarea', w: 'w4' }
+];
+let editing = null;
+function openShowDialog(show) {
+  editing = show;
+  $('dlgTitle').textContent = show ? 'Edit show' : 'Add a show';
+  $('dlgMsg').textContent = show ? `ID ${show.id}` : 'A new ID is given when you save';
+  $('dlgMsg').dataset.err = '';
+  const body = $('dlgBody'); body.textContent = '';
+  for (const f of FORM) {
+    if (f.sec) { const d = document.createElement('div'); d.className = 'sec-label'; d.textContent = f.sec; body.appendChild(d); continue; }
+    const wrap = document.createElement('div');
+    wrap.className = 'field ' + (f.w || '');
+    const id = 'f-' + f.k;
+    const lab = document.createElement('label');
+    lab.htmlFor = id; lab.textContent = f.label || (f.k[0].toUpperCase() + f.k.slice(1));
+    let el;
+    const val = show ? (show[f.k] || '') : (f.k === 'status' ? 'Watchlist' : '');
+    if (f.type === 'select') {
+      el = document.createElement('select');
+      const opts = ['', ...OPTS[f.k]];
+      if (val && !opts.includes(val)) opts.push(val); // never wipe a value that isn't in the list
+      for (const o of opts) { const op = document.createElement('option'); op.value = o; op.textContent = o || '–'; el.appendChild(op); }
+    } else if (f.type === 'textarea') el = document.createElement('textarea');
+    else { el = document.createElement('input'); el.type = f.type || 'text'; if (f.type === 'number') { el.inputMode = 'decimal'; el.step = 'any'; } }
+    el.id = id; el.name = f.k;
+    el.value = f.type === 'date' ? (toDate(val) || '') : f.type === 'number' ? (val === '' ? '' : (Number.isFinite(parseFloat(val)) ? toNum(val) : '')) : val;
+    if (f.req) el.required = true;
+    wrap.append(lab, el);
+    body.appendChild(wrap);
+  }
+  $('showDlg').showModal();
+}
+async function saveShowDialog(e) {
+  e.preventDefault();
+  if (!isLive()) { $('dlgMsg').textContent = 'Saving needs the live connection to your sheet.'; return; }
+  if (state.busy) return;
+  const data = {};
+  for (const f of FORM) if (f.k) data[f.k] = $('showForm').elements[f.k].value.trim();
+  if (!data.title) { $('dlgMsg').textContent = 'A title is needed.'; return; }
+  const btn = $('dlgSave'); btn.disabled = true; btn.textContent = 'Saving…'; state.busy = true;
+  try {
+    if (editing) {
+      const changed = {};
+      for (const [k, v] of Object.entries(data)) {
+        let old = String(editing[k] || '').trim();
+        if (DATE_FIELDS.includes(k)) old = toDate(old) || '';
+        const same = NUM_FIELDS.includes(k) ? (old === '' && v === '') || (old !== '' && v !== '' && toNum(old) === toNum(v)) : old === v;
+        if (!same) changed[k] = v;
+      }
+      const n = Object.keys(changed).length;
+      if (n) await writeShowFields(editing.id, changed);
+      notice('');
+      setStatus('live', n ? `Saved ${n} change${n > 1 ? 's' : ''} to “${data.title}”` : 'No changes to save');
+    } else {
+      const b = await addShow(data);
+      state.lib.open = b.id;
+      setStatus('live', `Added “${b.title}” with ID ${b.id}`);
+    }
+    $('showDlg').close();
+    renderAll();
+  } catch (err) {
+    $('dlgMsg').textContent = (err && err.code && err.code !== 'tool_error') ? explain(err) : 'Not saved: ' + (err.message || 'unknown problem') + '.';
+  } finally { state.busy = false; btn.disabled = false; btn.textContent = 'Save'; }
+}
+
+/* ---------- wiring ---------- */
+function showTab(name) {
+  if (!TABS.includes(name)) name = 'log';
+  for (const t of TABS) {
+    const tab = $('tab-' + t), view = $('view-' + t);
+    if (tab) tab.setAttribute('aria-selected', String(t === name));
+    if (view) view.hidden = t !== name;
+  }
+  if (name === 'library') renderLibrary();
+  if (name === 'log') { chartBase(); renderWeekly(dailyTotals()); }
+  try { localStorage.setItem(TAB_KEY, name); } catch (e) {}
+}
+for (const t of TABS) $('tab-' + t).addEventListener('click', () => showTab(t));
+let searchT;
+$('libSearch').addEventListener('input', e => { clearTimeout(searchT); searchT = setTimeout(() => { state.lib.q = e.target.value; state.lib.limit = 100; renderLibrary(); }, 150); });
+$('libChips').addEventListener('click', e => { const c = e.target.closest('.chip'); if (!c) return; state.lib.status = c.dataset.st; state.lib.limit = 100; renderLibrary(); });
+$('libHead').addEventListener('click', e => {
+  const th = e.target.closest('th'); if (!th) return; const k = th.dataset.k, L = state.lib;
+  const first = ['rating', 'year'].includes(k) ? -1 : 1;
+  if (L.sort !== k) { L.sort = k; L.dir = first; }
+  else if (L.dir === first) L.dir = -first;
+  else { L.sort = 'sheet'; L.dir = 1; }
+  renderLibrary();
+});
+$('libSheetOrder').addEventListener('click', () => { state.lib.sort = 'sheet'; state.lib.dir = 1; renderLibrary(); });
+$('libBody').addEventListener('click', e => {
+  const ed = e.target.closest('[data-edit]');
+  if (ed) { openShowDialog(showById(ed.dataset.edit)); return; }
+  const tr = e.target.closest('tr.row'); if (!tr) return;
+  state.lib.open = state.lib.open === tr.dataset.id ? null : tr.dataset.id; renderLibrary();
+});
+$('libMore').addEventListener('click', () => { state.lib.limit += 100; renderLibrary(); });
+$('addShowBtn').addEventListener('click', () => { if (!state.live) { notice(emptyMsg(), 'error'); return; } openShowDialog(null); });
+$('showForm').addEventListener('submit', saveShowDialog);
+$('dlgClose').addEventListener('click', () => $('showDlg').close());
+$('refreshBtn').addEventListener('click', () => state.google && !google_.valid() ? googleConnect() : refresh());
+document.querySelectorAll('.logday button').forEach(b => b.addEventListener('click', () => setLogDay(addDays(today(), Number(b.dataset.day)))));
+$('logDate').addEventListener('change', e => setLogDay(toDate(e.target.value)));
+setLogDay(null);
+
+/* ---------- Google Sheets direct (GitHub Pages and other hosts outside claude.ai) ----------
+   Same calls as the claude.ai connector, sent straight to the Sheets API with a Google sign-in.
+   Writes use USER_ENTERED, like the connector, so ' prefixes, numbers, dates and formulas behave the same. */
+const google_ = {
+  cfgKey: 'mbl_config', tokKey: 'tv-google-token', client: null,
+  cfg() { try { return JSON.parse(localStorage.getItem(this.cfgKey) || 'null') || {}; } catch (e) { return {}; } },
+  saveCfg(c) { try { localStorage.setItem(this.cfgKey, JSON.stringify({ ...this.cfg(), ...c })); } catch (e) {} },
+  tok() { try { return JSON.parse(localStorage.getItem(this.tokKey) || 'null'); } catch (e) { return null; } },
+  valid() { const t = this.tok(); return !!(t && t.exp > Date.now()); },
+  async callTool(server, tool, input) {
+    if (!this.valid()) { googleSignedOut(); throw { code: 'google_signin' }; }
+    const base = `https://sheets.googleapis.com/v4/spreadsheets/${input.spreadsheetId}/values/${encodeURIComponent(input.range)}`;
+    const url = tool === 'get_values' ? base
+      : tool === 'append_values' ? base + ':append?valueInputOption=USER_ENTERED'
+      : base + '?valueInputOption=USER_ENTERED';
+    const opts = { method: tool === 'get_values' ? 'GET' : tool === 'append_values' ? 'POST' : 'PUT', headers: { Authorization: 'Bearer ' + this.tok().t } };
+    if (tool !== 'get_values') { opts.headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify({ values: input.values }); }
+    const res = await fetch(url, opts);
+    if (res.status === 401) { try { localStorage.removeItem(this.tokKey); } catch (e) {} googleSignedOut(); throw { code: 'google_signin' }; }
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) throw { code: 'tool_error', message: (body.error && body.error.message) || 'HTTP ' + res.status };
+    return { payload: body };
+  }
+};
+function googleSignedOut() {
+  setStatus('error', state.live ? 'Signed out · showing the last data loaded' : 'Not connected');
+  $('refreshBtn').textContent = 'Connect';
+}
+function loadGis() {
+  return new Promise((ok, fail) => {
+    if (window.google && google.accounts && google.accounts.oauth2) return ok();
+    const s = document.createElement('script');
+    s.src = 'https://accounts.google.com/gsi/client'; s.async = true;
+    s.onload = () => ok(); s.onerror = () => fail(new Error('Google sign-in didn\'t load'));
+    document.head.appendChild(s);
+  });
+}
+// Runs from a click, and stays synchronous once Google's script has loaded, so the sign-in popup isn't blocked
+function googleConnect() {
+  const id = google_.cfg().clientId;
+  if (!id) { $('gClient').value = ''; $('gMsg').textContent = ''; $('gDlg').showModal(); return; }
+  if (!(window.google && google.accounts && google.accounts.oauth2)) { loadGis().then(googleConnect, err => notice(err.message, 'error')); return; }
+  try {
+    if (!google_.client) google_.client = google.accounts.oauth2.initTokenClient({
+      client_id: id, scope: 'https://www.googleapis.com/auth/spreadsheets',
+      callback: r => {
+        if (r.error) { notice('Google sign-in failed: ' + r.error, 'error'); return; }
+        try { localStorage.setItem(google_.tokKey, JSON.stringify({ t: r.access_token, exp: Date.now() + (r.expires_in - 120) * 1000 })); } catch (e) {}
+        $('refreshBtn').textContent = 'Refresh';
+        refresh();
+      },
+      error_callback: e => notice('Google sign-in was closed or blocked' + (e && e.type ? ' (' + e.type + ')' : '') + '. Press Connect to try again.', 'error')
+    });
+    google_.client.requestAccessToken({ prompt: '' });
+  } catch (err) { notice(err.message, 'error'); }
+}
+function googleBoot() {
+  state.google = true; state.mcp = google_;
+  loadGis().catch(() => {});
+  if (google_.valid()) { refresh(); return; }
+  googleSignedOut();
+  notice(google_.cfg().clientId ? 'Press Connect to sign in to Google and load your sheet.' : 'Press Connect to link your Google Sheet. You\'ll need the OAuth Client ID from your Google Cloud project.');
+}
+$('gClose').addEventListener('click', () => $('gDlg').close());
+$('gForm').addEventListener('submit', e => {
+  const v = $('gClient').value.trim();
+  if (!/\.apps\.googleusercontent\.com$/.test(v)) { e.preventDefault(); $('gMsg').textContent = 'That doesn\'t look like a Client ID.'; return; }
+  google_.saveCfg({ clientId: v }); google_.client = null;
+  googleConnect();
+});
+
+renderAll();
+try { const t = localStorage.getItem(TAB_KEY); if (TABS.includes(t) && t !== 'log') showTab(t); } catch (e) {}
+setStatus('loading', 'Connecting to your sheet…');
+(async () => {
+  if (!(window.claude && window.claude.use)) { googleBoot(); return; }
+  let mcp = null;
+  try { mcp = await window.claude.use('mcp'); } catch (e) {}
+  if (!mcp) {
+    setStatus('error', 'Not connected');
+    notice('This view can\'t reach Google Sheets. Open the page in Claude to see your shows and log episodes.');
+    return;
+  }
+  state.mcp = mcp;
+  refresh();
+})();
+</script>
