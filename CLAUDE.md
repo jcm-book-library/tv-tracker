@@ -1,15 +1,12 @@
 # TV tracker: notes for Claude sessions
 
+**Read the house rules first:** [HOUSE-RULES.md](https://github.com/jcm-book-library/control-room/blob/main/HOUSE-RULES.md) in `control-room` (plain text: https://raw.githubusercontent.com/jcm-book-library/control-room/main/HOUSE-RULES.md). They cover Google Sheet safety, branches and pull requests into `main`, using cheaper models to save usage credits, and the build template. The notes below are this repo's own; where they are more specific, they win. The project charter is `project.json`.
+
 Sister app to the book tracker "Jackets & Manuscripts" (repo `jcm-book-library/my-book-library`,
 reference file `v3/reading-log.html` on branch `claude/keen-sagan-yf9rqf`; read it, never change it).
 
-## Working with models (owner's request)
-
-Orchestrate across models to make the best use of usage credits:
-- **Lead model (Opus):** planning, anything that writes to the Google Sheet, reviewing diffs, final checks before publishing.
-- **Sonnet subagents:** the bulk of the coding (porting book-app patterns, building a stage's tabs), from a precise written brief.
+Model use: see "Using models" in the house rules.
 - **Haiku subagents:** mechanical work: read-back comparisons, grep/lint passes, screenshot checks, look-ups such as TVmaze episode counts.
-- Give each subagent a self-contained brief (files, columns, rules below) and review what comes back before committing.
 
 ## Sheet: "Entertainment Tracker" `1558jWeUc8gCzQuph6wOVyOocvTBhQf22UuCSXza8klc`
 
