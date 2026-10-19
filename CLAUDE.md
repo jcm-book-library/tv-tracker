@@ -5,8 +5,7 @@
 Sister app to the book tracker "Jackets & Manuscripts" (repo `jcm-book-library/my-book-library`,
 reference file `v3/reading-log.html` on branch `claude/keen-sagan-yf9rqf`; read it, never change it).
 
-Model use: see "Using models" in the house rules.
-- **Haiku subagents:** mechanical work: read-back comparisons, grep/lint passes, screenshot checks, look-ups such as TVmaze episode counts.
+Model use: see "Using models" in the house rules. In this repo, TVmaze episode-count look-ups go to Haiku.
 
 ## Sheet: "Entertainment Tracker" `1558jWeUc8gCzQuph6wOVyOocvTBhQf22UuCSXza8klc`
 
