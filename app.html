@@ -3,31 +3,39 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Figtree:wght@400;500;600&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-/* Layout: one column on phone, two on laptop. Proton Seasons: dark-only, one soft colour per month in --accent. */
+/* Layout: one column on phone, two on laptop. Theme: every colour comes from the tokens below, which applyTheme() overwrites from
+   the month's show theme (THEMES in the script). These values are the Default theme, so the page is right before the script runs. */
 :root{
-  --bg:#16141f; --surface:#1e1b2b; --raise:#2a2640; --line:#353050;
-  --fg:#f1effa; --muted:#a49fbf; --accent:#5591e0; --accent-next:#6a7ff0; --accent-ink:#ffffff; --accent-2:#c4f04a;
-  --danger:#ff7a7a;
+  --bg:#0d1424; --surface:#141c2e; --raise:#1b2438; --line:#283249;
+  --fg:#e8ebf2; --muted:#9aa4b8; --accent:#c5ccd8; --accent-ink:#0d1424; --accent-2:#8ea8cf;
+  --danger:#f29a9a; --under:#3c4458;
+  --r:12px; --rc:min(var(--r),10px); --grain:0; --hdr:transparent; --glow:none;
+  --shade:rgba(0,0,0,.5); --scrim:rgba(0,0,0,.66);
   --display:"Atkinson Hyperlegible",ui-sans-serif,system-ui,sans-serif;
   --body:"Figtree",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --data:"Atkinson Hyperlegible",ui-sans-serif,system-ui,sans-serif;
+  --dweight:700; --dcase:none; --dtrack:-.01em;
+  --fp:var(--display); --pweight:var(--dweight); --pcase:var(--dcase); --ptrack:var(--dtrack);
+  --bs:28px; --bsm:24px;
   color-scheme:dark;
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{background:var(--bg);color:var(--fg);font:15px/1.5 var(--body);margin:0;overflow-x:hidden}
 .wrap{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:20px 48px}
-h1,h2,.num{font-family:var(--display)}
-#todayLabel{color:var(--accent)}
-h1{font-size:clamp(26px,4vw,34px);font-weight:700;letter-spacing:-.02em;margin:0;text-wrap:balance}
-.lockup{--mk:44px;display:flex;align-items:center;gap:calc(var(--mk)*.22);margin-top:6px}
+.hdin{max-width:1180px;margin:0 auto;padding:14px 16px}
+.num{font-family:var(--data)}
+#todayLabel{color:var(--fg)}
+h1{margin:0}
+.lockup{--mk:40px;display:flex;align-items:center;gap:calc(var(--mk)*.25);margin-top:4px;min-width:0}
 .tv-mark{width:var(--mk);height:var(--mk);flex:none;color:var(--accent);display:block}
-.jm-wordmark{font-family:"Atkinson Hyperlegible",var(--body);font-weight:700;font-size:calc(var(--mk)*.62);line-height:1.06;letter-spacing:-.01em;color:#eef0fa}
-h2{font-size:17px;font-weight:700;margin:0;letter-spacing:-.01em}
+.jm-wordmark{position:relative;font-family:var(--display);font-weight:var(--dweight);text-transform:var(--dcase);letter-spacing:var(--dtrack);font-size:var(--bs);line-height:1.1;color:var(--fg);text-shadow:var(--glow);overflow-wrap:anywhere}
+h2{font-family:var(--fp);font-weight:var(--pweight);text-transform:var(--pcase);letter-spacing:var(--ptrack);font-size:17px;margin:0}
 .eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:600}
 .muted{color:var(--muted)}
 .small{font-size:13px}
 .tnum{font-variant-numeric:tabular-nums}
-header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:20px}
+header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 12px;position:relative;z-index:1}
 .status{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex:none}
 .status[data-state="live"] .dot{background:var(--accent)}
@@ -35,26 +43,26 @@ header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-be
 .status[data-state="loading"] .dot{background:var(--accent);animation:pulse 1s infinite alternate}
 @keyframes pulse{to{opacity:.3}}
 button{font:inherit;cursor:pointer}
-.btn{border:1px solid var(--line);background:var(--raise);color:var(--fg);border-radius:8px;padding:7px 12px;font-weight:600;font-size:13px}
+.btn{border:1px solid var(--line);background:var(--raise);color:var(--fg);border-radius:var(--rc);padding:7px 12px;font-weight:600;font-size:13px}
 .btn:hover{border-color:var(--muted)}
 .btn-primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .btn-primary:hover{filter:brightness(1.08);border-color:var(--accent)}
 .btn:disabled{opacity:.5;cursor:default}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.notice{background:var(--raise);border:1px solid var(--line);border-left:3px solid var(--accent);padding:10px 14px;border-radius:8px;margin-bottom:18px;font-size:14px}
+.notice{background:var(--raise);border:1px solid var(--line);border-left:3px solid var(--accent);padding:10px 14px;border-radius:var(--rc);margin-bottom:18px;font-size:14px}
 .notice[data-kind="error"]{border-left-color:var(--danger)}
 
 .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:20px}
-.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:flex;flex-direction:column;gap:4px;min-width:0}
 .stat .num{font-size:clamp(28px,4vw,40px);font-weight:700;line-height:1.05;letter-spacing:-.02em}
 .stat .sub{font-size:13px;color:var(--muted)}
-.stat.streak{background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 20%,var(--surface)),color-mix(in srgb,var(--accent-next) 8%,var(--surface)) 75%);border-color:color-mix(in srgb,var(--accent) 45%,var(--line))}
-.stat.streak .num{color:color-mix(in srgb,var(--accent) 70%,#fff)}
-.goalbar{height:6px;border-radius:3px;background:var(--raise);overflow:hidden;margin-top:6px}
-.goalbar > i{display:block;height:100%;background:var(--accent-2);border-radius:3px;transition:width .4s}
+.stat.streak{background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 10%,var(--surface)),color-mix(in srgb,var(--accent-2) 6%,var(--surface)) 75%);border-color:color-mix(in srgb,var(--accent) 45%,var(--line))}
+.stat.streak .num{color:var(--accent)}
+.goalbar{height:6px;border-radius:3px;background:var(--line);overflow:hidden;margin-top:6px}
+.goalbar > i{display:block;height:100%;background:var(--accent);border-radius:3px;transition:width .4s}
 
 .grid{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:20px;align-items:start}
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;min-width:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;min-width:0}
 .panel + .panel{margin-top:20px}
 .grid .panel + .panel{margin-top:20px}
 .panel-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:12px;flex-wrap:wrap}
@@ -64,32 +72,32 @@ button{font:inherit;cursor:pointer}
 .logday{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .logday button{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:999px;padding:4px 11px;cursor:pointer}
 .logday button[aria-pressed="true"]{background:color-mix(in srgb,var(--accent) 22%,transparent);border-color:var(--accent);color:var(--fg)}
-.logday input[type=date]{font:inherit;font-size:12px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:999px;padding:3px 10px;color-scheme:dark;max-width:100%}
-.logday-banner{margin:-4px 0 12px;padding:8px 12px;border-radius:10px;font-size:13px;font-weight:600;background:color-mix(in srgb,var(--accent) 16%,transparent);border:1px solid color-mix(in srgb,var(--accent) 45%,transparent)}
+.logday input[type=date]{font:inherit;font-size:12px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:999px;padding:3px 10px;max-width:100%}
+.logday-banner{margin:-4px 0 12px;padding:8px 12px;border-radius:var(--rc);font-size:13px;font-weight:600;background:color-mix(in srgb,var(--accent) 16%,transparent);border:1px solid color-mix(in srgb,var(--accent) 45%,transparent)}
 
 /* watching rows */
 .nb{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) auto;gap:8px 22px;align-items:center;padding:14px 0;border-top:1px solid var(--line)}
 .nb:first-child{border-top:0;padding-top:4px}
 .nb-title{font-weight:600;line-height:1.3;font-size:16px;overflow-wrap:anywhere}
 .nb-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:4px;font-size:13px;color:var(--muted)}
-.nb-se{font-family:var(--display);font-weight:700;color:var(--fg);font-size:15px}
-.pchip{font-size:11px;font-weight:600;padding:1px 9px;border-radius:999px;background:var(--raise);color:var(--fg);white-space:nowrap}
+.nb-se{font-family:var(--data);font-weight:700;color:var(--fg);font-size:15px}
+.pchip{font-size:11px;font-weight:600;padding:1px 9px;border-radius:999px;border:1px solid color-mix(in srgb,var(--accent-2) 55%,var(--line));background:var(--raise);color:var(--fg);white-space:nowrap}
 .nb-prog{display:flex;flex-direction:column;gap:6px;min-width:0}
 .nb-prog .nb-sub{font-size:12px;color:var(--muted)}
-.prog{height:6px;background:var(--raise);border-radius:3px;overflow:hidden}
-.prog > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-next));border-radius:3px}
+.prog{height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+.prog > i{display:block;height:100%;background:var(--accent);border-radius:3px}
 .nb-act{display:flex;align-items:center;gap:8px}
-.btn-plus{font-family:var(--display);font-size:18px;font-weight:700;padding:12px 22px;border-radius:12px;min-width:104px}
+.btn-plus{font-family:var(--data);font-size:18px;font-weight:700;padding:12px 22px;border-radius:var(--r);min-width:104px}
 .nb-more{grid-column:1/-1}
 .nb-more:empty{display:none}
-.more-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:12px;border-radius:10px;background:var(--raise)}
+.more-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:12px;border-radius:var(--rc);background:var(--raise)}
 .more-block{display:flex;flex-direction:column;gap:6px;min-width:0}
 .more-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
-.more-grid input,.more-grid select,.edit input{font:inherit;font-size:14px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:6px 8px;color-scheme:dark;min-width:0}
+.more-grid input,.more-grid select,.edit input{font:inherit;font-size:14px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:var(--rc);padding:6px 8px;min-width:0}
 input[type="number"]{font-variant-numeric:tabular-nums}
 .more-grid input[type=number]{width:64px}
 .stepper{display:inline-flex;align-items:center;gap:4px}
-.stepper button{width:32px;height:32px;padding:0;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--fg);font-weight:700}
+.stepper button{width:32px;height:32px;padding:0;border-radius:var(--rc);border:1px solid var(--line);background:var(--bg);color:var(--fg);font-weight:700}
 .flabel{font-size:12px;color:var(--muted);font-weight:600}
 
 .pick-list,.recent-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
@@ -107,13 +115,13 @@ input[type="number"]{font-variant-numeric:tabular-nums}
 .sw{width:10px;height:10px;border-radius:2px;display:inline-block}
 
 /* tabs */
-.tabs{display:flex;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:4px;margin-bottom:20px;width:max-content;max-width:100%;overflow-x:auto}
-.tab{border:0;background:transparent;color:var(--muted);border-radius:8px;padding:7px 16px;font-weight:600;font-size:14px;white-space:nowrap}
+.tabs{display:flex;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:4px;margin-bottom:20px;width:max-content;max-width:100%;overflow-x:auto}
+.tab{border:0;background:transparent;color:var(--muted);border-radius:var(--rc);padding:7px 16px;font-weight:600;font-size:14px;white-space:nowrap}
 .tab[aria-selected="true"]{background:color-mix(in srgb,var(--accent) 24%,var(--surface));color:var(--fg);box-shadow:inset 0 -2px 0 var(--accent)}
 
 /* library */
 .lib-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
-.lib-bar input[type="search"],.field input,.field select,.field textarea{font:inherit;font-size:14px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:7px 10px;color-scheme:dark}
+.lib-bar input[type="search"],.field input,.field select,.field textarea{font:inherit;font-size:14px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:var(--rc);padding:7px 10px}
 .lib-bar input[type="search"]{flex:1 1 220px;min-width:0}
 .lib-bar input:focus,.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);outline:none}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
@@ -121,17 +129,17 @@ input[type="number"]{font-variant-numeric:tabular-nums}
 .chip[aria-pressed="true"]{background:color-mix(in srgb,var(--accent) 24%,var(--surface));border-color:var(--accent);color:var(--fg)}
 .chip[data-st]:not([data-st="All"])::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--sc);margin-right:6px}
 .chip .n{font-variant-numeric:tabular-nums;opacity:.7;margin-left:4px;font-weight:500}
-.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
 table.lib{width:100%;border-collapse:collapse;font-size:14px;min-width:620px}
 .lib th{position:sticky;top:0;background:var(--raise);text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600;padding:9px 10px;white-space:nowrap;cursor:pointer;user-select:none}
-.lib th[aria-sort="ascending"]::after{content:" ↑";color:var(--accent)} .lib th[aria-sort="descending"]::after{content:" ↓";color:var(--accent)}
+.lib th[aria-sort="ascending"]::after{content:" ↑";color:var(--fg)} .lib th[aria-sort="descending"]::after{content:" ↓";color:var(--fg)}
 .lib th.num,.lib td.num{text-align:right}
 .lib td{padding:9px 10px;border-top:1px solid var(--line);vertical-align:top}
 .lib tbody tr.row{cursor:pointer}
 .lib tbody tr.row:hover td{background:color-mix(in srgb,var(--accent) 6%,var(--surface))}
 .lib tr.open td{background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
 .lib .t{font-weight:600;line-height:1.3;overflow-wrap:anywhere}
-.pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;white-space:nowrap;border:1px solid var(--sb,var(--line));color:var(--sc,var(--muted));background:color-mix(in srgb,var(--sc,transparent) 12%,transparent)}
+.pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;white-space:nowrap;border:1px solid var(--sb,var(--line));color:var(--sc,var(--muted));background:color-mix(in srgb,var(--sc,#8a87a0) 14%,#16141f)}
 [data-s="Watching"],[data-st="Watching"]{--sc:#8fb8f2;--sb:#34507a}
 [data-s="Watched"],[data-st="Watched"]{--sc:#8fd6a4;--sb:#2f6b45}
 [data-s="Watchlist"],[data-st="Watchlist"]{--sc:#cdbcf5;--sb:#5a4d80}
@@ -147,8 +155,8 @@ table.lib{width:100%;border-collapse:collapse;font-size:14px;min-width:620px}
 .lib-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:12px;font-size:13px;color:var(--muted);flex-wrap:wrap}
 
 /* dialogs */
-dialog{background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:16px;padding:0;width:min(760px,calc(100vw - 32px));max-height:calc(100vh - 40px)}
-dialog::backdrop{background:rgba(8,6,14,.65)}
+dialog{background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:calc(var(--r) + 4px);padding:0;width:min(760px,calc(100vw - 32px));max-height:calc(100vh - 40px)}
+dialog::backdrop{background:var(--scrim)}
 .dlg-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--surface);z-index:1}
 .dlg-head h2{font-size:20px}
 .dlg-body{padding:16px 20px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
@@ -158,7 +166,7 @@ dialog::backdrop{background:rgba(8,6,14,.65)}
 .field input,.field select,.field textarea{width:100%;min-width:0}
 .field.w2{grid-column:span 2} .field.w4{grid-column:1/-1}
 .field textarea{min-height:84px;resize:vertical}
-.sec-label{grid-column:1/-1;font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--accent);font-weight:700;margin-top:6px}
+.sec-label{grid-column:1/-1;font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--fg);font-weight:700;margin-top:6px}
 
 /* plan */
 .plan-cols{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;align-items:start}
@@ -169,28 +177,28 @@ dialog::backdrop{background:rgba(8,6,14,.65)}
 .plan-list li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 10px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
 .plan-list li:first-child{border-top:0}
 .plan-list li.empty{display:block}
-.plan-list .n{font-family:var(--display);font-weight:700;color:var(--accent);min-width:1.4em;text-align:right}
+.plan-list .n{font-family:var(--data);font-weight:700;color:var(--fg);min-width:1.4em;text-align:right}
 .plan-list .main{display:flex;flex-direction:column;gap:2px;min-width:0}
 .plan-list .t{font-weight:600;overflow-wrap:anywhere}
 .plan-list .m{font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:2px 8px;align-items:center}
 .plan-list .why{grid-column:2/-1;font-size:12px;color:var(--fg);opacity:.85;font-style:italic;overflow-wrap:anywhere}
 .plan-list .why:empty{display:none}
-.plan-list .hint{font-size:11px;font-weight:600;color:var(--accent-2)}
+.plan-list .hint{font-size:11px;font-weight:600;color:var(--fg)}
 .up-detail li{padding:14px 0;align-items:start}
-.up-detail .n{font-size:24px;line-height:1.1}
-.up-detail .t{font-family:var(--display);font-size:18px}
+.up-detail .n{font-size:24px;line-height:1.1;color:var(--accent)}
+.up-detail .t{font-family:var(--data);font-size:18px}
 .plan-list .acts{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
 .plan-list .acts button{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:999px;padding:4px 10px;min-height:30px;cursor:pointer;white-space:nowrap}
 .plan-list .acts button:hover{color:var(--fg);border-color:var(--accent)}
 .plan-list .acts button.go{background:color-mix(in srgb,var(--accent) 24%,var(--surface));border-color:var(--accent);color:var(--fg)}
 .plan-list .acts button:disabled{opacity:.35;cursor:default}
 .plan-list .whyedit{grid-column:2/-1;display:flex;gap:6px}
-.plan-list .whyedit input,.deck-why{font:inherit;font-size:13px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:6px 9px;min-width:0}
+.plan-list .whyedit input,.deck-why{font:inherit;font-size:13px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:var(--rc);padding:6px 9px;min-width:0}
 .plan-list .whyedit input{flex:1}
 .sheet-list li.someday .t{color:var(--muted);font-weight:500}
-.warn{margin:-4px 0 10px;font-size:13px;color:var(--accent-2)}
+.warn{margin:-4px 0 10px;font-size:13px;font-weight:600;color:var(--danger)}
 .deck-card{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
-.deck-card h3{font-family:var(--display);font-size:22px;margin:0;overflow-wrap:anywhere}
+.deck-card h3{font-family:var(--data);font-size:22px;margin:0;overflow-wrap:anywhere}
 .deck-card .chips{margin:10px 0 0}
 .deck-card .why-chip{font-size:12px;padding:2px 9px;border-radius:999px;background:var(--raise);color:var(--fg)}
 .deck-why{width:100%;margin-top:10px}
@@ -216,21 +224,144 @@ dialog::backdrop{background:rgba(8,6,14,.65)}
   .hide-sm{display:none}
   table.lib{min-width:0}
 }
+/* ---- theme: header band, page layers, controls ---- */
+/* Page layers behind everything: the theme's pattern (body::before, per theme below) and grain (body::after). Panels sit above both. */
+body::before,body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none}
+body::after{opacity:var(--grain);mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+/* The header band paints --hdr across the full width. Motifs (.fx, .fx2, mark extras) live in here only, never over data. */
+.hdband{position:relative;isolation:isolate;overflow:hidden;background:var(--hdr);padding-top:env(safe-area-inset-top,0px)}
+.hdband>.fx,.hdband>.fx2{position:absolute;inset:0;pointer-events:none;z-index:0}
+.hdband + .wrap{padding-top:20px}
+.mk{position:relative;display:inline-flex;flex:none}
+.el,.seal,.ant{display:none}
+.tools{display:inline-flex;align-items:center;gap:4px}
+.btn.icon{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:6px 8px;line-height:1;min-width:34px;min-height:34px}
+.btn.icon svg{width:18px;height:18px;flex:none;display:block}
+.tools .btn.step{padding:6px 7px;min-width:30px}
+#themeName{max-width:11em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.status{justify-content:flex-end}
+@media (max-width:560px){#themeName{display:none}.status{width:100%;justify-content:flex-start}.tools{margin-left:auto}.hdin{padding-block:12px}.lockup{--mk:34px}.jm-wordmark{font-size:var(--bsm)}}
+.thememenu{position:fixed;z-index:60;width:min(300px,calc(100vw - 16px));max-height:min(72vh,540px);overflow:auto;background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:var(--rc);box-shadow:0 12px 32px var(--shade);padding:6px}
+.thememenu[hidden]{display:none}
+.thememenu .mhead{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:700;padding:8px 10px 4px}
+.thememenu button{all:unset;box-sizing:border-box;width:100%;cursor:pointer;display:grid;grid-template-columns:18px 14px minmax(0,1fr) auto;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--rc);font-size:14px;color:var(--fg)}
+.thememenu button:hover,.thememenu button:focus-visible{background:color-mix(in srgb,var(--accent) 16%,var(--surface))}
+.thememenu button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.thememenu button[aria-checked="true"]{background:color-mix(in srgb,var(--accent) 24%,var(--surface));font-weight:600}
+.thememenu .tick{color:var(--fg);font-weight:700;text-align:center}
+.thememenu .dotc{width:14px;height:14px;border-radius:50%;border:1px solid var(--line);display:block}
+.thememenu .mo{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+.thememenu .nm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:560px){.thememenu button{padding:11px 10px}}
+/* Settings dialog and theme editor */
+.set-body{padding:16px 20px;display:grid;gap:20px}
+.set-sec{display:grid;gap:10px;min-width:0}
+.set-h{margin:0;font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:700}
+.set-sec select{font:inherit;font-size:14px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:var(--rc);padding:7px 10px;max-width:100%}
+.ed-colours{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.ed-colour{display:flex;align-items:center;gap:8px;font-size:13px;min-width:0}
+.ed-colour input[type=color]{width:40px;height:32px;padding:2px;flex:none;background:var(--bg);border:1px solid var(--line);border-radius:var(--rc);cursor:pointer}
+.ed-colour span{display:flex;flex-direction:column;min-width:0;line-height:1.25}
+.ed-colour small{color:var(--muted);font-size:11px;font-variant-numeric:tabular-nums}
+.ed-fonts,.ed-sliders{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.ed-slider{display:flex;flex-direction:column;gap:4px;min-width:0}
+.ed-slider label{font-size:12px;color:var(--muted);font-weight:600}
+.ed-slider input[type=range]{width:100%;accent-color:var(--accent)}
+.ed-fonts .field select{width:100%}
+.ed-mode{display:inline-flex;align-items:center;gap:8px;font-size:14px;cursor:pointer}
+.ed-mode input{accent-color:var(--accent);width:18px;height:18px}
+.badges{display:flex;flex-wrap:wrap;gap:6px}
+.badges span{font-size:12px;padding:3px 10px;border-radius:999px;background:var(--raise);color:var(--fg);font-variant-numeric:tabular-nums}
+.badges span.bad{background:#5a1f24;color:#ffd6d9}
+.ed-actions{display:flex;flex-wrap:wrap;gap:8px}
+@media (max-width:560px){.ed-fonts,.ed-sliders{grid-template-columns:minmax(0,1fr)}}
+
+/* ---- per-theme motifs, lifted from design/themes-board.html. Header only (Ripley, Deadwood and Blackadder also tint the page ground, behind everything) ---- */
+/* Breaking Bad / Better Call Saul */
+[data-tv-theme="saul"] .tv-mark{display:none}
+[data-tv-theme="saul"] .el{display:inline-flex;flex-direction:column;justify-content:center;align-items:center;position:relative;width:38px;height:38px;border:1.5px solid var(--accent);background:color-mix(in srgb,var(--accent) 14%,var(--surface));color:var(--accent);font:700 17px/1 var(--display);border-radius:3px}
+[data-tv-theme="saul"] .el i{position:absolute;top:2px;left:3px;font:400 7px/1 var(--body);font-style:normal}
+[data-tv-theme="saul"] .hdband .fx{background:linear-gradient(180deg,rgba(184,144,10,0),rgba(184,144,10,.26)),repeating-linear-gradient(8deg,rgba(184,144,10,.07) 0 5px,transparent 5px 13px)}
+/* Deadwood */
+[data-tv-theme="deadwood"] body::before{background:radial-gradient(ellipse at 50% 45%,transparent 45%,rgba(94,56,22,.30) 100%)}
+[data-tv-theme="deadwood"] .hdin{padding-bottom:26px}
+[data-tv-theme="deadwood"] .hdband .fx2{background:
+  linear-gradient(var(--accent-2),var(--accent-2)) 0 calc(100% - 12px)/calc(50% - 14px) 1px no-repeat,
+  linear-gradient(var(--accent-2),var(--accent-2)) 0 calc(100% - 7px)/calc(50% - 14px) 2px no-repeat,
+  linear-gradient(var(--accent-2),var(--accent-2)) 100% calc(100% - 12px)/calc(50% - 14px) 1px no-repeat,
+  linear-gradient(var(--accent-2),var(--accent-2)) 100% calc(100% - 7px)/calc(50% - 14px) 2px no-repeat,
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath d='M7 1l6 6-6 6-6-6z' fill='%23a87a2a'/%3E%3C/svg%3E") 50% calc(100% - 3px)/14px 14px no-repeat}
+/* Mr Inbetween */
+[data-tv-theme="inbetween"]{--hdr:radial-gradient(ellipse 45% 130% at 0% 50%,rgba(240,138,44,.55),transparent 70%),linear-gradient(90deg,rgba(240,138,44,.10) 10%,rgba(122,108,255,.20) 60%,rgba(122,108,255,.42))}
+[data-tv-theme="inbetween"] .jm-wordmark .k{position:relative}
+[data-tv-theme="inbetween"] .jm-wordmark .k::after{content:"";position:absolute;left:50%;top:50%;width:1.5em;height:1.5em;margin:-.75em 0 0 -.5em;border:1px solid var(--accent);border-radius:50%;
+  background:linear-gradient(var(--accent),var(--accent)) 50% 0/1px 100% no-repeat,linear-gradient(var(--accent),var(--accent)) 0 50%/100% 1px no-repeat;opacity:.85;pointer-events:none}
+/* Chernobyl */
+[data-tv-theme="chernobyl"] .hdband .fx{background:radial-gradient(ellipse 75% 95% at 50% 135%,rgba(239,122,60,.62),transparent 70%)}
+[data-tv-theme="chernobyl"] .hdband .fx2{background:radial-gradient(ellipse 60% 45% at 25% 100%,rgba(205,215,205,.17),transparent 70%),radial-gradient(ellipse 50% 40% at 78% 92%,rgba(205,215,205,.13),transparent 70%);filter:blur(5px)}
+/* Hannibal */
+[data-tv-theme="hannibal"] .hdin{padding-top:22px}
+[data-tv-theme="hannibal"] .hdband .fx{background:linear-gradient(90deg,#c8161f,#5a0a10 50%,#131314) 0 0/100% 4px no-repeat}
+[data-tv-theme="hannibal"] .ant{display:block;flex:none;width:44px;height:32px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='44' viewBox='0 0 60 44' fill='none' stroke='%23c9ccd2' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M30 42C28 30 20 24 12 8M20 22L9 22M16 14L7 11M24 29L15 31M30 42C32 30 40 24 48 8M40 22L51 22M44 14L53 11M36 29L45 31'/%3E%3C/svg%3E") center/contain no-repeat}
+/* Ripley */
+[data-tv-theme="ripley"] body::before{background:repeating-linear-gradient(90deg,rgba(255,255,255,.022) 0 14px,rgba(0,0,0,.18) 14px 22px)}
+[data-tv-theme="ripley"] .hdband .fx{background:repeating-linear-gradient(90deg,rgba(255,255,255,.07) 0 12px,rgba(0,0,0,.38) 12px 20px),linear-gradient(105deg,transparent 30%,rgba(255,255,255,.10) 50%,transparent 70%)}
+/* The Sopranos */
+[data-tv-theme="sopranos"] .hdband .fx{background:linear-gradient(180deg,rgba(223,232,240,.30),rgba(223,232,240,.06) 38%,transparent 60%)}
+[data-tv-theme="sopranos"] .hdband .fx2{--s1:radial-gradient(circle,rgba(255,255,255,.85) 0 1.6px,transparent 2.4px);--s2:radial-gradient(circle,rgba(223,232,240,.6) 0 1.1px,transparent 1.9px);--s3:radial-gradient(circle,rgba(255,255,255,.4) 0 2.6px,transparent 3.6px);
+  background-image:var(--s1),var(--s2),var(--s3);background-size:97px 61px,53px 41px,131px 83px;background-position:12px 8px,30px 20px,60px 40px}
+@keyframes tv-snow{to{background-position:12px 69px,30px 61px,60px 123px}}
+@media (prefers-reduced-motion:no-preference){[data-tv-theme="sopranos"] .hdband .fx2{animation:tv-snow 16s linear infinite}}
+/* Succession */
+[data-tv-theme="succession"] .hdband .fx{background:
+  linear-gradient(112deg,transparent 28%,rgba(220,235,250,.10) 42%,rgba(220,235,250,.03) 55%,transparent 70%),
+  radial-gradient(ellipse 50% 70% at 78% 20%,rgba(200,220,240,.14),transparent 70%),
+  repeating-linear-gradient(90deg,rgba(143,181,216,.18) 0 1px,transparent 1px 30px),
+  repeating-linear-gradient(0deg,rgba(143,181,216,.18) 0 1px,transparent 1px 26px)}
+/* Fleabag */
+[data-tv-theme="fleabag"] .hdin{padding-bottom:22px}
+[data-tv-theme="fleabag"] .hdband .fx2{top:auto;height:6px;background:repeating-linear-gradient(90deg,var(--fg) 0 9px,var(--raise) 9px 18px);opacity:.9}
+[data-tv-theme="fleabag"] .mk::before{content:"";position:absolute;inset:-7px;border-radius:50%;border:2px solid var(--accent-2);opacity:.5;box-shadow:0 0 14px color-mix(in srgb,var(--accent-2) 55%,transparent),inset 0 0 10px color-mix(in srgb,var(--accent-2) 35%,transparent)}
+/* Arcane */
+[data-tv-theme="arcane"] .hdband .fx{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='96' viewBox='0 0 150 96'%3E%3Cg fill='%23f2559a'%3E%3Ccircle cx='118' cy='20' r='13'/%3E%3Ccircle cx='96' cy='34' r='5'/%3E%3Ccircle cx='140' cy='52' r='4'/%3E%3Ccircle cx='84' cy='12' r='2.5'/%3E%3Ccircle cx='128' cy='72' r='2'/%3E%3Cpath d='M118 20l-30 22 6 4z'/%3E%3C/g%3E%3Cg fill='%234fb8ea'%3E%3Ccircle cx='132' cy='34' r='9'/%3E%3Ccircle cx='108' cy='54' r='4'/%3E%3Ccircle cx='146' cy='10' r='5'/%3E%3Ccircle cx='100' cy='8' r='2'/%3E%3Ccircle cx='120' cy='84' r='2.5'/%3E%3Cpath d='M132 34l-22 30 5 2z'/%3E%3C/g%3E%3C/svg%3E") left -34px top -18px/auto 90% no-repeat;opacity:.75}
+[data-tv-theme="arcane"] .hdband .fx2{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='80' viewBox='0 0 400 80' preserveAspectRatio='none'%3E%3Cpath d='M0 76C90 14 250 -6 400 30' fill='none' stroke='%23c9a24a' stroke-width='1' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E") 0 0/100% 100% no-repeat}
+/* Mad Men */
+[data-tv-theme="madmen"] .hdband .fx{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='70' height='130' viewBox='0 0 70 130'%3E%3Cpath d='M32 128C8 108 54 98 32 78C10 58 56 48 32 28C20 14 36 6 42 0' fill='none' stroke='%238a8993' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M38 128C22 114 48 106 40 92' fill='none' stroke='%23a9a8b2' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") 2px 0/auto 58px no-repeat;filter:blur(1.1px);opacity:.5}
+/* Blackadder the Third */
+[data-tv-theme="blackadder"] body::before{background:radial-gradient(ellipse 120px 80px at 14% 78%,rgba(107,63,31,.16),transparent 70%),radial-gradient(ellipse 90px 140px at 88% 30%,rgba(107,63,31,.13),transparent 70%),radial-gradient(circle 30px at 62% 92%,rgba(107,63,31,.20),transparent 80%),radial-gradient(ellipse at 50% 0%,rgba(255,244,214,.55),transparent 65%)}
+[data-tv-theme="blackadder"] .seal{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;flex:none;border-radius:50% 46% 52% 48%;background:radial-gradient(circle at 35% 30%,#c8403a,#a82a24 55%,#7a1d17);color:#f6ead0;font:400 11px/1 "IM Fell English SC",Georgia,serif;letter-spacing:.04em;box-shadow:0 1px 2px rgba(42,26,16,.45),inset 0 0 0 2px rgba(0,0,0,.12);transform:rotate(-8deg)}
+@media (max-width:480px){
+  [data-tv-theme="ripley"]{--bsm:19px}[data-tv-theme="succession"]{--bsm:17px}[data-tv-theme="hannibal"] .hdband .fx{background-position:0 0,calc(100% - 14px) 9px}
+  [data-tv-theme="arcane"],[data-tv-theme="chernobyl"],[data-tv-theme="deadwood"]{--bsm:22px}
+}
+
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
-<div class="wrap">
-  <header>
-    <div>
-      <div class="eyebrow" id="todayLabel">Today</div>
-      <h1 class="lockup"><svg class="tv-mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M17 6 24 14 31 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="5" y="14" width="38" height="26" rx="6" fill="none" stroke="currentColor" stroke-width="3.5"/><path d="M20 21.5v11l9-5.5z" fill="currentColor"/></svg><span class="jm-wordmark" id="wordmark">TV Tracker</span></h1>
-    </div>
-    <div class="status" id="status" data-state="loading" role="status">
-      <span class="dot"></span><span id="statusText">Connecting to your sheet…</span>
-      <button class="btn" id="refreshBtn" type="button">Refresh</button>
-    </div>
-  </header>
+<div class="hdband">
+  <span class="fx" aria-hidden="true"></span><span class="fx2" aria-hidden="true"></span>
+  <div class="hdin">
+    <header>
+      <div>
+        <div class="eyebrow" id="todayLabel">Today</div>
+        <h1 class="lockup"><span class="mk" aria-hidden="true"><svg class="tv-mark" viewBox="0 0 48 48"><path d="M17 6 24 14 31 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="5" y="14" width="38" height="26" rx="6" fill="none" stroke="currentColor" stroke-width="3.5"/><path d="M20 21.5v11l9-5.5z" fill="currentColor"/></svg><span class="el"><i>52</i>Tv</span></span><span class="jm-wordmark" id="wordmark">TV Tracker</span><span class="ant" aria-hidden="true"></span><span class="seal" aria-hidden="true">III</span></h1>
+      </div>
+      <div class="status" id="status" data-state="loading" role="status">
+        <span class="dot"></span><span id="statusText">Connecting to your sheet…</span>
+        <button class="btn" id="refreshBtn" type="button">Refresh</button>
+        <span class="tools" id="themeTools">
+          <button class="btn icon step" id="themePrev" type="button" aria-label="Previous theme" title="Previous theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <button class="btn icon" id="themeBtn" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="themeMenu" aria-label="Theme" title="Choose a theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 3a9 9 0 100 18c1.4 0 2-1 1.6-2.1-.5-1.3.4-2.4 1.7-2.4H18a3 3 0 003-3C21 7.6 17 3 12 3z"/><circle cx="7.5" cy="11" r="1.1" fill="currentColor"/><circle cx="10" cy="7.2" r="1.1" fill="currentColor"/><circle cx="14.6" cy="7.2" r="1.1" fill="currentColor"/></svg><span id="themeName"></span></button>
+          <button class="btn icon step" id="themeNext" type="button" aria-label="Next theme" title="Next theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+          <button class="btn icon" id="settingsBtn" type="button" aria-label="Settings" title="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+        </span>
+      </div>
+    </header>
+  </div>
+</div>
+<div id="themeMenu" class="thememenu" role="menu" aria-label="Themes" hidden></div>
 
+<div class="wrap">
   <div class="notice" id="notice" hidden></div>
 
   <nav class="tabs" role="tablist" aria-label="Sections">
@@ -296,7 +427,7 @@ dialog::backdrop{background:rgba(8,6,14,.65)}
           <div class="chart-box"><canvas id="weekChart" aria-label="Episodes watched per week"></canvas></div>
           <div class="legend" style="margin-top:8px">
             <span><i class="sw" style="background:var(--accent)"></i>Weekly goal reached</span>
-            <span><i class="sw" id="lgUnder"></i>Under goal</span>
+            <span><i class="sw" id="lgUnder" style="background:var(--under)"></i>Under goal</span>
           </div>
         </section>
       </div>
@@ -340,6 +471,37 @@ dialog::backdrop{background:rgba(8,6,14,.65)}
     </div>
   </div>
 </div>
+
+<dialog id="setDlg" aria-labelledby="setTitle">
+  <div class="dlg-head"><h2 id="setTitle">Settings</h2><button class="btn" type="button" id="setClose">Close</button></div>
+  <div class="set-body">
+    <section class="set-sec" aria-labelledby="setThemeH">
+      <h3 class="set-h" id="setThemeH">Theme</h3>
+      <select id="setTheme" aria-label="Theme"></select>
+      <p class="muted small" style="margin:0">Saved on this device only, never in your sheet. “This month” follows the calendar: one show per month. Default is always there.</p>
+    </section>
+    <section class="set-sec" aria-labelledby="edH">
+      <h3 class="set-h" id="edH">Edit this theme</h3>
+      <div class="ed-colours" id="edColours"></div>
+      <div class="ed-fonts">
+        <div class="field"><label for="edFontD">Heading font</label><select id="edFontD"></select></div>
+        <div class="field"><label for="edFontB">Text font</label><select id="edFontB"></select></div>
+      </div>
+      <div class="ed-sliders">
+        <div class="ed-slider"><label for="edRadius">Roundness <span id="edRadiusV" class="tnum"></span></label><input type="range" id="edRadius" min="0" max="24" step="1"></div>
+        <div class="ed-slider"><label for="edGrain">Grain <span id="edGrainV" class="tnum"></span></label><input type="range" id="edGrain" min="0" max="0.6" step="0.01"></div>
+      </div>
+      <label class="ed-mode"><input type="checkbox" id="edLight"> Light theme (sets the browser’s light or dark controls)</label>
+      <div class="badges" id="edBadges" aria-label="Contrast against the panel colour"></div>
+      <div class="ed-actions">
+        <button class="btn" type="button" id="edReset">Reset this theme</button>
+        <button class="btn btn-primary" type="button" id="edCopy">Save as a copy</button>
+        <button class="btn" type="button" id="edDelete" hidden>Delete this theme</button>
+      </div>
+      <p class="muted small" style="margin:0" id="edNote"></p>
+    </section>
+  </div>
+</dialog>
 
 <dialog id="gDlg" aria-labelledby="gTitle" style="width:min(520px,calc(100vw - 32px))">
   <form id="gForm" method="dialog">
@@ -390,40 +552,269 @@ const weekStart = d => addDays(d, -((fromIso(d).getDay() + 6) % 7)); // Monday-f
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const $ = id => document.getElementById(id);
 
-/* ---------- Proton Seasons theme ---------- */
-// One soft colour per month through Melbourne's seasons (summer Dec–Feb … spring Sep–Nov).
-const MC = ['#e8935a','#e07a7a','#d9738f','#c573b4','#a674e0','#7f6cf5','#6a7ff0','#5591e0','#3fa4b8','#43ad8f','#7bae6a','#d6a345'];
-const SEASON = ['Summer','Summer','Autumn','Autumn','Autumn','Winter','Winter','Winter','Spring','Spring','Spring','Summer'];
-const BASE = { bg:'#16141f', surface:'#1e1b2b', raise:'#2a2640', line:'#353050' };
-const LIME = '#c4f04a';
+/* ---------- Themes ----------
+   TV Tracker wears one show's look for the whole month (no drift between months). The 13 themes below come from
+   design/themes-board.html (the approved board). A theme is ten colour tokens, two fonts, a corner radius and a grain amount;
+   applyTheme() writes them onto :root as CSS custom properties, and data-tv-theme on <html> switches the per-theme decoration in
+   the stylesheet (header motif, page ground). Fonts change the wordmark and h1/h2 panel titles only: body text stays Figtree and
+   numbers stay Atkinson Hyperlegible. Choice and edits live in this browser only (localStorage), never in the sheet. */
+const THEMES = [
+  { id: 'default', show: 'Default', short: 'Default', month: null, mode: 'dark', fonts: ['Atkinson Hyperlegible', 'Figtree'],
+    c: { bg: '#0d1424', surface: '#141c2e', raise: '#1b2438', line: '#283249', fg: '#e8ebf2', muted: '#9aa4b8', accent: '#c5ccd8', ink: '#0d1424', accent2: '#8ea8cf', danger: '#f29a9a' }, r: 12, grain: 0 },
+  { id: 'saul', show: 'Breaking Bad / Better Call Saul', short: 'Breaking Bad', month: 1, mode: 'light', fonts: ['Barlow Condensed', 'Figtree'],
+    c: { bg: '#efe7d4', surface: '#fbf7ee', raise: '#f4ecdc', line: '#d9cdb2', fg: '#1b1a14', muted: '#5b5546', accent: '#1f6b45', ink: '#ffffff', accent2: '#b8900a', danger: '#b3261e' }, r: 6, grain: .15 },
+  { id: 'deadwood', show: 'Deadwood', short: 'Deadwood', month: 2, mode: 'light', fonts: ['Rye', 'Figtree'], fp: 'Playfair Display',
+    c: { bg: '#e8dcc2', surface: '#f6eedd', raise: '#eee3cb', line: '#cdbb98', fg: '#2a1d12', muted: '#6a5640', accent: '#7a3f1c', ink: '#ffffff', accent2: '#a87a2a', danger: '#9a2b1b' }, r: 3, grain: .35 },
+  { id: 'inbetween', show: 'Mr Inbetween', short: 'Mr Inbetween', month: 3, mode: 'dark', fonts: ['Saira Condensed', 'Figtree'],
+    c: { bg: '#0b0a0d', surface: '#141217', raise: '#1c1a21', line: '#2b2833', fg: '#f1eef4', muted: '#a59fb0', accent: '#f08a2c', ink: '#1a0b00', accent2: '#7a6cff', danger: '#ff6a5a' }, r: 4, grain: .1 },
+  { id: 'chernobyl', show: 'Chernobyl', short: 'Chernobyl', month: 4, mode: 'dark', fonts: ['Jura', 'Figtree'],
+    c: { bg: '#111513', surface: '#191e1b', raise: '#212824', line: '#313a34', fg: '#e9eee8', muted: '#9faca2', accent: '#ef7a3c', ink: '#1a0a02', accent2: '#b5c3b0', danger: '#ff8a6a' }, r: 6, grain: .4 },
+  { id: 'hannibal', show: 'Hannibal', short: 'Hannibal', month: 5, mode: 'dark', fonts: ['Cormorant Garamond', 'Figtree'],
+    c: { bg: '#08080a', surface: '#131314', raise: '#1b1b1d', line: '#2b2b2f', fg: '#f0f0f2', muted: '#a3a3aa', accent: '#c8161f', ink: '#ffffff', accent2: '#c9ccd2', danger: '#ff8a7a' }, r: 10, grain: 0 },
+  { id: 'ripley', show: 'Ripley', short: 'Ripley', month: 6, mode: 'dark', fonts: ['Italiana', 'Figtree'],
+    c: { bg: '#0c0c0c', surface: '#151515', raise: '#1e1e1e', line: '#2e2e2e', fg: '#f2f2f2', muted: '#9a9a9a', accent: '#e6e6e6', ink: '#111111', accent2: '#8a8a8a', danger: '#d0d0d0' }, r: 2, grain: .25 },
+  { id: 'sopranos', show: 'The Sopranos', short: 'The Sopranos', month: 7, mode: 'dark', fonts: ['Abril Fatface', 'Figtree'],
+    c: { bg: '#121418', surface: '#1a1d22', raise: '#22262c', line: '#33383f', fg: '#eef1f4', muted: '#a3abb5', accent: '#d93a30', ink: '#ffffff', accent2: '#dfe8f0', danger: '#ff8a7a' }, r: 8, grain: .1 },
+  { id: 'succession', show: 'Succession', short: 'Succession', month: 8, mode: 'dark', fonts: ['Raleway', 'Figtree'],
+    c: { bg: '#0f151b', surface: '#161e26', raise: '#1e2832', line: '#2c3946', fg: '#edf1f5', muted: '#9eacba', accent: '#8fb5d8', ink: '#0a1520', accent2: '#c75a62', danger: '#ff8a7a' }, r: 4, grain: 0 },
+  { id: 'fleabag', show: 'Fleabag', short: 'Fleabag', month: 9, mode: 'dark', fonts: ['Oswald', 'Figtree'],
+    c: { bg: '#15100f', surface: '#1f1817', raise: '#2a201f', line: '#3c2f2d', fg: '#f6eeea', muted: '#b3a29d', accent: '#d93a33', ink: '#ffffff', accent2: '#d9b45a', danger: '#ff8a7a' }, r: 8, grain: .1 },
+  { id: 'arcane', show: 'Arcane', short: 'Arcane', month: 10, mode: 'dark', fonts: ['Marcellus SC', 'Figtree'],
+    c: { bg: '#120f1c', surface: '#1b1729', raise: '#241f36', line: '#352e4d', fg: '#f2eefa', muted: '#aaa2c4', accent: '#4fb8ea', ink: '#04131c', accent2: '#f2559a', danger: '#ff8a7a' }, r: 12, grain: .1 },
+  { id: 'madmen', show: 'Mad Men', short: 'Mad Men', month: 11, mode: 'light', fonts: ['Jost', 'Figtree'],
+    c: { bg: '#ecebf0', surface: '#fafafc', raise: '#f1f0f5', line: '#d4d2dc', fg: '#141418', muted: '#55545e', accent: '#d93a26', ink: '#ffffff', accent2: '#3f6fb5', danger: '#b3261e' }, r: 4, grain: .08 },
+  { id: 'blackadder', show: 'Blackadder the Third', short: 'Blackadder', month: 12, mode: 'light', fonts: ['IM Fell English', 'Figtree'], fp: 'IM Fell English SC',
+    c: { bg: '#e9d8b0', surface: '#f6ead0', raise: '#efdfbd', line: '#cdb688', fg: '#2a1a10', muted: '#6b5236', accent: '#a82a24', ink: '#ffffff', accent2: '#6b3f1f', danger: '#8a1f14' }, r: 3, grain: .3 }
+];
+const DISPLAY = { // how each theme sets its headings: [weight, text-transform, letter-spacing]
+  default: [700, 'none', '-.01em'], saul: [700, 'uppercase', '.02em'], deadwood: [400, 'none', '.01em'], inbetween: [700, 'uppercase', '.04em'],
+  chernobyl: [600, 'uppercase', '.08em'], hannibal: [700, 'none', '0'], ripley: [400, 'uppercase', '.3em'], sopranos: [400, 'none', '0'],
+  succession: [300, 'uppercase', '.36em'], fleabag: [700, 'uppercase', '.05em'], arcane: [400, 'uppercase', '.08em'], madmen: [600, 'none', '.02em'], blackadder: [400, 'none', '.01em']
+};
+const PDISPLAY = { deadwood: [700, 'none', '0'], blackadder: [400, 'none', '.02em'] }; // panel titles where a theme sets its own panel font (fp)
+const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const TOKENS = [ // [key, CSS custom property, label]
+  ['bg', '--bg', 'Ground'], ['surface', '--surface', 'Panels'], ['raise', '--raise', 'Raised'], ['line', '--line', 'Lines'], ['fg', '--fg', 'Text'],
+  ['muted', '--muted', 'Quiet text'], ['accent', '--accent', 'Highlight'], ['ink', '--accent-ink', 'Button text'], ['accent2', '--accent-2', 'Second colour'], ['danger', '--danger', 'Warning']
+];
+// Google Fonts families offered in the editor: w = weights to request, k = fallback kind
+const FONTS = {
+  'Abril Fatface': { k: 'serif' }, 'Anton': {}, 'Atkinson Hyperlegible': { w: '400;700' }, 'Barlow Condensed': { w: '600;700' }, 'Bebas Neue': {}, 'Cinzel': { w: '600', k: 'serif' },
+  'Cormorant Garamond': { w: '600;700', k: 'serif' }, 'DM Sans': { w: '400;600' }, 'EB Garamond': { w: '600;700', k: 'serif' }, 'Figtree': { w: '400;500;600' },
+  'IM Fell English': { k: 'serif' }, 'IM Fell English SC': { k: 'serif' }, 'Italiana': { k: 'serif' }, 'Jost': { w: '400;600' }, 'Jura': { w: '600' },
+  'Libre Franklin': { w: '400;600' }, 'Lora': { w: '400;600;700', k: 'serif' }, 'Manrope': { w: '400;600' }, 'Marcellus SC': { k: 'serif' }, 'Merriweather': { w: '400;700', k: 'serif' },
+  'Nunito': { w: '400;700' }, 'Oswald': { w: '500;700' }, 'Playfair Display': { w: '400;700', k: 'serif' }, 'Raleway': { w: '300;600' }, 'Rye': { k: 'serif' },
+  'Saira Condensed': { w: '600;700' }, 'Source Sans 3': { w: '400;600' }
+};
+const HEAD_FONTS = ['Atkinson Hyperlegible', 'Figtree']; // already linked in the page head
+const FALLBACK = { serif: 'Georgia,"Times New Roman",serif', mono: 'ui-monospace,Menlo,Consolas,monospace', sans: 'ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif' };
+const safeFont = n => String(n || '').replace(/[^\w \-+]/g, '').slice(0, 60);
+const fontStack = name => `"${safeFont(name)}",${FALLBACK[(FONTS[name] || {}).k || 'sans']}`;
+const THEME_KEY = 'tv-theme', EDITS_KEY = 'tv-theme-edits', CUSTOM_KEY = 'tv-theme-custom';
+const HEX = /^#[0-9a-f]{6}$/i;
+const themeState = { pref: 'auto', edits: {}, custom: [] };
+(function loadThemeState() { // every read is guarded: the page must render the same with storage blocked, empty or corrupt
+  const read = k => { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } };
+  try { const p = localStorage.getItem(THEME_KEY); if (p && /^[\w-]{1,40}$/.test(p)) themeState.pref = p; } catch (e) {}
+  const ed = read(EDITS_KEY), cu = read(CUSTOM_KEY);
+  if (ed && typeof ed === 'object' && !Array.isArray(ed)) themeState.edits = ed;
+  if (Array.isArray(cu)) themeState.custom = cu.filter(t => t && /^[\w-]{1,40}$/.test(t.id || '') && t.c && Array.isArray(t.fonts) && TOKENS.every(([k]) => HEX.test(t.c[k] || ''))).map(t => ({ ...t, fonts: [safeFont(t.fonts[0]) || 'Atkinson Hyperlegible', safeFont(t.fonts[1]) || 'Figtree'], fp: t.fp ? safeFont(t.fp) : null, base: /^\w{1,20}$/.test(t.base || '') && DISPLAY[t.base] ? t.base : 'default', custom: true }));
+})();
+function saveTheme(what) {
+  const put = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
+  if (!what || what === 'pref') put(THEME_KEY, themeState.pref);
+  if (!what || what === 'edits') put(EDITS_KEY, JSON.stringify(themeState.edits));
+  if (!what || what === 'custom') put(CUSTOM_KEY, JSON.stringify(themeState.custom));
+}
+const allThemes = () => [...THEMES, ...themeState.custom];
+const baseTheme = id => allThemes().find(t => t.id === id);
+const monthTheme = () => { const m = new Date().getMonth() + 1; return (THEMES.find(t => t.month === m) || THEMES[0]).id; };
+const activeThemeId = () => themeState.pref !== 'auto' && baseTheme(themeState.pref) ? themeState.pref : monthTheme();
+const clampN = (v, lo, hi, d) => Number.isFinite(+v) && v !== null && v !== '' ? Math.min(hi, Math.max(lo, +v)) : d;
+// The theme as worn: the base theme with this device's edits laid over it
+function effTheme(id) {
+  const b = baseTheme(id) || THEMES[0], e = themeState.edits[b.id] || {}, ec = (e.c && typeof e.c === 'object') ? e.c : {};
+  const c = {}; for (const [k] of TOKENS) c[k] = HEX.test(ec[k] || '') ? ec[k] : b.c[k];
+  return { ...b, c, r: clampN(e.r, 0, 24, b.r), grain: clampN(e.grain, 0, .6, b.grain), mode: e.mode === 'light' || e.mode === 'dark' ? e.mode : b.mode,
+    fonts: [safeFont(e.fd) || b.fonts[0], safeFont(e.fb) || b.fonts[1]], fp: e.fd ? null : (b.fp || null) };
+}
+const fxId = t => t.base || t.id; // custom copies keep the decoration of the theme they came from
 const hexRgb = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
 const mix = (a, b, t) => '#' + hexRgb(a).map((v, i) => Math.round(v + (hexRgb(b)[i] - v) * t).toString(16).padStart(2, '0')).join('');
-// Drift: a day's colour slides up to 60% of the way toward next month's by month end.
-function dayColour(isoDate) {
-  const y = +isoDate.slice(0, 4), m = +isoDate.slice(5, 7) - 1, d = +isoDate.slice(8, 10);
-  const len = new Date(y, m + 1, 0).getDate();
-  return mix(MC[m], MC[(m + 1) % 12], ((d - 1) / (len - 1)) * 0.6);
-}
-const underColour = c => mix(BASE.raise, c, 0.42);
-function applyTheme() {
-  const t = today(), m = +t.slice(5, 7) - 1, c = dayColour(t), r = document.documentElement.style;
-  r.setProperty('--accent', c);
-  r.setProperty('--accent-next', MC[(m + 1) % 12]);
-  r.setProperty('--bg', mix(BASE.bg, c, 0.05));
-  r.setProperty('--surface', mix(BASE.surface, c, 0.05));
-  r.setProperty('--raise', mix(BASE.raise, c, 0.06));
-  r.setProperty('--line', mix(BASE.line, c, 0.08));
-  const u = $('lgUnder'); if (u) u.style.background = underColour(c);
-  setFavicon(c);
-}
-/* Favicon follows the month colour (used when hosted outside claude.ai) */
+const hexLum = h => { const v = hexRgb(h).map(x => x / 255).map(x => x <= .03928 ? x / 12.92 : ((x + .055) / 1.055) ** 2.4); return .2126 * v[0] + .7152 * v[1] + .0722 * v[2]; };
+const ratio = (a, b) => { const [x, y] = [hexLum(a), hexLum(b)].sort((p, q) => q - p); return (x + .05) / (y + .05); };
+
+// Favicon: the TV mark in the theme's highlight colour (used when hosted outside claude.ai)
 function setFavicon(c) {
   const m = document.querySelector('.tv-mark'); if (!m) return;
   const svg = m.outerHTML.replace('class="tv-mark"', 'xmlns="http://www.w3.org/2000/svg"').replace(/currentColor/g, c);
   let l = document.querySelector('link[rel="icon"]');
   if (!l) { l = document.createElement('link'); l.rel = 'icon'; document.head.appendChild(l); }
-  l.type = 'image/svg+xml'; l.href = 'data:image/svg+xml,' + encodeURIComponent(svg);
+  l.type = 'image/svg+xml'; l.removeAttribute('sizes'); l.href = 'data:image/svg+xml,' + encodeURIComponent(svg);
 }
+// One extra Google Fonts link for the active theme's families (Atkinson and Figtree are already in the page head)
+function syncFonts(fonts) {
+  const need = [...new Set(fonts)].filter(f => f && !HEAD_FONTS.includes(f));
+  let l = document.getElementById('themeFonts');
+  if (!need.length) { if (l) l.remove(); return; }
+  const href = 'https://fonts.googleapis.com/css2?' + need.map(f => 'family=' + f.replace(/ /g, '+') + ((FONTS[f] || {}).w ? ':wght@' + FONTS[f].w : '')).join('&') + '&display=swap';
+  if (!l) { l = document.createElement('link'); l.id = 'themeFonts'; l.rel = 'stylesheet'; document.head.appendChild(l); }
+  if (l.getAttribute('href') !== href) l.setAttribute('href', href);
+}
+let appliedKey = '';
+function applyTheme() { // returns true when something actually changed
+  const id = activeThemeId(), t = effTheme(id), key = JSON.stringify([id, t]);
+  if (key === appliedKey) return false;
+  appliedKey = key;
+  const root = document.documentElement, st = root.style, fx = fxId(t);
+  for (const [k, v] of TOKENS) st.setProperty(v, t.c[k]);
+  st.setProperty('--display', fontStack(t.fonts[0]));
+  st.setProperty('--body', fontStack(t.fonts[1]));
+  st.setProperty('--r', t.r + 'px');
+  st.setProperty('--grain', t.grain);
+  const [w, cs, tr] = DISPLAY[fx] || DISPLAY.default;
+  st.setProperty('--dweight', w); st.setProperty('--dcase', cs); st.setProperty('--dtrack', tr);
+  const [pw, pc, pt] = t.fp ? (PDISPLAY[fx] || [w, cs, tr]) : [w, cs, tr];
+  st.setProperty('--fp', fontStack(t.fp || t.fonts[0]));
+  st.setProperty('--pweight', pw); st.setProperty('--pcase', pc); st.setProperty('--ptrack', pt);
+  st.setProperty('--under', mix(t.c.raise, t.c.accent, .42));
+  st.setProperty('--shade', t.mode === 'light' ? 'rgba(40,30,20,.22)' : 'rgba(0,0,0,.5)');
+  st.setProperty('--scrim', t.mode === 'light' ? 'rgba(30,25,20,.5)' : 'rgba(0,0,0,.66)');
+  st.colorScheme = t.mode === 'light' ? 'light' : 'dark';
+  root.dataset.tvTheme = fx; root.dataset.themeId = id;
+  syncFonts([t.fonts[0], t.fonts[1], t.fp]);
+  setFavicon(t.c.accent);
+  return true;
+}
+let chartRepaint = 0;
+function repaintChart() { // Chart.js paints with real colours, so the chart is redrawn when the theme moves (once per frame while dragging a colour)
+  if (chartRepaint) return;
+  chartRepaint = requestAnimationFrame(() => { chartRepaint = 0; if (!$('view-log').hidden && typeof renderWeekly === 'function') { chartBase(); renderWeekly(dailyTotals()); } });
+}
+function themeChanged() { if (applyTheme()) repaintChart(); renderThemeUI(); }
+if (document.fonts && document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', repaintChart);
+function setThemePref(p) { themeState.pref = p; saveTheme('pref'); themeChanged(); }
+const themeSeq = () => [...THEMES.filter(t => t.month).sort((a, b) => a.month - b.month), ...themeState.custom, THEMES[0]].map(t => t.id);
+function flickTheme(dir) {
+  const seq = themeSeq(), i = seq.indexOf(activeThemeId());
+  setThemePref(seq[(i + dir + seq.length) % seq.length]);
+}
+
+/* ----- theme menu (header) ----- */
+const themeMenu = () => $('themeMenu');
+const menuItems = () => [...themeMenu().querySelectorAll('button')];
+const isAuto = () => themeState.pref === 'auto' || !baseTheme(themeState.pref);
+function renderThemeUI() {
+  const cur = activeThemeId(), auto = isAuto(), t = baseTheme(cur) || THEMES[0];
+  $('themeName').textContent = t.short || t.show;
+  $('themeBtn').setAttribute('aria-label', `Theme: ${t.show}${auto ? ' (this month)' : ''}. Choose a theme`);
+  const item = (id, label, sub, checked, color) =>
+    `<button type="button" role="menuitemradio" aria-checked="${checked}" data-theme="${esc(id)}" tabindex="-1"><span class="tick" aria-hidden="true">${checked ? '✓' : ''}</span><i class="dotc" style="background:${esc(color)}" aria-hidden="true"></i><span class="nm">${esc(label)}</span><span class="mo">${esc(sub)}</span></button>`;
+  const mt = THEMES.find(x => x.id === monthTheme());
+  let h = item('auto', `This month (${mt.short})`, '', auto, mt.c.accent);
+  h += '<div class="mhead" role="presentation">Shows, by month</div>';
+  for (const x of THEMES.filter(x => x.month).sort((a, b) => a.month - b.month)) h += item(x.id, x.short, MONTH_NAMES[x.month - 1].slice(0, 3), !auto && cur === x.id, x.c.accent);
+  if (themeState.custom.length) {
+    h += '<div class="mhead" role="presentation">Your themes</div>';
+    for (const x of themeState.custom) h += item(x.id, x.show, '', !auto && cur === x.id, effTheme(x.id).c.accent);
+  }
+  h += '<div class="mhead" role="presentation">Plain</div>';
+  h += item('default', 'Default', '', !auto && cur === 'default', THEMES[0].c.accent);
+  themeMenu().innerHTML = h;
+  syncSettings();
+}
+function placeMenu() {
+  const m = themeMenu(), b = $('themeBtn').getBoundingClientRect(), w = m.offsetWidth || 300;
+  m.style.left = Math.max(8, Math.min(b.right - w, innerWidth - w - 8)) + 'px';
+  m.style.top = (b.bottom + 6) + 'px';
+}
+function openThemeMenu(focusActive = true) {
+  themeMenu().hidden = false; $('themeBtn').setAttribute('aria-expanded', 'true'); placeMenu();
+  if (focusActive) { const on = themeMenu().querySelector('[aria-checked="true"]') || menuItems()[0]; on.focus(); on.scrollIntoView({ block: 'nearest' }); }
+}
+function closeThemeMenu(refocus) {
+  if (themeMenu().hidden) return;
+  themeMenu().hidden = true; $('themeBtn').setAttribute('aria-expanded', 'false');
+  if (refocus) $('themeBtn').focus();
+}
+$('themeBtn').addEventListener('click', () => themeMenu().hidden ? openThemeMenu(false) : closeThemeMenu());
+$('themeBtn').addEventListener('keydown', e => { if (e.key === 'ArrowDown' && themeMenu().hidden) { e.preventDefault(); openThemeMenu(); } });
+themeMenu().addEventListener('click', e => { const b = e.target.closest('button[data-theme]'); if (!b) return; setThemePref(b.dataset.theme); closeThemeMenu(true); });
+themeMenu().addEventListener('keydown', e => {
+  const items = menuItems(), i = items.indexOf(document.activeElement);
+  if (e.key === 'ArrowDown') { e.preventDefault(); items[(i + 1) % items.length].focus(); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); items[(i - 1 + items.length) % items.length].focus(); }
+  else if (e.key === 'Home') { e.preventDefault(); items[0].focus(); }
+  else if (e.key === 'End') { e.preventDefault(); items[items.length - 1].focus(); }
+  else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); closeThemeMenu(true); }
+  else if (e.key === 'Tab') closeThemeMenu(false);
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !themeMenu().hidden) closeThemeMenu(true); });
+document.addEventListener('pointerdown', e => { if (!themeMenu().hidden && !themeMenu().contains(e.target) && !$('themeBtn').contains(e.target)) closeThemeMenu(false); });
+addEventListener('resize', () => { if (!themeMenu().hidden) placeMenu(); });
+$('themePrev').addEventListener('click', () => flickTheme(-1));
+$('themeNext').addEventListener('click', () => flickTheme(1));
+
+/* ----- settings dialog: picker + editor for the theme being worn ----- */
+const fontOptions = cur => Object.keys(FONTS).concat(cur && !FONTS[cur] ? [cur] : []).sort().map(f => `<option value="${esc(f)}">${esc(f)}</option>`).join('');
+$('edColours').innerHTML = TOKENS.map(([k, , label]) => `<label class="ed-colour"><input type="color" id="edc-${k}" data-k="${k}" aria-label="${esc(label)} colour"><span>${esc(label)}<small id="edh-${k}"></small></span></label>`).join('');
+$('edFontD').innerHTML = fontOptions(); $('edFontB').innerHTML = fontOptions();
+function themeEdit(patch) { // patch: { c:{key:hex}, r, grain, mode, fd, fb }
+  const id = activeThemeId(), e = themeState.edits[id] || (themeState.edits[id] = {});
+  if (patch.c) e.c = { ...(e.c || {}), ...patch.c };
+  for (const k of ['r', 'grain', 'mode', 'fd', 'fb']) if (k in patch) e[k] = patch[k];
+  saveTheme('edits'); themeChanged();
+}
+function syncSettings() {
+  const sel = $('setTheme'), cur = activeThemeId(), auto = isAuto();
+  const mt = THEMES.find(x => x.id === monthTheme());
+  const opt = (v, l) => `<option value="${esc(v)}">${esc(l)}</option>`;
+  sel.innerHTML = opt('auto', `This month (${mt.short})`) + '<optgroup label="Shows, by month">' + THEMES.filter(x => x.month).sort((a, b) => a.month - b.month).map(x => opt(x.id, `${MONTH_NAMES[x.month - 1]} · ${x.short}`)).join('') + '</optgroup>' +
+    (themeState.custom.length ? '<optgroup label="Your themes">' + themeState.custom.map(x => opt(x.id, x.show)).join('') + '</optgroup>' : '') + '<optgroup label="Plain">' + opt('default', 'Default') + '</optgroup>';
+  sel.value = auto ? 'auto' : cur;
+  const t = effTheme(cur), b = baseTheme(cur) || THEMES[0], edited = !!themeState.edits[cur] && Object.keys(themeState.edits[cur]).length > 0;
+  $('edH').textContent = `Edit ${b.short || b.show}`;
+  for (const [k] of TOKENS) { const inp = $('edc-' + k); if (inp.value !== t.c[k]) inp.value = t.c[k]; $('edh-' + k).textContent = t.c[k]; }
+  for (const [id, v] of [['edFontD', t.fonts[0]], ['edFontB', t.fonts[1]]]) { const s = $(id); if (![...s.options].some(o => o.value === v)) s.insertAdjacentHTML('beforeend', `<option value="${esc(v)}">${esc(v)}</option>`); s.value = v; }
+  if (+$('edRadius').value !== t.r) $('edRadius').value = t.r;
+  if (+$('edGrain').value !== t.grain) $('edGrain').value = t.grain;
+  $('edRadiusV').textContent = t.r + 'px'; $('edGrainV').textContent = (+t.grain).toFixed(2);
+  $('edLight').checked = t.mode === 'light';
+  const checks = [['Text', t.c.fg, t.c.surface], ['Quiet', t.c.muted, t.c.surface], ['Highlight', t.c.accent, t.c.surface], ['Button', t.c.ink, t.c.accent]];
+  $('edBadges').innerHTML = checks.map(([l, a, bb]) => { const r = ratio(a, bb), min = l === 'Highlight' ? 3 : 4.5; return `<span class="${r < min ? 'bad' : ''}" title="${l} on ${l === 'Button' ? 'highlight' : 'panel'}: ${r < min ? 'below ' + min + ', hard to read' : 'readable'}">${l} ${r.toFixed(1)}</span>`; }).join('');
+  $('edReset').disabled = !edited;
+  $('edDelete').hidden = !b.custom;
+  $('edNote').textContent = edited ? 'Your changes are saved on this device. Reset puts the original colours back.' : 'Change anything above and it applies straight away.';
+}
+$('settingsBtn').addEventListener('click', () => { closeThemeMenu(false); syncSettings(); $('setDlg').showModal(); });
+$('setClose').addEventListener('click', () => $('setDlg').close());
+$('setTheme').addEventListener('change', e => setThemePref(e.target.value));
+$('edColours').addEventListener('input', e => { const k = e.target.dataset.k; if (k) themeEdit({ c: { [k]: e.target.value } }); });
+$('edFontD').addEventListener('change', e => themeEdit({ fd: e.target.value }));
+$('edFontB').addEventListener('change', e => themeEdit({ fb: e.target.value }));
+$('edRadius').addEventListener('input', e => themeEdit({ r: +e.target.value }));
+$('edGrain').addEventListener('input', e => themeEdit({ grain: +e.target.value }));
+$('edLight').addEventListener('change', e => themeEdit({ mode: e.target.checked ? 'light' : 'dark' }));
+$('edReset').addEventListener('click', () => { delete themeState.edits[activeThemeId()]; saveTheme('edits'); themeChanged(); });
+$('edCopy').addEventListener('click', () => {
+  const id = activeThemeId(), t = effTheme(id), b = baseTheme(id) || THEMES[0];
+  const stem = (b.show || '').replace(/ \(copy( \d+)?\)$/, '');
+  let name = `${stem} (copy)`, n = 2;
+  while (themeState.custom.some(x => x.show === name)) name = `${stem} (copy ${n++})`;
+  const nid = 'my-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+  themeState.custom.push({ id: nid, show: name, short: name, base: fxId(b), custom: true, month: null, mode: t.mode, fonts: [...t.fonts], fp: t.fp || null, c: { ...t.c }, r: t.r, grain: t.grain });
+  delete themeState.edits[id]; // the original goes back to how it was; the copy carries the edits
+  themeState.pref = nid; saveTheme(); themeChanged();
+});
+$('edDelete').addEventListener('click', () => {
+  const id = activeThemeId(), b = baseTheme(id); if (!b || !b.custom) return;
+  themeState.custom = themeState.custom.filter(x => x.id !== id); delete themeState.edits[id];
+  if (themeState.pref === id) themeState.pref = 'auto';
+  saveTheme(); themeChanged();
+});
+// "This month" follows the calendar: pick up a new month when the page comes back to the front
+document.addEventListener('visibilitychange', () => { if (!document.hidden && isAuto()) themeChanged(); });
+applyTheme(); renderThemeUI();
 
 /* ---------- state ---------- */
 const STATUSES = ['Watching', 'Next Up', 'Watchlist', 'Coming Soon', 'New Season', 'Rewatch', 'Watched', 'Paused', 'DNF'];
@@ -509,7 +900,7 @@ function renderStats(totals) {
   const w = state.shows.filter(s => s.status === 'Watching').length;
   $('sWatching').textContent = state.live ? fmt(w) : '–';
   $('sWatchingSub').textContent = w === 1 ? 'show in progress' : 'shows in progress';
-  $('todayLabel').textContent = new Date().toLocaleDateString('en-AU', { weekday: 'long' }) + ' · ' + fmtDate(t) + ' · ' + SEASON[Number(t.slice(5, 7)) - 1];
+  $('todayLabel').textContent = new Date().toLocaleDateString('en-AU', { weekday: 'long' }) + ' · ' + fmtDate(t);
 }
 
 function setLogDay(d) {
@@ -673,6 +1064,12 @@ async function rollBackProgress(e) {
   await writeShowFields(s.id, { season: back.s, episode: back.e });
 }
 
+// The second letter sits in its own span so Mr Inbetween can draw its crosshair over it
+function setWordmark(name) {
+  const n = String(name), w = $('wordmark'); if (w.dataset.name === n) return;
+  w.dataset.name = n; w.innerHTML = n.length > 1 ? esc(n[0]) + '<span class="k">' + esc(n[1]) + '</span>' + esc(n.slice(2)) : esc(n);
+}
+
 /* ---------- charts ---------- */
 const css = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 let weekChart;
@@ -681,6 +1078,7 @@ function chartBase() {
   Chart.defaults.font.family = css('--body');
   Chart.defaults.color = css('--muted');
   Chart.defaults.borderColor = css('--line');
+  if (Chart.defaults.plugins && Chart.defaults.plugins.tooltip) Object.assign(Chart.defaults.plugins.tooltip, { backgroundColor: css('--raise'), titleColor: css('--fg'), bodyColor: css('--fg'), borderColor: css('--line'), borderWidth: 1 });
 }
 const goalLinePlugin = {
   id: 'goalLine',
@@ -705,11 +1103,11 @@ function renderWeekly(totals) {
     let n = 0; for (let d = 0; d < 7; d++) n += totals.get(addDays(ws, d)) || 0;
     data.push(n);
   }
-  const muted = css('--muted');
+  const muted = css('--muted'), hi = css('--accent'), lo = css('--under');
   const cfg = {
     type: 'bar',
     data: { labels, datasets: [{ label: 'Episodes', data,
-      backgroundColor: data.map((v, i) => { const c = dayColour(labels[i]); return v >= goal ? c : underColour(c); }),
+      backgroundColor: data.map(v => v >= goal ? hi : lo),
       borderRadius: 3, barPercentage: .9, categoryPercentage: .95 }] },
     options: {
       responsive: true, maintainAspectRatio: false, animation: false,
@@ -734,7 +1132,7 @@ function renderWeekly(totals) {
 }
 
 function renderAll() {
-  applyTheme();
+  applyTheme(); // picks up a new month if the page has been open across midnight on the 1st
   const totals = dailyTotals();
   renderStats(totals);
   renderWatching();
@@ -744,7 +1142,7 @@ function renderAll() {
   renderWeekly(totals);
   if (!$('view-library').hidden) renderLibrary();
   if (!$('view-plan').hidden) renderPlan();
-  $('wordmark').textContent = state.settings.appName || 'TV Tracker';
+  setWordmark(state.settings.appName || 'TV Tracker');
   document.title = state.settings.appName || 'TV Tracker';
 }
 
