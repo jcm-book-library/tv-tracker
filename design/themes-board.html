@@ -1,0 +1,325 @@
+<title>TV Tracker Themes</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Atkinson+Hyperlegible:wght@400;700&family=Barlow+Condensed:wght@700&family=Cormorant+Garamond:wght@700&family=Figtree:wght@400;600;700&family=IM+Fell+English&family=IM+Fell+English+SC&family=Italiana&family=Jost:wght@600&family=Jura:wght@600&family=Marcellus+SC&family=Oswald:wght@700&family=Playfair+Display:wght@700&family=Raleway:wght@300&family=Rye&family=Saira+Condensed:wght@700&display=swap">
+<style>
+/* The page wears the Default theme (dark navy). Each card pairs a theme's notes with a mock-up of the TV app in that theme. */
+:root{
+  --pg-bg:#0d1424; --pg-surface:#141c2e; --pg-raise:#1b2438; --pg-line:#283249;
+  --pg-fg:#e8ebf2; --pg-muted:#9aa4b8; --pg-accent:#c5ccd8; --pg-accent2:#8ea8cf;
+  --pg-display:"Atkinson Hyperlegible",ui-sans-serif,system-ui,sans-serif;
+  --pg-body:"Figtree",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--pg-bg);color:var(--pg-fg);font:15px/1.55 var(--pg-body)}
+.page{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px}
+h1{font-family:var(--pg-display);font-size:clamp(28px,5vw,40px);letter-spacing:-.02em;margin:0;text-wrap:balance}
+.lede{color:var(--pg-muted);max-width:68ch;margin:8px 0 0}
+.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--pg-muted);font-weight:600}
+.intro{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:24px;margin:24px 0 18px;align-items:start}
+.card{background:var(--pg-surface);border:1px solid var(--pg-line);border-radius:12px;padding:16px;min-width:0}
+.months{list-style:none;margin:8px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 16px;font-size:14px}
+.months li{display:flex;align-items:baseline;gap:8px;padding:5px 0;border-top:1px solid var(--pg-line);min-width:0}
+.months li:nth-child(-n+2){border-top:0}
+.months a{color:var(--pg-fg);text-decoration:none;min-width:0}
+.months a:hover{color:var(--pg-accent)}
+.months .m{color:var(--pg-muted);font-variant-numeric:tabular-nums;min-width:2.4em}
+.months .mk{margin-left:auto;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--pg-bg);background:var(--pg-accent);border-radius:999px;padding:1px 7px;white-space:nowrap}
+.months li.now a{font-weight:700}
+.howto{margin:8px 0 0;padding-left:18px;font-size:14px}
+.howto li{margin:4px 0}
+.jump{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;display:flex;gap:6px;overflow-x:auto;padding:10px 0;background:var(--pg-bg);border-bottom:1px solid var(--pg-line);margin-bottom:6px}
+.jump a{flex:none;font-size:13px;font-weight:600;color:var(--pg-muted);text-decoration:none;border:1px solid var(--pg-line);border-radius:999px;padding:4px 12px}
+.jump a:hover,.jump a:focus-visible{color:var(--pg-fg);border-color:var(--pg-accent)}
+.jump a.now{color:var(--pg-fg);border-color:var(--pg-accent2)}
+:focus-visible{outline:2px solid var(--pg-accent2);outline-offset:2px}
+
+/* theme card */
+.th{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:22px;align-items:start;padding:24px 0;border-top:1px solid var(--pg-line);scroll-margin-top:64px}
+.th-meta h2{font-family:var(--pg-display);font-size:24px;margin:2px 0 0;letter-spacing:-.01em;text-wrap:balance}
+.th-meta .tags{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.th-meta .tag{font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;border:1px solid var(--pg-line);color:var(--pg-muted)}
+.th-meta .tag.now{color:var(--pg-bg);background:var(--pg-accent);border-color:var(--pg-accent)}
+.th-meta p{margin:6px 0;font-size:14px}
+.th-meta .muted{color:var(--pg-muted)}
+.th-meta .lab{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--pg-muted);font-weight:600;margin:14px 0 4px}
+.sw{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px 6px}
+.sw>div{min-width:0}
+.sw>div>div{border-radius:8px;height:30px;border:1px solid rgba(128,128,128,.45)}
+.sw span{display:block;font-size:10px;line-height:1.3;color:var(--pg-muted);margin-top:3px;font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sw span b{display:block;color:var(--pg-fg);font-weight:600}
+.checks{display:grid;grid-template-columns:1fr;gap:4px;margin:0;padding:0;list-style:none}
+.checks li{display:flex;align-items:center;gap:8px;font-size:12px;background:var(--pg-raise);border-radius:8px;padding:4px 10px;font-variant-numeric:tabular-nums}
+.checks li .r{margin-left:auto;font-weight:700}
+.checks li .need{color:var(--pg-muted);font-size:11px}
+.checks li .ok{color:#9ad0a2;font-weight:700}
+.checks li.bad{background:#5a1f24}
+.checks li.bad .ok{color:#ffb3b8}
+.motif{font-size:13px;color:var(--pg-muted)}
+
+/* ---- mock-up: reads only the theme tokens ---- */
+.app{
+  --dcase:none; --dtrack:-.01em; --dweight:700; --glow:none; --shadow:none; --hdr:transparent; --bs:24px;
+  --fp:var(--fd); --pcase:var(--dcase); --ptrack:var(--dtrack); --pweight:var(--dweight);
+  position:relative;isolation:isolate;overflow:hidden;
+  background:var(--bg);color:var(--fg);font:14px/1.5 var(--fb);border-radius:calc(var(--r) + 6px);border:1px solid var(--line);padding:16px;min-width:0
+}
+.app::before{content:"";position:absolute;inset:0;z-index:-2;pointer-events:none}
+.app::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:var(--grain,0);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");mix-blend-mode:overlay}
+.hd{position:relative;overflow:hidden;display:flex;justify-content:space-between;align-items:center;gap:8px 12px;flex-wrap:wrap;margin:-16px -16px 14px;padding:16px;background:var(--hdr)}
+.hd>.fx,.hd>.fx2{position:absolute;inset:0;pointer-events:none;z-index:0}
+.lock,.hr{position:relative;z-index:1}
+.lock{display:flex;align-items:center;gap:10px;min-width:0}
+.mk{position:relative;display:inline-flex;flex:none}
+.tvg{width:32px;height:32px;color:var(--accent);display:block}
+.brand{position:relative;font-family:var(--fd);font-weight:var(--dweight);text-transform:var(--dcase);letter-spacing:var(--dtrack);font-size:var(--bs);line-height:1.1;color:var(--fg);text-shadow:var(--glow);white-space:nowrap}
+.hr{display:flex;align-items:center;gap:10px}
+.today{font:12px var(--fb);color:var(--muted);letter-spacing:.02em;white-space:nowrap}
+.pal{width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:var(--r);padding:0}
+.pal svg{width:18px;height:18px}
+.el,.seal{display:none}
+.tabs{display:flex;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px;margin-bottom:14px;max-width:100%;overflow-x:auto}
+.tabs b{flex:1;text-align:center;font-weight:600;font-size:13px;color:var(--muted);padding:5px 14px;border-radius:999px;white-space:nowrap}
+.tabs b.on{background:color-mix(in srgb,var(--accent) 22%,var(--surface));color:var(--fg);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 55%,transparent)}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:12px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;box-shadow:var(--shadow);min-width:0}
+.tile .lab{font-size:10px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:600}
+.tile .num{font:700 26px/1.15 "Atkinson Hyperlegible",ui-sans-serif,system-ui,sans-serif;font-variant-numeric:tabular-nums;color:var(--accent)}
+.tile .num small{font-size:13px;font-weight:400;color:var(--muted);margin-left:4px}
+.bar{height:6px;border-radius:3px;background:var(--raise);overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:3px}
+.bar.b2 i{background:var(--accent2)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px;box-shadow:var(--shadow);min-width:0;margin-bottom:12px}
+.panel h3{font-family:var(--fp);font-weight:var(--pweight);text-transform:var(--pcase);letter-spacing:var(--ptrack);font-size:16px;margin:0 0 8px;color:var(--fg)}
+.now-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:center}
+.now-row .t{font-weight:700;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.now-row .se{font:13px "Atkinson Hyperlegible",ui-sans-serif,system-ui,sans-serif;color:var(--muted);font-variant-numeric:tabular-nums}
+.now-row .bar{grid-column:1/-1}
+.plat{font-size:11px;font-weight:600;color:var(--accent2);border:1px solid color-mix(in srgb,var(--accent2) 55%,var(--line));border-radius:999px;padding:0 8px}
+.btn{font:700 13px var(--fb);border:1px solid var(--accent);background:var(--accent);color:var(--ink);border-radius:var(--r);padding:6px 14px;white-space:nowrap}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;padding:6px;background:var(--raise)}
+td{padding:7px 6px;border-top:1px solid var(--line)}
+td.n,th.n{font-family:"Atkinson Hyperlegible",ui-sans-serif,system-ui,sans-serif;font-variant-numeric:tabular-nums;color:var(--muted);white-space:nowrap}
+/* status chips: FIXED in every theme (mirror the sheet dropdown chips) */
+.chip{display:inline-block;font-size:11px;font-weight:700;padding:1px 9px;border-radius:999px;white-space:nowrap}
+.chip.watching{background:#2c4356;color:#9cc7e0}
+.chip.nextup{background:#493744;color:#e07fbf}
+.chip.watchlist{background:#362f4a;color:#b3a8d8}
+.chip.watched{background:#33472f;color:#b9d6a0}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+@media (max-width:860px){.th{grid-template-columns:minmax(0,1fr)}.intro{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:480px){.app{--bs:calc(var(--bsm,24px))}.hd{padding:14px 16px}.months{grid-template-columns:minmax(0,1fr)}.months li:nth-child(2){border-top:1px solid var(--pg-line)}}
+
+/* ---- per-theme motifs (header only, never over data). Selector: .app[data-tv-theme="id"] ---- */
+/* Breaking Bad / Better Call Saul */
+[data-tv-theme="saul"] .tvg{display:none}
+[data-tv-theme="saul"] .el{display:inline-flex;flex-direction:column;justify-content:center;align-items:center;position:relative;width:38px;height:38px;border:1.5px solid var(--accent);background:color-mix(in srgb,var(--accent) 14%,var(--surface));color:var(--accent);font:700 17px/1 var(--fd);border-radius:3px}
+[data-tv-theme="saul"] .el i{position:absolute;top:2px;left:3px;font:400 7px/1 var(--fb);font-style:normal}
+[data-tv-theme="saul"] .hd .fx{background:linear-gradient(180deg,rgba(184,144,10,0),rgba(184,144,10,.26)),repeating-linear-gradient(8deg,rgba(184,144,10,.07) 0 5px,transparent 5px 13px)}
+/* Deadwood */
+[data-tv-theme="deadwood"]{--fp:"Playfair Display",Georgia,serif;--pweight:700;--pcase:none;--ptrack:0}
+[data-tv-theme="deadwood"] .app::before,[data-tv-theme="deadwood"].app::before{background:radial-gradient(ellipse at 50% 45%,transparent 45%,rgba(94,56,22,.30) 100%)}
+[data-tv-theme="deadwood"] .hd{padding-bottom:26px}
+[data-tv-theme="deadwood"] .hd .fx2{background:
+  linear-gradient(var(--accent2),var(--accent2)) 0 calc(100% - 12px)/calc(50% - 14px) 1px no-repeat,
+  linear-gradient(var(--accent2),var(--accent2)) 0 calc(100% - 7px)/calc(50% - 14px) 2px no-repeat,
+  linear-gradient(var(--accent2),var(--accent2)) 100% calc(100% - 12px)/calc(50% - 14px) 1px no-repeat,
+  linear-gradient(var(--accent2),var(--accent2)) 100% calc(100% - 7px)/calc(50% - 14px) 2px no-repeat,
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath d='M7 1l6 6-6 6-6-6z' fill='%23a87a2a'/%3E%3C/svg%3E") 50% calc(100% - 3px)/14px 14px no-repeat}
+/* Mr Inbetween */
+[data-tv-theme="inbetween"] .hd{--hdr:radial-gradient(ellipse 45% 130% at 0% 50%,rgba(240,138,44,.55),transparent 70%),linear-gradient(90deg,rgba(240,138,44,.10) 10%,rgba(122,108,255,.20) 60%,rgba(122,108,255,.42))}
+[data-tv-theme="inbetween"] .brand .k{position:relative}
+[data-tv-theme="inbetween"] .brand .k::after{content:"";position:absolute;left:50%;top:50%;width:1.5em;height:1.5em;margin:-.75em 0 0 -.5em;border:1px solid var(--accent);border-radius:50%;
+  background:linear-gradient(var(--accent),var(--accent)) 50% 0/1px 100% no-repeat,linear-gradient(var(--accent),var(--accent)) 0 50%/100% 1px no-repeat;opacity:.85;pointer-events:none}
+/* Chernobyl */
+[data-tv-theme="chernobyl"] .hd .fx{background:radial-gradient(ellipse 75% 95% at 50% 135%,rgba(239,122,60,.62),transparent 70%)}
+[data-tv-theme="chernobyl"] .hd .fx2{background:radial-gradient(ellipse 60% 45% at 25% 100%,rgba(205,215,205,.17),transparent 70%),radial-gradient(ellipse 50% 40% at 78% 92%,rgba(205,215,205,.13),transparent 70%);filter:blur(5px)}
+/* Hannibal */
+[data-tv-theme="hannibal"] .hd{padding-top:22px}
+[data-tv-theme="hannibal"] .hd .fx{background:linear-gradient(90deg,#d29a4a,#8a6a5a 45%,#26314d) 0 0/100% 4px no-repeat}
+.ant{display:none}
+[data-tv-theme="hannibal"] .ant{display:block;flex:none;width:44px;height:32px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='44' viewBox='0 0 60 44' fill='none' stroke='%23e6dcc4' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M30 42C28 30 20 24 12 8M20 22L9 22M16 14L7 11M24 29L15 31M30 42C32 30 40 24 48 8M40 22L51 22M44 14L53 11M36 29L45 31'/%3E%3C/svg%3E") center/contain no-repeat}
+/* Ripley */
+[data-tv-theme="ripley"] .app::before{background:repeating-linear-gradient(90deg,rgba(255,255,255,.022) 0 14px,rgba(0,0,0,.18) 14px 22px)}
+[data-tv-theme="ripley"] .hd .fx{background:repeating-linear-gradient(90deg,rgba(255,255,255,.07) 0 12px,rgba(0,0,0,.38) 12px 20px),linear-gradient(105deg,transparent 30%,rgba(255,255,255,.10) 50%,transparent 70%)}
+/* The Sopranos */
+[data-tv-theme="sopranos"] .hd .fx{background:linear-gradient(180deg,rgba(223,232,240,.30),rgba(223,232,240,.06) 38%,transparent 60%)}
+[data-tv-theme="sopranos"] .hd .fx2{--s1:radial-gradient(circle,rgba(255,255,255,.85) 0 1.6px,transparent 2.4px);--s2:radial-gradient(circle,rgba(223,232,240,.6) 0 1.1px,transparent 1.9px);--s3:radial-gradient(circle,rgba(255,255,255,.4) 0 2.6px,transparent 3.6px);
+  background-image:var(--s1),var(--s2),var(--s3);background-size:97px 61px,53px 41px,131px 83px;background-position:12px 8px,30px 20px,60px 40px}
+@keyframes tv-snow{to{background-position:12px 69px,30px 61px,60px 123px}}
+@media (prefers-reduced-motion:no-preference){[data-tv-theme="sopranos"] .hd .fx2{animation:tv-snow 16s linear infinite}}
+/* Succession */
+[data-tv-theme="succession"] .hd .fx{background:
+  linear-gradient(112deg,transparent 28%,rgba(220,235,250,.10) 42%,rgba(220,235,250,.03) 55%,transparent 70%),
+  radial-gradient(ellipse 50% 70% at 78% 20%,rgba(200,220,240,.14),transparent 70%),
+  repeating-linear-gradient(90deg,rgba(143,181,216,.18) 0 1px,transparent 1px 30px),
+  repeating-linear-gradient(0deg,rgba(143,181,216,.18) 0 1px,transparent 1px 26px)}
+/* Fleabag */
+[data-tv-theme="fleabag"] .hd{padding-bottom:22px}
+[data-tv-theme="fleabag"] .hd .fx2{top:auto;height:6px;background:repeating-linear-gradient(90deg,var(--fg) 0 9px,var(--raise) 9px 18px);opacity:.9}
+[data-tv-theme="fleabag"] .mk::before{content:"";position:absolute;inset:-7px;border-radius:50%;border:2px solid var(--accent2);opacity:.5;box-shadow:0 0 14px color-mix(in srgb,var(--accent2) 55%,transparent),inset 0 0 10px color-mix(in srgb,var(--accent2) 35%,transparent)}
+/* Arcane */
+[data-tv-theme="arcane"] .hd .fx{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='96' viewBox='0 0 150 96'%3E%3Cg fill='%23f2559a'%3E%3Ccircle cx='118' cy='20' r='13'/%3E%3Ccircle cx='96' cy='34' r='5'/%3E%3Ccircle cx='140' cy='52' r='4'/%3E%3Ccircle cx='84' cy='12' r='2.5'/%3E%3Ccircle cx='128' cy='72' r='2'/%3E%3Cpath d='M118 20l-30 22 6 4z'/%3E%3C/g%3E%3Cg fill='%234fb8ea'%3E%3Ccircle cx='132' cy='34' r='9'/%3E%3Ccircle cx='108' cy='54' r='4'/%3E%3Ccircle cx='146' cy='10' r='5'/%3E%3Ccircle cx='100' cy='8' r='2'/%3E%3Ccircle cx='120' cy='84' r='2.5'/%3E%3Cpath d='M132 34l-22 30 5 2z'/%3E%3C/g%3E%3C/svg%3E") left -34px top -18px/auto 90% no-repeat;opacity:.75}
+[data-tv-theme="arcane"] .hd .fx2{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='80' viewBox='0 0 400 80' preserveAspectRatio='none'%3E%3Cpath d='M0 76C90 14 250 -6 400 30' fill='none' stroke='%23c9a24a' stroke-width='1' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E") 0 0/100% 100% no-repeat}
+/* Mad Men */
+[data-tv-theme="madmen"] .hd .fx{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='70' height='130' viewBox='0 0 70 130'%3E%3Cpath d='M32 128C8 108 54 98 32 78C10 58 56 48 32 28C20 14 36 6 42 0' fill='none' stroke='%238a8993' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M38 128C22 114 48 106 40 92' fill='none' stroke='%23a9a8b2' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") 6px 100%/auto 100px no-repeat;filter:blur(1.1px);opacity:.55}
+/* Blackadder the Third */
+[data-tv-theme="blackadder"]{--fp:"IM Fell English SC",Georgia,serif;--pweight:400;--pcase:none;--ptrack:.02em}
+[data-tv-theme="blackadder"] .app::before,[data-tv-theme="blackadder"].app::before{background:radial-gradient(ellipse 120px 80px at 14% 78%,rgba(107,63,31,.16),transparent 70%),radial-gradient(ellipse 90px 140px at 88% 30%,rgba(107,63,31,.13),transparent 70%),radial-gradient(circle 30px at 62% 92%,rgba(107,63,31,.20),transparent 80%),radial-gradient(ellipse at 50% 0%,rgba(255,244,214,.55),transparent 65%)}
+[data-tv-theme="blackadder"] .seal{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;flex:none;border-radius:50% 46% 52% 48%;background:radial-gradient(circle at 35% 30%,#c8403a,#a82a24 55%,#7a1d17);color:#f6ead0;font:400 11px/1 "IM Fell English SC",Georgia,serif;letter-spacing:.04em;box-shadow:0 1px 2px rgba(42,26,16,.45),inset 0 0 0 2px rgba(0,0,0,.12);transform:rotate(-8deg)}
+@media (max-width:480px){
+  [data-tv-theme="ripley"]{--bsm:19px}[data-tv-theme="succession"]{--bsm:17px}[data-tv-theme="hannibal"] .hd .fx{background-position:0 0,calc(100% - 14px) 9px}
+  [data-tv-theme="arcane"],[data-tv-theme="chernobyl"],[data-tv-theme="deadwood"]{--bsm:22px}
+}
+</style>
+
+<div class="page">
+  <div class="eyebrow">TV Tracker · theme proposal</div>
+  <h1>Twelve shows, twelve months</h1>
+  <p class="lede">The app would wear the current month's show theme for the whole month, with a plain Default always one tap away. Each theme borrows only colour, type and shading from its show: no stills, posters or logos, and every show name in the mock-ups is made up. Motifs are small, live in the header only, and never sit over your data.</p>
+
+  <div class="intro">
+    <section class="card" aria-labelledby="monH">
+      <div class="eyebrow" id="monH">Month for each theme</div>
+      <ul class="months" id="months"></ul>
+    </section>
+    <section class="card" aria-labelledby="fbH">
+      <div class="eyebrow" id="fbH">How to read this board</div>
+      <ol class="howto">
+        <li>Jump with the chips below. Each card has the notes on the left and, below them on a phone, a mock-up that uses only that theme's colours, fonts and motif.</li>
+        <li>Swatches show all ten tokens with hex values. The checklist gives live contrast ratios and a pass mark against the targets.</li>
+        <li>Status chips (Watching, Next Up, Watchlist, Watched) keep the sheet's colours in every theme.</li>
+        <li>Tell me in chat what to change in plain words, such as “Ripley: slats too strong” or “swap Fleabag and Arcane”.</li>
+      </ol>
+    </section>
+  </div>
+
+  <nav class="jump" id="jump" aria-label="Jump to a theme"></nav>
+  <div id="themes"></div>
+</div>
+
+<script>
+// Theme data in the film app's shape: these tokens and the CSS above are what would be lifted into app.html.
+// 'fp' (optional) = panel-title font where it differs from the heading font; 'nudge' = recorded contrast adjustment.
+const THEMES = [
+  { id: 'default', show: 'Default', month: null, mode: 'dark', fonts: ['Atkinson Hyperlegible', 'Figtree'],
+    motif: 'None. Plain dark navy with grey and silver tinting, so the show themes stand out.',
+    c: { bg: '#0d1424', surface: '#141c2e', raise: '#1b2438', line: '#283249', fg: '#e8ebf2', muted: '#9aa4b8', accent: '#c5ccd8', ink: '#0d1424', accent2: '#8ea8cf', danger: '#f29a9a' }, r: 12, grain: 0 },
+  { id: 'saul', show: 'Breaking Bad / Better Call Saul', month: 1, mode: 'light', fonts: ['Barlow Condensed', 'Figtree'],
+    motif: 'The “TV” letters sit in a small square element tile (green, thin border, tiny atomic number) beside the wordmark, over a faint desert-heat haze across the header.',
+    c: { bg: '#efe7d4', surface: '#fbf7ee', raise: '#f4ecdc', line: '#d9cdb2', fg: '#1b1a14', muted: '#5b5546', accent: '#1f6b45', ink: '#ffffff', accent2: '#b8900a', danger: '#b3261e' }, r: 6, grain: .15 },
+  { id: 'deadwood', show: 'Deadwood', month: 2, mode: 'light', fonts: ['Rye', 'Figtree'], fp: 'Playfair Display',
+    motif: 'An ornamental double rule with a centre diamond under the header, and a sepia vignette. Rye is used for the wordmark only; panel titles take Playfair Display.',
+    c: { bg: '#e8dcc2', surface: '#f6eedd', raise: '#eee3cb', line: '#cdbb98', fg: '#2a1d12', muted: '#6a5640', accent: '#7a3f1c', ink: '#ffffff', accent2: '#a87a2a', danger: '#9a2b1b' }, r: 3, grain: .35 },
+  { id: 'inbetween', show: 'Mr Inbetween', month: 3, mode: 'dark', fonts: ['Saira Condensed', 'Figtree'],
+    motif: 'A thin crosshair reticle over one letter of the wordmark, and a match-flame glow at the header’s left edge fading into ultraviolet on the right.',
+    c: { bg: '#0b0a0d', surface: '#141217', raise: '#1c1a21', line: '#2b2833', fg: '#f1eef4', muted: '#a59fb0', accent: '#f08a2c', ink: '#1a0b00', accent2: '#7a6cff', danger: '#ff6a5a' }, r: 4, grain: .1 },
+  { id: 'chernobyl', show: 'Chernobyl', month: 4, mode: 'dark', fonts: ['Jura', 'Figtree'],
+    motif: 'Heavy film grain, and a soft orange glow rising from the bottom of the header band with a thin fog drifting over it.',
+    c: { bg: '#111513', surface: '#191e1b', raise: '#212824', line: '#313a34', fg: '#e9eee8', muted: '#9faca2', accent: '#ef7a3c', ink: '#1a0a02', accent2: '#b5c3b0', danger: '#ff8a6a' }, r: 6, grain: .4 },
+  { id: 'hannibal', show: 'Hannibal', month: 5, mode: 'dark', fonts: ['Cormorant Garamond', 'Figtree'],
+    motif: 'A small stag-antler silhouette against a thin dusk-amber-to-navy band at the very top of the header.',
+    c: { bg: '#0b1120', surface: '#121a2c', raise: '#19233a', line: '#26314d', fg: '#eef0f6', muted: '#a2aac0', accent: '#d5605a', ink: '#1a0606', accent2: '#e6dcc4', danger: '#ff8a7a' }, r: 10, grain: 0 },
+  { id: 'ripley', show: 'Ripley', month: 6, mode: 'dark', fonts: ['Italiana', 'Figtree'],
+    motif: 'Vertical window-blind slats across the header and very faintly across the page background; wordmark letters widely spaced. A homage to classic black-and-white TV, pure greyscale.',
+    c: { bg: '#0c0c0c', surface: '#151515', raise: '#1e1e1e', line: '#2e2e2e', fg: '#f2f2f2', muted: '#9a9a9a', accent: '#e6e6e6', ink: '#111111', accent2: '#8a8a8a', danger: '#d0d0d0' }, r: 2, grain: .25 },
+  { id: 'sopranos', show: 'The Sopranos', month: 7, mode: 'dark', fonts: ['Abril Fatface', 'Figtree'],
+    motif: 'A few soft snowflakes drifting in the header (static dots; they only move when your device allows motion) and a cold pale band at the top.',
+    c: { bg: '#121418', surface: '#1a1d22', raise: '#22262c', line: '#33383f', fg: '#eef1f4', muted: '#a3abb5', accent: '#d93a30', ink: '#ffffff', accent2: '#dfe8f0', danger: '#ff8a7a' }, r: 8, grain: .1 },
+  { id: 'succession', show: 'Succession', month: 8, mode: 'dark', fonts: ['Raleway', 'Figtree'],
+    motif: 'A glass curtain-wall grid of fine lines behind the header with a lighter cloudy reflection. Light weight, uppercase, very wide tracking.',
+    c: { bg: '#0f151b', surface: '#161e26', raise: '#1e2832', line: '#2c3946', fg: '#edf1f5', muted: '#9eacba', accent: '#8fb5d8', ink: '#0a1520', accent2: '#c75a62', danger: '#ff8a7a' }, r: 4, grain: 0 },
+  { id: 'fleabag', show: 'Fleabag', month: 9, mode: 'dark', fonts: ['Oswald', 'Figtree'],
+    motif: 'A thin Breton-stripe band along the header bottom and a faint gold halo ring behind the wordmark mark.',
+    nudge: 'Accent #e8453c to #d93a33 (white on accent was 3.9, now 4.6).',
+    c: { bg: '#15100f', surface: '#1f1817', raise: '#2a201f', line: '#3c2f2d', fg: '#f6eeea', muted: '#b3a29d', accent: '#d93a33', ink: '#ffffff', accent2: '#d9b45a', danger: '#ff8a7a' }, r: 8, grain: .1 },
+  { id: 'arcane', show: 'Arcane', month: 10, mode: 'dark', fonts: ['Marcellus SC', 'Figtree'],
+    motif: 'A spray-paint splatter of pink and blue in one header corner plus a fine gold hairline arc (Piltover brass).',
+    c: { bg: '#120f1c', surface: '#1b1729', raise: '#241f36', line: '#352e4d', fg: '#f2eefa', muted: '#aaa2c4', accent: '#4fb8ea', ink: '#04131c', accent2: '#f2559a', danger: '#ff8a7a' }, r: 12, grain: .1 },
+  { id: 'madmen', show: 'Mad Men', month: 11, mode: 'light', fonts: ['Jost', 'Figtree'],
+    motif: 'A single grey smoke curl drifting up from the header’s left corner.',
+    c: { bg: '#ecebf0', surface: '#fafafc', raise: '#f1f0f5', line: '#d4d2dc', fg: '#141418', muted: '#55545e', accent: '#d93a26', ink: '#ffffff', accent2: '#3f6fb5', danger: '#b3261e' }, r: 4, grain: .08 },
+  { id: 'blackadder', show: 'Blackadder the Third', month: 12, mode: 'light', fonts: ['IM Fell English', 'Figtree'], fp: 'IM Fell English SC',
+    motif: 'A parchment wash with a couple of faint stains, and a small red wax seal stamped “III” beside the wordmark. IM Fell English SC supplies the small caps for panel titles.',
+    c: { bg: '#e9d8b0', surface: '#f6ead0', raise: '#efdfbd', line: '#cdb688', fg: '#2a1a10', muted: '#6b5236', accent: '#a82a24', ink: '#ffffff', accent2: '#6b3f1f', danger: '#8a1f14' }, r: 3, grain: .3 }
+];
+const DISPLAY = { // how each theme sets its headings: [weight, case, tracking]
+  default: [700, 'none', '-.01em'], saul: [700, 'uppercase', '.02em'], deadwood: [400, 'none', '.01em'], inbetween: [700, 'uppercase', '.04em'],
+  chernobyl: [600, 'uppercase', '.08em'], hannibal: [700, 'none', '0'], ripley: [400, 'uppercase', '.3em'], sopranos: [400, 'none', '0'],
+  succession: [300, 'uppercase', '.36em'], fleabag: [700, 'uppercase', '.05em'], arcane: [400, 'uppercase', '.08em'], madmen: [600, 'none', '.02em'], blackadder: [400, 'none', '.01em']
+};
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const THIS_MONTH = 10; // October: Arcane
+const TOKENS = [['bg','Ground'],['surface','Panel'],['raise','Raised'],['line','Line'],['fg','Text'],['muted','Muted'],['accent','Accent'],['ink','Ink'],['accent2','Accent 2'],['danger','Danger']];
+
+const TVG = `<svg class="tvg" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M16 9L10 3M16 9l6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><rect x="3" y="9" width="26" height="18" rx="3.5" stroke="currentColor" stroke-width="2.4"/><rect x="7" y="13" width="14" height="10" rx="1.5" fill="currentColor" opacity=".3"/><circle cx="25" cy="16" r="1.3" fill="currentColor"/><circle cx="25" cy="21" r="1.3" fill="currentColor"/></svg>`;
+const PAL = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 3a9 9 0 100 18c1.4 0 2-1 1.6-2.1-.5-1.3.4-2.4 1.7-2.4H18a3 3 0 003-3C21 7.6 17 3 12 3z"/><circle cx="7.5" cy="11" r="1.1" fill="currentColor"/><circle cx="10" cy="7.2" r="1.1" fill="currentColor"/><circle cx="14.6" cy="7.2" r="1.1" fill="currentColor"/></svg>`;
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const lum = h => { const v = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16) / 255).map(x => x <= .03928 ? x / 12.92 : ((x + .055) / 1.055) ** 2.4); return .2126 * v[0] + .7152 * v[1] + .0722 * v[2]; };
+const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + .05) / (y + .05); };
+// [label, fg token, bg token, minimum]
+const CHECKS = [['Text on ground', 'fg', 'bg', 7], ['Text on panel', 'fg', 'surface', 7], ['Muted on panel', 'muted', 'surface', 4.5], ['Accent on panel', 'accent', 'surface', 3], ['Ink on accent', 'ink', 'accent', 4.5]];
+
+function brandHtml(t) { return t.id === 'inbetween' ? 'T<span class="k">V</span> Tracker' : 'TV Tracker'; }
+
+function card(t) {
+  const [w, cs, tr] = DISPLAY[t.id];
+  const fam = f => `'${f}',ui-sans-serif,system-ui,sans-serif`;
+  let vars = Object.entries(t.c).map(([k, v]) => `--${k}:${v}`).join(';') + `;--r:${t.r}px;--grain:${t.grain};--fd:${fam(t.fonts[0])};--fb:${fam(t.fonts[1])};--dweight:${w};--dcase:${cs};--dtrack:${tr}`;
+  if (t.fp) vars += `;--fp:${fam(t.fp)}`;
+  const rows = CHECKS.map(([l, a, b, min]) => { const r = ratio(t.c[a], t.c[b]), ok = r >= min;
+    return `<li class="${ok ? '' : 'bad'}" data-check="${ok ? 'pass' : 'fail'}"><span>${l}</span><span class="need">≥ ${min}</span><span class="r">${r.toFixed(1)}</span><span class="ok" aria-label="${ok ? 'pass' : 'fail'}">${ok ? '✓' : '✕'}</span></li>`; }).join('');
+  const sw = TOKENS.map(([k, n]) => `<div><div style="background:${t.c[k]}"></div><span><b>${n}</b>${t.c[k]}</span></div>`).join('');
+  const headFonts = t.fp ? `${t.fonts[0]} (wordmark), ${t.fp} (panel titles)` : t.fonts[0];
+  const extra = t.id === 'saul' ? '<span class="el"><i>52</i>Tv</span>' : '';
+  const ant = t.id === 'hannibal' ? '<span class="ant" aria-hidden="true"></span>' : '';
+  const seal = t.id === 'blackadder' ? '<span class="seal">III</span>' : '';
+  return `<section class="th" id="${t.id}" aria-labelledby="h-${t.id}">
+  <div class="th-meta">
+    <div class="eyebrow">${t.month ? MONTHS[t.month - 1] : 'Any time'}</div>
+    <h2 id="h-${t.id}">${esc(t.show)}</h2>
+    <div class="tags"><span class="tag">${t.mode === 'dark' ? 'Dark' : 'Light'}</span>${t.month === THIS_MONTH ? '<span class="tag now">This month</span>' : ''}${t.id === 'default' ? '<span class="tag">Plain option</span>' : ''}${t.nudge ? '<span class="tag">Contrast nudged</span>' : ''}<span class="tag">Radius ${t.r}</span><span class="tag">Grain ${t.grain}</span></div>
+    <p class="motif">${esc(t.motif)}</p>
+    <div class="lab">Fonts</div>
+    <p>Headings: ${esc(headFonts)}<br>Text: ${esc(t.fonts[1])}<br><span class="muted">Numbers and data: Atkinson Hyperlegible</span></p>
+    <div class="lab">Palette</div>
+    <div class="sw">${sw}</div>
+    <div class="lab">Contrast</div>
+    <ul class="checks">${rows}</ul>
+    ${t.nudge ? `<p class="muted" style="font-size:12px">Nudge: ${esc(t.nudge)}</p>` : ''}
+  </div>
+  <div class="app" data-tv-theme="${t.id}" style="${vars}" aria-label="TV Tracker mock-up in the ${esc(t.show)} theme">
+    <header class="hd"><span class="fx"></span><span class="fx2"></span>
+      <div class="lock"><span class="mk">${TVG}${extra}</span><span class="brand">${brandHtml(t)}</span>${ant}${seal}</div>
+      <div class="hr"><span class="today">Saturday · 24 Oct 26</span><button type="button" class="pal" tabindex="-1" aria-label="Theme">${PAL}</button></div>
+    </header>
+    <div class="tabs"><b class="on">Log</b><b>Library</b><b>Plan</b></div>
+    <div class="tiles">
+      <div class="tile"><div class="lab">Watching streak</div><div class="num">4<small>days</small></div></div>
+      <div class="tile"><div class="lab">This week</div><div class="num">7<small>of 10 eps</small></div><div class="bar" role="img" aria-label="7 of 10 episodes"><i style="width:70%"></i></div></div>
+    </div>
+    <div class="panel"><h3>Watching now</h3>
+      <div class="now-row"><div class="t">Example Show <span class="plat">StreamBox</span></div><button type="button" class="btn" tabindex="-1">+1 ep</button>
+        <div class="se">S2 · E5</div><div></div><div class="bar b2" role="img" aria-label="Season progress"><i style="width:50%"></i></div></div>
+    </div>
+    <div class="panel"><h3>Library</h3>
+      <table><thead><tr><th>Title</th><th class="n">Now</th><th>Status</th></tr></thead><tbody>
+        <tr><td><b>Example Show</b></td><td class="n">S2 · E5</td><td><span class="chip watching">Watching</span></td></tr>
+        <tr><td><b>Harbour Lights</b></td><td class="n">S1 · E1</td><td><span class="chip nextup">Next Up</span></td></tr>
+        <tr><td><b>Night Shift</b></td><td class="n">&nbsp;</td><td><span class="chip watchlist">Watchlist</span></td></tr>
+      </tbody></table>
+    </div>
+  </div>
+</section>`;
+}
+
+document.getElementById('themes').innerHTML = THEMES.map(card).join('');
+document.getElementById('jump').innerHTML = THEMES.map(t => `<a href="#${t.id}" class="${t.month === THIS_MONTH ? 'now' : ''}">${esc(t.id === 'saul' ? 'Breaking Bad' : t.show)}</a>`).join('');
+document.getElementById('months').innerHTML = THEMES.filter(t => t.month).sort((a, b) => a.month - b.month)
+  .map(t => `<li class="${t.month === THIS_MONTH ? 'now' : ''}"><span class="m">${MONTHS[t.month - 1].slice(0, 3)}</span><a href="#${t.id}">${esc(t.show)}</a>${t.month === THIS_MONTH ? '<span class="mk">This month</span>' : ''}</li>`).join('');
+if (location.hash) { const el = document.getElementById(location.hash.slice(1)); if (el) el.scrollIntoView(); }
+</script>
