@@ -335,6 +335,62 @@ body::after{opacity:var(--grain);mix-blend-mode:overlay;background-image:url("da
   [data-tv-theme="arcane"],[data-tv-theme="chernobyl"],[data-tv-theme="deadwood"]{--bsm:22px}
 }
 
+/* dashboard (read-only) */
+.dash-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:20px;grid-auto-rows:1fr}
+.dash-tiles .stat .num{font-size:clamp(26px,3vw,32px);min-height:calc(clamp(26px,3vw,32px)*1.05)}
+.dash-tiles .stat .eyebrow{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dash-tiles .stat[data-click]{cursor:pointer;text-align:left;font:inherit;color:inherit}
+.dash-tiles .stat[data-click]:hover,.dash-tiles .stat[data-click]:focus-visible{border-color:var(--accent)}
+.dash-2{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;margin-bottom:20px;align-items:stretch}
+.dash-2 .panel + .panel{margin-top:0}
+.dash-2 > .panel:last-child:nth-child(odd){grid-column:1/-1}
+@media (min-width:600px){.dash-tiles{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (min-width:900px){.dash-tiles{grid-template-columns:repeat(6,minmax(0,1fr))}.dash-2{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.dash-msg{margin:0}
+.hbars{display:flex;flex-direction:column;gap:7px;margin:0;padding:0;list-style:none}
+.hbar{display:grid;grid-template-columns:minmax(0,8.5em) minmax(0,1fr) auto;gap:10px;align-items:center;font-size:13px}
+.hbar .lab{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hbar .track{height:10px;background:var(--raise);border-radius:4px;overflow:hidden}
+.hbar .fill{display:block;height:100%;background:var(--accent);border-radius:4px}
+.hbar[data-s] .fill{background:var(--sc,var(--accent))}
+.hbar .val{font-variant-numeric:tabular-nums;color:var(--muted);text-align:right;white-space:nowrap}
+.hbar[data-click],.mini-list li[data-click]{cursor:pointer;border-radius:6px;margin:-3px -6px;padding:3px 6px}
+.hbar[data-click]:hover,.hbar[data-click]:focus-visible,.mini-list li[data-click]:hover,.mini-list li[data-click]:focus-visible{background:color-mix(in srgb,var(--accent) 12%,transparent)}
+.hbars li.empty,.mini-list li.empty{display:block;color:var(--muted);font-size:14px}
+.mini-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;font-size:14px}
+.mini-list li{display:flex;justify-content:space-between;gap:10px;min-width:0}
+.mini-list li span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mini-list .r{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.panel-foot{margin:12px 0 0}
+.binge-line{margin:14px 0 0;font-size:14px}
+.heat-scroll{overflow-x:auto;padding-bottom:4px}
+.heat{display:grid;grid-template-rows:14px repeat(7,10px);grid-auto-flow:column;grid-auto-columns:minmax(9px,1fr);gap:2px;min-width:max-content}
+@media (min-width:900px){.heat{min-width:0}}
+.heat .c{border-radius:2px}
+.heat .m{font-size:10px;color:var(--muted);white-space:nowrap;grid-row:1}
+.heat button.c{border:0;padding:0;margin:0;cursor:pointer;display:block}
+.heat button.c:hover{outline:1px solid var(--fg);outline-offset:1px}
+.heat .c.today{outline:2px solid var(--fg);outline-offset:1px;position:relative;z-index:1}
+.hc{display:inline-block;background:var(--raise)}
+.hc[data-n="1"]{background:color-mix(in srgb,var(--accent) 40%,var(--raise))}
+.hc[data-n="2"]{background:color-mix(in srgb,var(--accent) 70%,var(--raise))}
+.hc[data-n="3"]{background:var(--accent)}
+.heat-legend{display:flex;align-items:center;justify-content:flex-end;gap:4px;margin-top:10px;font-size:12px;color:var(--muted)}
+.heat-legend .hc{width:10px;height:10px;border-radius:2px}
+.heat-legend .hc[data-n="0"]{outline:1px solid var(--line);outline-offset:-1px}
+.drill-list{list-style:none;margin:0;padding:8px 12px 16px;display:flex;flex-direction:column}
+.drill-list li button{all:unset;box-sizing:border-box;width:100%;cursor:pointer;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;padding:10px 8px;border-radius:var(--rc);border-top:1px solid var(--line)}
+.drill-list li:first-child button{border-top:0}
+.drill-list li button:hover,.drill-list li button:focus-visible{background:color-mix(in srgb,var(--accent) 12%,var(--surface))}
+.drill-list li button:focus-visible{outline:2px solid var(--accent)}
+.drill-list .t{font-weight:600;overflow-wrap:anywhere}
+.drill-list .m{font-size:13px;color:var(--muted);grid-column:1;overflow-wrap:anywhere}
+.drill-list .r{grid-row:1/3;grid-column:2;align-self:center;text-align:right;font-size:13px;color:var(--muted);display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.drill-list .r b{color:var(--fg);font-weight:700;font-family:var(--data)}
+.drill-list li.plain{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;padding:10px 8px;border-top:1px solid var(--line)}
+.drill-list li.plain:first-child{border-top:0}
+.chart-box canvas{cursor:default}
+
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
@@ -368,7 +424,8 @@ body::after{opacity:var(--grain);mix-blend-mode:overlay;background-image:url("da
     <button class="tab" role="tab" id="tab-log" aria-selected="true" aria-controls="view-log" type="button">Log</button>
     <button class="tab" role="tab" id="tab-library" aria-selected="false" aria-controls="view-library" type="button">Library</button>
     <button class="tab" role="tab" id="tab-plan" aria-selected="false" aria-controls="view-plan" type="button">Plan</button>
-    <!-- Later tabs slot in here: Dashboard, Tools, Discover (add a button + a #view-<name> panel, then add the name to TABS) -->
+    <button class="tab" role="tab" id="tab-dashboard" aria-selected="false" aria-controls="view-dashboard" type="button">Dashboard</button>
+    <!-- Later tabs slot in here: Tools, Discover (add a button + a #view-<name> panel, then add the name to TABS) -->
   </nav>
 
   <div id="view-log" role="tabpanel" aria-labelledby="tab-log">
@@ -470,7 +527,54 @@ body::after{opacity:var(--grain);mix-blend-mode:overlay;background-image:url("da
       </div>
     </div>
   </div>
+
+  <div id="view-dashboard" role="tabpanel" aria-labelledby="tab-dashboard" hidden>
+    <section class="dash-tiles" id="dashTiles" aria-label="Totals"></section>
+    <div class="dash-2">
+      <section class="panel" aria-labelledby="monthH">
+        <div class="panel-head"><h2 id="monthH">Episodes per month</h2><span class="muted small" id="monthNote"></span></div>
+        <div class="chart-box" id="monthBox"><canvas id="monthChart" aria-label="Episodes watched per month"></canvas></div>
+        <ul class="hbars" id="monthBars" hidden></ul>
+        <p class="muted small dash-msg" id="monthMsg" hidden></p>
+      </section>
+      <section class="panel" aria-labelledby="calH">
+        <div class="panel-head"><h2 id="calH">Calendar</h2><span class="muted small" id="calNote"></span></div>
+        <div id="heatBox">
+          <div class="heat-scroll" id="heatScroll"><div class="heat" id="heat" role="group" aria-label="Episodes per day"></div></div>
+          <div class="heat-legend" aria-hidden="true"><span>Less</span><i class="hc" data-n="0"></i><i class="hc" data-n="1"></i><i class="hc" data-n="2"></i><i class="hc" data-n="3"></i><span>More</span></div>
+        </div>
+        <p class="muted small dash-msg" id="calMsg" hidden></p>
+      </section>
+    </div>
+    <div class="dash-2">
+      <section class="panel" aria-labelledby="bingeH">
+        <div class="panel-head"><h2 id="bingeH">Binge or weekly?</h2><span class="muted small" id="bingeNote"></span></div>
+        <ul class="hbars" id="bingeBars"></ul>
+        <p class="binge-line" id="bingeBig" hidden></p>
+        <p class="muted small panel-foot" id="bingeKey"></p>
+        <p class="muted small dash-msg" id="bingeMsg" hidden></p>
+      </section>
+      <section class="panel" aria-labelledby="ratH"><div class="panel-head"><h2 id="ratH">Ratings</h2><span class="muted small" id="ratNote"></span></div><ul class="hbars" id="ratBars"></ul></section>
+    </div>
+    <div class="dash-2">
+      <section class="panel" aria-labelledby="genH"><div class="panel-head"><h2 id="genH">Genres</h2><span class="muted small" id="genNote"></span></div><ul class="hbars" id="genBars"></ul></section>
+      <section class="panel" aria-labelledby="stH"><div class="panel-head"><h2 id="stH">Library by status</h2><span class="muted small" id="stNote"></span></div><ul class="hbars" id="stBars"></ul></section>
+    </div>
+    <div class="dash-2">
+      <section class="panel" aria-labelledby="platH"><div class="panel-head"><h2 id="platH">Platforms</h2><span class="muted small" id="platNote"></span></div><ul class="hbars" id="platBars"></ul></section>
+      <section class="panel" aria-labelledby="howH"><div class="panel-head"><h2 id="howH">How to watch</h2><span class="muted small" id="howNote"></span></div><ul class="hbars" id="howBars"></ul></section>
+    </div>
+    <div class="dash-2">
+      <section class="panel" aria-labelledby="actH"><div class="panel-head"><h2 id="actH">Top actors</h2><span class="muted small" id="actNote"></span></div><ul class="mini-list" id="actList"></ul></section>
+      <section class="panel" aria-labelledby="decH"><div class="panel-head"><h2 id="decH">Decades</h2><span class="muted small" id="decNote"></span></div><ul class="hbars" id="decBars"></ul></section>
+    </div>
+  </div>
 </div>
+
+<dialog id="drillDlg" aria-labelledby="drillTitle">
+  <div class="dlg-head"><div><h2 id="drillTitle">Shows</h2><div class="muted small" id="drillSub"></div></div><button class="btn" type="button" id="drillClose">Close</button></div>
+  <ul class="drill-list" id="drillList"></ul>
+</dialog>
 
 <dialog id="setDlg" aria-labelledby="setTitle">
   <div class="dlg-head"><h2 id="setTitle">Settings</h2><button class="btn" type="button" id="setClose">Close</button></div>
@@ -526,7 +630,7 @@ body::after{opacity:var(--grain);mix-blend-mode:overlay;background-image:url("da
 const SHEET_ID = '1558jWeUc8gCzQuph6wOVyOocvTBhQf22UuCSXza8klc';
 const SERVER = 'Google Sheets';
 const T_SHOWS = "'📺'", T_LOG = "'📺 Log'", T_SEASONS = "'📺 Seasons'", T_SETTINGS = "'📺 Settings'";
-const TABS = ['log', 'library', 'plan'];   // later: 'dashboard', 'tools', 'discover'
+const TABS = ['log', 'library', 'plan', 'dashboard'];   // later: 'tools', 'discover'
 const TAB_KEY = 'tv-tab';
 
 /* ---------- dates (local time) ---------- */
@@ -689,7 +793,7 @@ function applyTheme() { // returns true when something actually changed
 let chartRepaint = 0;
 function repaintChart() { // Chart.js paints with real colours, so the chart is redrawn when the theme moves (once per frame while dragging a colour)
   if (chartRepaint) return;
-  chartRepaint = requestAnimationFrame(() => { chartRepaint = 0; if (!$('view-log').hidden && typeof renderWeekly === 'function') { chartBase(); renderWeekly(dailyTotals()); } });
+  chartRepaint = requestAnimationFrame(() => { chartRepaint = 0; if (!$('view-log').hidden && typeof renderWeekly === 'function') { chartBase(); renderWeekly(dailyTotals()); } if (!$('view-dashboard').hidden && typeof renderMonthChart === 'function') renderMonthChart(); });
 }
 function themeChanged() { if (applyTheme()) repaintChart(); renderThemeUI(); }
 if (document.fonts && document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', repaintChart);
@@ -1142,6 +1246,7 @@ function renderAll() {
   renderWeekly(totals);
   if (!$('view-library').hidden) renderLibrary();
   if (!$('view-plan').hidden) renderPlan();
+  if (!$('view-dashboard').hidden) renderDashboard();
   setWordmark(state.settings.appName || 'TV Tracker');
   document.title = state.settings.appName || 'TV Tracker';
 }
@@ -1770,6 +1875,352 @@ document.addEventListener('keydown', e => {
   if (b) { e.preventDefault(); b.click(); }
 });
 
+/* ---------- Dashboard (read-only: nothing here ever writes to the sheet) ---------- */
+const lc = s => String(s || '').trim().toLowerCase();
+const one = n => (Math.round(n * 10) / 10).toFixed(1);
+const avgOfNums = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null;
+const FULL_MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const DOW = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const BACKLOG = ['Watchlist', 'Next Up', 'New Season', 'Rewatch', 'Paused'];
+const LOG_EMPTY = 'Fills in as you log episodes on the Log tab.';
+const plural = (n, w) => `${fmt(n)} ${w}${n === 1 ? '' : 's'}`;
+const ratingOf = s => { const n = parseFloat(String(s.rating ?? '').replace(/,/g, '')); return Number.isFinite(n) && n > 0 ? n : null; };
+const avgRating = shows => { const r = shows.map(ratingOf).filter(x => x != null); return avgOfNums(r); };
+
+// Starring is free text: split on commas, drop blanks and junk (quotes, very long strings, no letters)
+function actorNames(text) {
+  const out = [];
+  for (const raw of String(text || '').split(',')) {
+    const n = raw.replace(/\s+/g, ' ').trim();
+    if (n.length < 2 || n.length > 40) continue;
+    if (/["“”‘]/.test(n) || /^['’]|['’]$/.test(n)) continue;
+    if (!/\p{L}/u.test(n)) continue;
+    if (!out.some(x => lc(x) === lc(n))) out.push(n);
+  }
+  return out;
+}
+
+/* Watching style per show, from the log: average episodes per watching day, and the usual gap between watching days */
+function median(a) { const s = [...a].sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; }
+function styleOf(avg, medGap) {
+  if (avg >= 3) return 'Binge';
+  if (avg >= 1.5) return 'Steady';
+  return medGap >= 5 ? 'Weekly' : 'Casual';
+}
+const STYLES = [
+  ['Binge', '3 or more episodes on an average watching day'],
+  ['Steady', '1.5 to 3 episodes a day'],
+  ['Weekly', 'under 1.5 a day, with about 5 or more days between'],
+  ['Casual', 'the rest']
+];
+function watchStyles() {
+  const byShow = new Map();
+  for (const e of state.entries) {
+    if (!byShow.has(e.showId)) byShow.set(e.showId, new Map());
+    const d = byShow.get(e.showId);
+    d.set(e.date, (d.get(e.date) || 0) + e.eps);
+  }
+  const shows = [];
+  let biggest = null;
+  for (const [id, days] of byShow) {
+    const show = showById(id), title = show ? show.title : (state.entries.find(e => e.showId === id) || {}).title || id;
+    const dates = [...days.keys()].sort();
+    for (const d of dates) if (!biggest || days.get(d) > biggest.eps || (days.get(d) === biggest.eps && d > biggest.date)) biggest = { eps: days.get(d), date: d, id, title };
+    if (dates.length < 2) continue;
+    const eps = [...days.values()].reduce((a, b) => a + b, 0), avg = eps / dates.length;
+    const gaps = dates.slice(1).map((d, i) => daysBetween(dates[i], d));
+    shows.push({ id, show, title, days: dates.length, eps, avg, medGap: median(gaps), style: styleOf(avg, median(gaps)) });
+  }
+  return { shows, biggest };
+}
+
+/* ---------- drill-down: click a tile, bar, row or day to list what is behind it; a row opens the show's edit dialog ---------- */
+let drillOpener = null, drillNext = false, drillToShow = false;
+const pillHtml = s => s ? `<span class="pill" data-s="${esc(s)}">${esc(s)}</span>` : '';
+function showItem(s, extra) {
+  const r = ratingOf(s);
+  return { id: s.id, title: s.title, meta: [s.year, s.platform, s.genre, ...(extra && extra.meta ? [extra.meta] : [])].filter(Boolean).join(' · '),
+    big: extra && extra.big != null ? extra.big : (r != null ? one(r).replace(/\.0$/, '') + '/10' : '–'), status: s.status, sort: extra && extra.sort != null ? extra.sort : (r ?? -1) };
+}
+const showItems = shows => shows.map(s => showItem(s)).sort((a, b) => b.sort - a.sort || a.title.localeCompare(b.title));
+function epRange(rows) {
+  const by = new Map();
+  for (const e of rows) if (e.episode > 0) { if (!by.has(e.season)) by.set(e.season, []); by.get(e.season).push(e.episode); }
+  return [...by].sort((a, b) => a[0] - b[0]).map(([s, a]) => { const lo = Math.min(...a), hi = Math.max(...a); return (s ? `S${s} ` : '') + (lo === hi ? `E${lo}` : `E${lo}–${hi}`); }).join(', ');
+}
+// Episodes grouped by show: one row per show, biggest first
+function episodeItems(rows, withDates) {
+  const by = new Map();
+  for (const e of rows) { if (!by.has(e.showId)) by.set(e.showId, []); by.get(e.showId).push(e); }
+  return [...by].map(([id, a]) => {
+    const show = showById(id), n = a.reduce((x, e) => x + e.eps, 0), days = [...new Set(a.map(e => e.date))].sort();
+    const when = !withDates ? '' : days.length > 1 ? `${days.length} days, last ${fmtDate(days[days.length - 1])}` : fmtDate(days[0]);
+    return { id: show ? id : null, title: show ? show.title : (a[0].title || id), meta: [epRange(a), when].filter(Boolean).join(' · '), big: fmt(n), small: n === 1 ? 'episode' : 'episodes', sort: n };
+  }).sort((a, b) => b.sort - a.sort || a.title.localeCompare(b.title));
+}
+function openDrill(spec, opener) {
+  drillOpener = opener || document.activeElement;
+  $('drillTitle').textContent = spec.title;
+  const n = spec.items.length;
+  $('drillSub').textContent = spec.episodes != null
+    ? [plural(spec.episodes, 'episode'), plural(n, 'show'), spec.sub].filter(Boolean).join(' · ')
+    : [plural(n, 'show'), spec.sub].filter(Boolean).join(' · ');
+  const list = $('drillList');
+  list.textContent = '';
+  for (const it of spec.items) {
+    const li = document.createElement('li');
+    const inner = '<span class="t"></span><span class="m"></span><span class="r"><b></b><span></span></span>';
+    if (it.id) li.innerHTML = '<button type="button">' + inner + '</button>'; else { li.className = 'plain'; li.innerHTML = inner; }
+    li.querySelector('.t').textContent = it.title;
+    li.querySelector('.m').textContent = it.meta || '';
+    li.querySelector('.r b').textContent = it.big;
+    if (it.small) li.querySelector('.r span').textContent = it.small; else li.querySelector('.r span').innerHTML = pillHtml(it.status);
+    const b = li.querySelector('button');
+    if (b) b.addEventListener('click', () => { const s = showById(it.id); if (!s) return; drillNext = true; drillToShow = true; $('drillDlg').close(); openShowDialog(s); });
+    list.appendChild(li);
+  }
+  $('drillDlg').showModal();
+}
+function restoreDrillFocus() {
+  const o = drillOpener; drillOpener = null;
+  let el = o && o.isConnected ? o : null;
+  if (!el && o && o.dataset && o.dataset.fk) el = [...document.querySelectorAll('[data-fk]')].find(e => e.dataset.fk === o.dataset.fk);
+  if (!el && !$('view-dashboard').hidden) el = $('tab-dashboard');
+  if (el) { el.focus({ preventScroll: true }); requestAnimationFrame(() => { if (el.isConnected && document.activeElement !== el) el.focus({ preventScroll: true }); }); }
+}
+$('drillClose').addEventListener('click', () => $('drillDlg').close());
+$('drillDlg').addEventListener('close', () => { if (drillNext) { drillNext = false; return; } restoreDrillFocus(); });
+$('showDlg').addEventListener('close', () => { if (drillToShow) { drillToShow = false; restoreDrillFocus(); } });
+function makeDrill(el, spec, fk) {
+  el.dataset.click = '';
+  if (fk) el.dataset.fk = fk;
+  el.tabIndex = 0;
+  el.setAttribute('role', 'button');
+  el.setAttribute('aria-label', `${spec.title}: show ${spec.items.length} show${spec.items.length === 1 ? '' : 's'}`);
+  const open = () => openDrill(spec, el);
+  el.addEventListener('click', open);
+  el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+}
+function hbars(el, items, max) {
+  el.textContent = '';
+  const m = max || Math.max(1, ...items.map(i => i.value));
+  if (!items.length) { el.innerHTML = '<li class="empty">Nothing to show yet.</li>'; return; }
+  for (const it of items) {
+    const li = document.createElement('li');
+    li.className = 'hbar';
+    if (it.status) li.dataset.s = it.status;
+    li.innerHTML = '<span class="lab"></span><span class="track"><span class="fill"></span></span><span class="val"></span>';
+    if (it.status) li.querySelector('.lab').innerHTML = pillHtml(it.status); else li.querySelector('.lab').textContent = it.label;
+    li.querySelector('.fill').style.width = (it.value > 0 ? Math.max(2, it.value / m * 100) : 0) + '%';
+    li.querySelector('.val').textContent = it.text ?? fmt(it.value);
+    li.title = it.tip || `${it.label}: ${li.querySelector('.val').textContent}`;
+    if (it.drill && it.drill.items.length) makeDrill(li, it.drill, el.id + ':' + it.label);
+    el.appendChild(li);
+  }
+}
+const groupBy = (items, keyFn) => { const m = new Map(); for (const it of items) { const k = keyFn(it); if (k == null || k === '') continue; if (!m.has(k)) m.set(k, []); m.get(k).push(it); } return m; };
+const avgText = shows => { const a = avgRating(shows); return a == null ? 'avg –' : `avg ${one(a)}`; };
+
+/* episodes per month, last 12 months. The chart colours come from the theme tokens (chartBase), so it is redrawn when the theme moves */
+let monthChart, monthSpec = null;
+function renderMonthChart() {
+  if (monthChart) { monthChart.destroy(); monthChart = null; }
+  if (!window.Chart || !monthSpec) return;
+  chartBase();
+  const { labels, data, keys, cur } = monthSpec, cv = $('monthChart');
+  cv.setAttribute('role', 'img'); cv.tabIndex = -1; cv.dataset.fk = 'month-chart';
+  cv.setAttribute('aria-label', 'Episodes watched per month: ' + labels.map((l, i) => `${l} ${data[i]}`).join(', '));
+  const accent = css('--accent'), accent2 = css('--accent-2');
+  monthChart = new Chart(cv, {
+    type: 'bar',
+    data: { labels, datasets: [{ label: 'Episodes', data, backgroundColor: data.map((_, i) => i === cur ? accent2 : accent), borderRadius: 4, barPercentage: .6, maxBarThickness: 28 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false, animation: false,
+      interaction: { mode: 'index', intersect: false },
+      onClick: (e, _els, chart) => { const els = chart.getElementsAtEventForMode(e, 'index', { intersect: false }, true); if (els.length && data[els[0].index]) openDrill(monthDrill(els[0].index), cv); },
+      onHover: (e, els) => { if (e.native && e.native.target) e.native.target.style.cursor = els.length && data[els[0].index] ? 'pointer' : 'default'; },
+      plugins: {
+        legend: { display: false },
+        tooltip: { displayColors: false, callbacks: { title: it => monthSpec.titles[it[0].dataIndex], label: c => `${plural(c.raw, 'episode')}${c.raw ? ' · click to see them' : ''}` } }
+      },
+      scales: { x: { grid: { display: false }, ticks: { color: css('--muted') } }, y: { beginAtZero: true, grid: { color: css('--line') }, ticks: { maxTicksLimit: 5, precision: 0, color: css('--muted') } } }
+    }
+  });
+}
+function monthDrill(i) {
+  const k = monthSpec.keys[i], rows = state.entries.filter(e => e.date.startsWith(k));
+  return { title: monthSpec.titles[i], episodes: monthSpec.data[i], items: episodeItems(rows, true) };
+}
+
+function renderHeat(t, totals) {
+  const box = $('heat');
+  box.textContent = '';
+  const start = addDays(weekStart(t), -52 * 7);   // 53 Monday-first weeks ending this week
+  const frag = document.createDocumentFragment();
+  let lastMonth = -1, cells = 0, active = 0;
+  for (let d = start, i = 0; d <= t; d = addDays(d, 1), i++) {
+    const col = Math.floor(i / 7), row = i % 7, m = Number(d.slice(5, 7)) - 1;
+    if (row === 0 && m !== lastMonth) {   // month name above the column whose Monday starts a new month (not the first if it would crowd the next)
+      if (!(col === 0 && Number(d.slice(8)) > 21)) { const s = document.createElement('span'); s.className = 'm'; s.style.gridColumn = String(col + 1); s.textContent = MONTHS[m]; frag.appendChild(s); }
+      lastMonth = m;
+    }
+    const n = totals.get(d) || 0;
+    const c = document.createElement(n ? 'button' : 'i');
+    c.className = 'c hc' + (d === t ? ' today' : '');
+    if (n) { c.type = 'button'; active++; }
+    c.style.gridRow = String(row + 2); c.style.gridColumn = String(col + 1);
+    c.dataset.d = d; c.dataset.n = String(n >= 4 ? 3 : n >= 2 ? 2 : n);
+    const label = `${DOW[row]} ${fmtDate(d)}`;
+    c.title = n ? `${label}: ${plural(n, 'episode')}` : `${label}: no episodes`;
+    if (n) {
+      c.setAttribute('aria-label', c.title);
+      makeDrill(c, { title: label, episodes: n, items: episodeItems(state.entries.filter(e => e.date === d), false) }, 'day:' + d);
+      c.setAttribute('aria-label', c.title);
+    } else if (d === t) c.setAttribute('aria-label', c.title);
+    frag.appendChild(c);
+    cells++;
+  }
+  box.appendChild(frag);
+  return { cells, active, start };
+}
+
+function renderDashboard() {
+  const act = document.activeElement;
+  const fk = act && act.dataset && act.dataset.fk && $('view-dashboard').contains(act) ? act.dataset.fk : null;
+  const t = today(), yr = t.slice(0, 4), shows = state.shows, loaded = state.live;
+  const hasLog = state.entries.length > 0;
+
+  // tiles
+  const watched = shows.filter(s => s.status === 'Watched' || s.status === 'Rewatch');
+  const rated = shows.filter(s => ratingOf(s) != null);
+  const tens = shows.filter(s => ratingOf(s) === 10);
+  const watching = shows.filter(s => s.status === 'Watching');
+  const backlog = shows.filter(s => BACKLOG.includes(s.status));
+  const yrRows = state.entries.filter(e => e.date.startsWith(yr));
+  const yrEps = yrRows.reduce((a, e) => a + e.eps, 0);
+  const avg = avgRating(rated);
+  const tiles = [
+    ['Shows watched', loaded ? fmt(watched.length) : '–', 'Watched and Rewatch', { title: 'Shows watched', items: showItems(watched) }],
+    ['Average rating', avg != null ? one(avg) : '–', `${fmt(rated.length)} rated shows`, { title: 'Rated shows', items: showItems(rated) }],
+    ['10/10 shows', loaded ? fmt(tens.length) : '–', 'rated a perfect 10', { title: 'Rated 10/10', items: showItems(tens) }],
+    ['Episodes this year', hasLog ? fmt(yrEps) : '–', hasLog ? `logged in ${yr}` : LOG_EMPTY, hasLog ? { title: `Episodes in ${yr}`, episodes: yrEps, items: episodeItems(yrRows, true) } : null],
+    ['Watching now', loaded ? fmt(watching.length) : '–', watching.length === 1 ? 'show in progress' : 'shows in progress', { title: 'Watching now', items: showItems(watching) }],
+    ['Backlog', loaded ? fmt(backlog.length) : '–', 'Watchlist, Next Up, New Season, Rewatch, Paused', { title: 'Backlog', items: showItems(backlog) }]
+  ];
+  const tb = $('dashTiles'); tb.textContent = '';
+  for (const [label, value, sub, drill] of tiles) {
+    const d = document.createElement('div');
+    d.className = 'stat';
+    d.innerHTML = '<span class="eyebrow"></span><span class="num tnum"></span><span class="sub"></span>';
+    d.children[0].textContent = label; d.children[0].title = label; d.children[1].textContent = value; d.children[2].textContent = sub;
+    if (drill && drill.items.length) makeDrill(d, drill, 'tile:' + label);
+    tb.appendChild(d);
+  }
+
+  // episodes per month (last 12 months) + calendar: both come from 📺 Log
+  const totals = dailyTotals();
+  $('monthMsg').hidden = hasLog; $('monthMsg').textContent = LOG_EMPTY;
+  $('monthBox').hidden = !hasLog || !window.Chart;
+  $('monthBars').hidden = true;
+  $('calMsg').hidden = hasLog; $('calMsg').textContent = LOG_EMPTY;
+  $('heatBox').hidden = !hasLog;
+  if (monthChart) { monthChart.destroy(); monthChart = null; }
+  monthSpec = null;
+  if (hasLog) {
+    const cm = Number(t.slice(5, 7)) - 1, cy = Number(yr), keys = [], labels = [], titles = [];
+    for (let i = 11; i >= 0; i--) {
+      const mi = cm - i, y = cy + Math.floor(mi / 12), m = ((mi % 12) + 12) % 12;
+      keys.push(`${y}-${pad(m + 1)}`); labels.push(MONTHS[m]); titles.push(`${FULL_MONTHS[m]} ${y}`);
+    }
+    const data = keys.map(k => state.entries.reduce((a, e) => a + (e.date.startsWith(k) ? e.eps : 0), 0));
+    monthSpec = { keys, labels, titles, data, cur: 11 };
+    $('monthNote').textContent = `${fmt(data.reduce((a, b) => a + b, 0))} in 12 months`;
+    if (window.Chart) renderMonthChart();
+    else { $('monthBars').hidden = false; hbars($('monthBars'), keys.map((k, i) => ({ label: labels[i], value: data[i], tip: titles[i] + ': ' + plural(data[i], 'episode'), drill: monthDrill(i) }))); }
+    const h = renderHeat(t, totals);
+    $('calNote').textContent = `${fmt(h.active)} day${h.active === 1 ? '' : 's'} with an episode`;
+    const sc = $('heatScroll'); sc.scrollLeft = sc.scrollWidth;
+  } else {
+    $('monthNote').textContent = ''; $('calNote').textContent = ''; $('heat').textContent = '';
+  }
+
+  // binge vs weekly
+  const ws = hasLog ? watchStyles() : { shows: [], biggest: null };
+  const bySt = groupBy(ws.shows, x => x.style);
+  const bingeOk = ws.shows.length > 0;
+  $('bingeBars').hidden = !bingeOk; $('bingeKey').hidden = !bingeOk;
+  $('bingeMsg').hidden = bingeOk; $('bingeMsg').textContent = hasLog ? 'Needs a show logged on at least two different days.' : LOG_EMPTY;
+  $('bingeNote').textContent = bingeOk ? `${plural(ws.shows.length, 'show')} with 2+ days logged` : '';
+  hbars($('bingeBars'), bingeOk ? STYLES.map(([st, def]) => {
+    const a = bySt.get(st) || [];
+    return { label: st, value: a.length, text: fmt(a.length), tip: `${st}: ${def}`, drill: { title: `${st} shows`, sub: def,
+      items: a.map(x => showItem(x.show || { id: x.id, title: x.title, status: '' }, { big: one(x.avg) + ' eps/day', meta: `${plural(x.eps, 'episode')} over ${plural(x.days, 'day')}`, sort: x.avg })).sort((p, q) => q.sort - p.sort || p.title.localeCompare(q.title)) } };
+  }) : []);
+  $('bingeKey').textContent = STYLES.map(([st, def]) => `${st}: ${def}`).join('. ') + '.';
+  const bb = $('bingeBig');
+  bb.hidden = !(hasLog && ws.biggest);
+  if (ws.biggest) bb.textContent = ws.biggest.eps >= 2
+    ? `You binged ${ws.biggest.eps} episodes in your biggest day (${ws.biggest.title}, ${fmtDate(ws.biggest.date)}).`
+    : `Your biggest day so far is 1 episode (${ws.biggest.title}, ${fmtDate(ws.biggest.date)}).`;
+
+  // ratings 1-10 (all rated shows)
+  const bucket = r => Math.min(10, Math.max(1, Math.round(r)));
+  const rb = groupBy(rated, s => bucket(ratingOf(s)));
+  hbars($('ratBars'), rated.length ? [10, 9, 8, 7, 6, 5, 4, 3, 2, 1].map(r => { const a = rb.get(r) || []; return { label: String(r), value: a.length, tip: `Rated ${r}: ${plural(a.length, 'show')}`, drill: { title: `Rated ${r}`, items: showItems(a) } }; }) : []);
+  $('ratNote').textContent = rated.length ? `${fmt(rated.length)} rated · average ${one(avg)}` : '';
+
+  // genres
+  const gm = groupBy(shows, s => lc(s.genre));
+  const gAll = [...gm.values()].map(a => ({ name: a[0].genre.trim(), a })).sort((x, y) => y.a.length - x.a.length || (avgRating(y.a) ?? 0) - (avgRating(x.a) ?? 0) || x.name.localeCompare(y.name));
+  const GMAX = 15, gItems = gAll.slice(0, GMAX);
+  hbars($('genBars'), gItems.map(g => ({ label: g.name, value: g.a.length, text: `${fmt(g.a.length)} · ${avgText(g.a)}`, tip: `${g.name}: ${plural(g.a.length, 'show')}, ${avgText(g.a)}`, drill: { title: g.name, items: showItems(g.a) } })));
+  const gHave = gAll.reduce((n, g) => n + g.a.length, 0);
+  $('genNote').textContent = gAll.length > GMAX ? `Top ${GMAX} of ${gAll.length} genres` : (gHave < shows.length ? `${fmt(shows.length - gHave)} without a genre` : 'Shows · average rating');
+
+  // library by status (the sheet's fixed chip colours)
+  const sm = groupBy(shows, s => s.status);
+  const stNames = [...STATUSES, ...[...sm.keys()].filter(k => !STATUSES.includes(k))];
+  hbars($('stBars'), shows.length ? stNames.map(st => { const a = sm.get(st) || []; return { label: st, status: st, value: a.length, tip: `${st}: ${plural(a.length, 'show')}`, drill: { title: st, items: showItems(a) } }; }) : []);
+  $('stNote').textContent = shows.length ? plural(shows.length, 'show') : '';
+
+  // platform and how to watch
+  const split = (barsId, noteId, key, order, noun) => {
+    const m = groupBy(shows, s => lc(s[key]));
+    const items = [...m.values()].map(a => ({ name: a[0][key].trim(), a }));
+    const pos = n => { const i = order.findIndex(o => lc(o) === lc(n)); return i < 0 ? 999 : i; };
+    items.sort((x, y) => y.a.length - x.a.length || pos(x.name) - pos(y.name) || x.name.localeCompare(y.name));
+    const have = items.reduce((n, g) => n + g.a.length, 0), pct = n => have ? Math.round(n / have * 100) : 0;
+    hbars($(barsId), items.map(g => ({ label: g.name, value: g.a.length, text: `${fmt(g.a.length)} · ${pct(g.a.length)}%`, tip: `${g.name}: ${plural(g.a.length, 'show')} (${pct(g.a.length)}%)`, drill: { title: `${noun}: ${g.name}`, items: showItems(g.a) } })));
+    $(noteId).textContent = have < shows.length ? `${fmt(shows.length - have)} not filled in` : plural(shows.length, 'show');
+  };
+  split('platBars', 'platNote', 'platform', OPTS.platform, 'Platform');
+  split('howBars', 'howNote', 'howToWatch', OPTS.howToWatch, 'How to watch');
+
+  // top actors
+  const am = new Map();
+  for (const s of shows) for (const n of actorNames(s.starring)) { const k = lc(n); if (!am.has(k)) am.set(k, { name: n, a: [] }); am.get(k).a.push(s); }
+  const top = [...am.values()].map(x => ({ ...x, r: avgRating(x.a) })).sort((x, y) => y.a.length - x.a.length || (y.r ?? 0) - (x.r ?? 0) || x.name.localeCompare(y.name)).slice(0, 12);
+  const al = $('actList'); al.textContent = '';
+  if (!top.length) al.innerHTML = '<li class="empty">Nothing to show yet.</li>';
+  for (const x of top) {
+    const li = document.createElement('li');
+    li.innerHTML = '<span></span><span class="r"></span>';
+    li.firstChild.textContent = x.name;
+    li.lastChild.textContent = `${plural(x.a.length, 'show')} · ${x.r == null ? 'avg –' : 'avg ' + one(x.r)}`;
+    li.title = `${x.name}: ${li.lastChild.textContent}`;
+    makeDrill(li, { title: `Starring ${x.name}`, items: showItems(x.a) }, 'actor:' + x.name);
+    al.appendChild(li);
+  }
+  $('actNote').textContent = top.length ? 'Most shows, from Starring' : '';
+
+  // decades
+  const dm = groupBy(shows.filter(s => { const y = toNum(s.year); return y >= 1900 && y < 2100; }), s => Math.floor(toNum(s.year) / 10) * 10);
+  hbars($('decBars'), [...dm.entries()].sort((a, b) => b[0] - a[0]).map(([k, a]) => ({ label: k + 's', value: a.length, text: `${fmt(a.length)} · ${avgText(a)}`, tip: `${k}s: ${plural(a.length, 'show')}, ${avgText(a)}`, drill: { title: `${k}s`, items: showItems(a) } })));
+  $('decNote').textContent = dm.size ? 'Shows · average rating' : '';
+
+  if (fk) { const el = [...document.querySelectorAll('[data-fk]')].find(e => e.dataset.fk === fk); if (el) el.focus({ preventScroll: true }); }
+}
+
 /* ---------- wiring ---------- */
 function showTab(name) {
   if (!TABS.includes(name)) name = 'log';
@@ -1780,6 +2231,7 @@ function showTab(name) {
   }
   if (name === 'library') renderLibrary();
   if (name === 'plan') renderPlan();
+  if (name === 'dashboard') renderDashboard();
   if (name === 'log') { chartBase(); renderWeekly(dailyTotals()); }
   try { localStorage.setItem(TAB_KEY, name); } catch (e) {}
 }

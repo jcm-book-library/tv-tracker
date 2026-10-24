@@ -27,6 +27,13 @@ See `CLAUDE.md` for the data model and sheet rules.
 - Fix: the first rows written to an empty tab took the header's formatting, so dates read back as serial numbers.
   The app now writes the first log rows directly into row 2 and reads serial dates correctly.
 
+## Stage 4 (2026-10-24): Dashboard
+- Dashboard tab (read-only, never writes to the sheet): six tiles, episodes per month (last 12), a 53-week calendar, binge or weekly per show,
+  ratings, genres, library by status, platforms, how to watch, top actors and decades. Every tile, bar, row and calendar day opens a list;
+  tapping a show in it opens the Library edit dialog.
+- Log-based panels show "Fills in as you log episodes on the Log tab." until the log has rows. Dashboard tests: `node tests/dashboard.mjs`
+  (own fixture `tests/dash-fixture.json`); `node tests/smoke.mjs` still covers the rest.
+
 ## Themes
 The app wears one show's look for the whole month (no drift): Jan Breaking Bad / Better Call Saul, Feb Deadwood, Mar Mr Inbetween,
 Apr Chernobyl, May Hannibal, Jun Ripley, Jul The Sopranos, Aug Succession, Sep Fleabag, Oct Arcane, Nov Mad Men, Dec Blackadder the Third.
