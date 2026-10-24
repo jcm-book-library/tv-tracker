@@ -173,6 +173,45 @@ dialog::backdrop{background:rgba(8,6,14,.65)}
 .field textarea{min-height:84px;resize:vertical}
 .sec-label{grid-column:1/-1;font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--accent);font-weight:700;margin-top:6px}
 
+/* plan */
+.plan-cols{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;align-items:start}
+.plan-col{min-width:0;display:flex;flex-direction:column;gap:20px}
+.plan-col > .panel{margin:0}
+@media (min-width:900px){.plan-cols{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+.plan-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.plan-list li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 10px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.plan-list li:first-child{border-top:0}
+.plan-list li.empty{display:block}
+.plan-list .n{font-family:var(--display);font-weight:700;color:var(--accent);min-width:1.4em;text-align:right}
+.plan-list .main{display:flex;flex-direction:column;gap:2px;min-width:0}
+.plan-list .t{font-weight:600;overflow-wrap:anywhere}
+.plan-list .m{font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:2px 8px;align-items:center}
+.plan-list .why{grid-column:2/-1;font-size:12px;color:var(--fg);opacity:.85;font-style:italic;overflow-wrap:anywhere}
+.plan-list .why:empty{display:none}
+.plan-list .hint{font-size:11px;font-weight:600;color:var(--accent-2)}
+.up-detail li{padding:14px 0;align-items:start}
+.up-detail .n{font-size:24px;line-height:1.1}
+.up-detail .t{font-family:var(--display);font-size:18px}
+.plan-list .acts{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.plan-list .acts button{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:999px;padding:4px 10px;min-height:30px;cursor:pointer;white-space:nowrap}
+.plan-list .acts button:hover{color:var(--fg);border-color:var(--accent)}
+.plan-list .acts button.go{background:color-mix(in srgb,var(--accent) 24%,var(--surface));border-color:var(--accent);color:var(--fg)}
+.plan-list .acts button:disabled{opacity:.35;cursor:default}
+.plan-list .whyedit{grid-column:2/-1;display:flex;gap:6px}
+.plan-list .whyedit input,.deck-why{font:inherit;font-size:13px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:6px 9px;min-width:0}
+.plan-list .whyedit input{flex:1}
+.sheet-list li.someday .t{color:var(--muted);font-weight:500}
+.warn{margin:-4px 0 10px;font-size:13px;color:var(--accent-2)}
+.deck-card{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+.deck-card h3{font-family:var(--display);font-size:22px;margin:0;overflow-wrap:anywhere}
+.deck-card .chips{margin:10px 0 0}
+.deck-card .why-chip{font-size:12px;padding:2px 9px;border-radius:999px;background:var(--raise);color:var(--fg)}
+.deck-why{width:100%;margin-top:10px}
+.deck-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.deck-btns .btn{padding:10px 12px}
+.deck-btns kbd{font:inherit;font-size:11px;opacity:.6;margin-left:6px}
+@media (max-width:560px){.plan-list li{grid-template-columns:auto minmax(0,1fr)}.plan-list .acts{grid-column:2;justify-content:flex-start}.deck-kbd{display:none}.deck-btns kbd{display:none}}
+
 @media (max-width:899px){
   .grid{grid-template-columns:minmax(0,1fr)}
   .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -210,7 +249,8 @@ dialog::backdrop{background:rgba(8,6,14,.65)}
   <nav class="tabs" role="tablist" aria-label="Sections">
     <button class="tab" role="tab" id="tab-log" aria-selected="true" aria-controls="view-log" type="button">Log</button>
     <button class="tab" role="tab" id="tab-library" aria-selected="false" aria-controls="view-library" type="button">Library</button>
-    <!-- Later tabs slot in here: Plan, Dashboard, Tools, Discover (add a button + a #view-<name> panel, then add the name to TABS) -->
+    <button class="tab" role="tab" id="tab-plan" aria-selected="false" aria-controls="view-plan" type="button">Plan</button>
+    <!-- Later tabs slot in here: Dashboard, Tools, Discover (add a button + a #view-<name> panel, then add the name to TABS) -->
   </nav>
 
   <div id="view-log" role="tabpanel" aria-labelledby="tab-log">
@@ -290,6 +330,28 @@ dialog::backdrop{background:rgba(8,6,14,.65)}
     </div>
     <div class="lib-foot"><span><span id="libCount"></span> <button class="btn" id="libSheetOrder" type="button" hidden>Back to sheet order</button></span><button class="btn" id="libMore" type="button" hidden>Show 100 more</button></div>
   </div>
+
+  <div id="view-plan" role="tabpanel" aria-labelledby="tab-plan" hidden>
+    <div class="plan-cols">
+      <div class="plan-col">
+        <section class="panel" aria-labelledby="upH"><div class="panel-head"><h2 id="upH">Up next</h2><span class="muted small tnum" id="upNote"></span></div><p class="warn" id="upWarn" hidden></p><ol class="plan-list up-detail" id="upList"></ol></section>
+        <section class="panel" aria-labelledby="deckH" id="deckPanel">
+          <div class="panel-head"><h2 id="deckH">Sort deck</h2><span class="muted small tnum" id="deckNote"></span></div>
+          <div id="deckBody"></div>
+        </section>
+      </div>
+      <div class="plan-col">
+        <section class="panel" aria-labelledby="soonH"><div class="panel-head"><h2 id="soonH">Soon</h2><span class="muted small tnum" id="soonNote"></span></div><ol class="plan-list" id="soonList"></ol></section>
+        <section class="panel" aria-labelledby="cslH"><div class="panel-head"><h2 id="cslH">Not out yet</h2><span class="muted small tnum" id="cslNote"></span></div><ol class="plan-list" id="cslList"></ol></section>
+        <section class="panel" aria-labelledby="sheetH">
+          <div class="panel-head"><h2 id="sheetH">Backlog, in sheet order</h2><span class="muted small tnum" id="sheetNote"></span></div>
+          <p class="muted small" style="margin:-4px 0 10px">Watchlist, Next Up, New Season, Rewatch and Paused shows that aren't in Up next or Soon.</p>
+          <ol class="plan-list sheet-list" id="sheetList"></ol>
+          <button class="btn" type="button" id="sheetMore" hidden style="margin-top:8px">Show 50 more</button>
+        </section>
+      </div>
+    </div>
+  </div>
 </div>
 
 <dialog id="gDlg" aria-labelledby="gTitle" style="width:min(520px,calc(100vw - 32px))">
@@ -315,7 +377,7 @@ dialog::backdrop{background:rgba(8,6,14,.65)}
 const SHEET_ID = '1558jWeUc8gCzQuph6wOVyOocvTBhQf22UuCSXza8klc';
 const SERVER = 'Google Sheets';
 const T_SHOWS = "'📺'", T_LOG = "'📺 Log'", T_SEASONS = "'📺 Seasons'", T_SETTINGS = "'📺 Settings'";
-const TABS = ['log', 'library'];   // later: 'plan', 'dashboard', 'tools', 'discover'
+const TABS = ['log', 'library', 'plan'];   // later: 'dashboard', 'tools', 'discover'
 const TAB_KEY = 'tv-tab';
 
 /* ---------- dates (local time) ---------- */
@@ -327,8 +389,16 @@ const daysBetween = (a, b) => Math.round((fromIso(b) - fromIso(a)) / 864e5);
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const fmt = n => Number(n).toLocaleString('en-AU');
 const today = () => iso(new Date());
+// Dates are stored as yyyy-mm-dd and shown as "19 Oct 26"
+const fmtDate = v => { const m = String(v ?? '').match(/^(\d{4})-(\d{2})-(\d{2})/); return m ? `${Number(m[3])} ${MONTHS[Number(m[2]) - 1]} ${m[1].slice(2)}` : String(v ?? ''); };
 const toNum = v => { const n = parseFloat(String(v ?? '').replace(/,/g, '')); return Number.isFinite(n) ? n : 0; };
-const toDate = v => { const m = String(v ?? '').match(/^(\d{4})-(\d{2})-(\d{2})/); return m ? m[0] : null; };
+const toDate = v => {
+  const t = String(v ?? '').trim(), m = t.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (m) return m[0];
+  // A Sheets date serial (days since 1970-01-01 is serial - 25569), e.g. from an unformatted cell
+  if (/^\d{5}(\.\d+)?$/.test(t) && +t >= 20000 && +t <= 80000) return new Date(Math.floor(+t - 25569) * 864e5).toISOString().slice(0, 10);
+  return null;
+};
 const weekStart = d => addDays(d, -((fromIso(d).getDay() + 6) % 7)); // Monday-first
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const $ = id => document.getElementById(id);
@@ -382,6 +452,7 @@ const state = {
   shows: [],            // 📺 rows
   showHeader: [],       // raw header of 📺
   seasons: new Map(),   // "showId|season" -> episode count
+  premieres: new Map(), // showId -> sorted premiere dates (yyyy-mm-dd) from 📺 Seasons
   settings: { weeklyGoalEps: 7, streakMinEps: 1, appName: 'TV Tracker' },
   mcp: null, live: false, busy: false, logDate: null, editing: null, more: null, logN: 2,
   pickAll: false, lib: { q: '', status: 'All', sort: 'sheet', dir: 1, limit: 100, open: null }
@@ -394,7 +465,7 @@ const SHOW_KEYS = { title: 'title', rating: 'rating', status: 'status', howtowat
 const normH = h => String(h ?? '').replace(/\(.*?\)/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
 const keyOfHeader = h => SHOW_KEYS[normH(h)] || null;
 const NUM_FIELDS = ['rating', 'year', 'totalSeasons', 'totalEps', 'season', 'episode', 'upNext'];
-const DATE_FIELDS = ['started', 'finished'];
+const DATE_FIELDS = ['started', 'finished', 'sorted'];
 const colLetter = i => { let s = ''; i++; while (i) { const r = (i - 1) % 26; s = String.fromCharCode(65 + r) + s; i = Math.floor((i - 1) / 26); } return s; };
 const showById = id => state.shows.find(s => s.id === String(id));
 
@@ -432,8 +503,7 @@ function progressOf(show) {
 
 /* ---------- rendering: stats ---------- */
 const logDay = () => state.logDate || today();
-const dayLabel = d => d === today() ? 'Today' : d === addDays(today(), -1) ? 'Yesterday'
-  : fromIso(d).toLocaleDateString('en-AU', daysBetween(d, today()) < 7 ? { weekday: 'short' } : { day: 'numeric', month: 'short' });
+const dayLabel = d => d === today() ? 'Today' : d === addDays(today(), -1) ? 'Yesterday' : fmtDate(d);
 
 function renderStats(totals) {
   const t = today(), goal = state.settings.weeklyGoalEps || 7;
@@ -452,7 +522,7 @@ function renderStats(totals) {
   const w = state.shows.filter(s => s.status === 'Watching').length;
   $('sWatching').textContent = state.live ? fmt(w) : '–';
   $('sWatchingSub').textContent = w === 1 ? 'show in progress' : 'shows in progress';
-  $('todayLabel').textContent = new Date().toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long' }) + ' · ' + SEASON[Number(t.slice(5, 7)) - 1];
+  $('todayLabel').textContent = new Date().toLocaleDateString('en-AU', { weekday: 'long' }) + ' · ' + fmtDate(t) + ' · ' + SEASON[Number(t.slice(5, 7)) - 1];
 }
 
 function setLogDay(d) {
@@ -463,7 +533,7 @@ function setLogDay(d) {
   $('logDate').value = state.logDate || '';
   const ban = $('logDayBanner');
   ban.hidden = !state.logDate;
-  if (state.logDate) ban.textContent = `Logging for ${fromIso(cur).toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long' })}. New episodes and finished shows go on that day.`;
+  if (state.logDate) ban.textContent = `Logging for ${fromIso(cur).toLocaleDateString('en-AU', { weekday: 'long' })} ${fmtDate(cur)}. New episodes and finished shows go on that day.`;
 }
 
 const emptyMsg = () => 'Open in Claude, or press Connect to sign in to Google.';
@@ -559,7 +629,7 @@ function entryEditor(e) {
       editEntry(e, { date: d, season: s, episode: n }, btn);
     }
     if (a === 'del') {
-      if (!confirm(`Delete ${e.title || 'this episode'} S${e.season} E${e.episode} from ${e.date}?`)) return;
+      if (!confirm(`Delete ${e.title || 'this episode'} S${e.season} E${e.episode} from ${fmtDate(e.date)}?`)) return;
       editEntry(e, { del: true }, btn);
     }
   });
@@ -659,14 +729,14 @@ function renderWeekly(totals) {
       plugins: {
         legend: { display: false },
         tooltip: { callbacks: {
-          title: items => 'Week of ' + fromIso(items[0].label).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }),
+          title: items => 'Week of ' + fmtDate(items[0].label),
           label: c => `${fmt(c.raw)} episode${c.raw === 1 ? '' : 's'}`
         } },
         goalLine: { value: goal, color: muted }
       },
       scales: {
         x: { grid: { display: false }, ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 6,
-          callback: function (v) { const d = fromIso(this.getLabelForValue(v)); return `${d.getDate()} ${MONTHS[d.getMonth()]}`; } } },
+          callback: function (v) { return fmtDate(this.getLabelForValue(v)); } } },
         y: { beginAtZero: true, grid: { color: css('--line') }, ticks: { maxTicksLimit: 5, precision: 0 } }
       }
     },
@@ -686,6 +756,7 @@ function renderAll() {
   chartBase();
   renderWeekly(totals);
   if (!$('view-library').hidden) renderLibrary();
+  if (!$('view-plan').hidden) renderPlan();
   $('wordmark').textContent = state.settings.appName || 'TV Tracker';
   document.title = state.settings.appName || 'TV Tracker';
 }
@@ -750,10 +821,12 @@ async function refresh() {
     state.editing = null;
     // 📺 Seasons
     const sh = (seasons[0] || []).map(h => String(h).trim()), si = k => sh.indexOf(k);
-    state.seasons = new Map();
+    state.seasons = new Map(); state.premieres = new Map();
     for (const r of seasons.slice(1)) {
       const id = String(r[si('showId')] ?? '').trim(), s = toNum(r[si('season')]), n = toNum(r[si('episodes')]);
       if (id && s && n) state.seasons.set(id + '|' + s, n);
+      const pr = toDate(r[si('premiere')]);
+      if (id && pr) state.premieres.set(id, [...(state.premieres.get(id) || []), pr].sort());
     }
     // 📺 Settings
     for (const r of settings.slice(1)) {
@@ -796,14 +869,14 @@ async function findShowRow(id) {
   if (hits.length !== 1) throw { code: 'tool_error', message: hits.length ? `ID ${id} appears ${hits.length} times in 📺` : `ID ${id} isn't in 📺 any more` };
   return { header, row: hits[0], ids };
 }
-async function writeShowFields(id, fields) {
+async function writeShowFields(id, fields, opts = {}) {
   const { header, row } = await findShowRow(id);
   for (const [k, v] of Object.entries(fields)) {
     const c = header.findIndex(h => keyOfHeader(h) === k);
     if (c < 0 || k === 'id') continue;
     await writeCell(`${T_SHOWS}!${colLetter(c)}${row}`, cellValue(k, v));
   }
-  const s = showById(id);
+  const s = opts.noLocal ? null : showById(id);
   if (s) Object.assign(s, Object.fromEntries(Object.entries(fields).map(([k, v]) => [k, String(v ?? '').trim()])));
 }
 async function addShow(fields) {
@@ -851,10 +924,19 @@ async function logEpisodes(show, n, btn) {
     for (let i = 0; i < n; i++) { p = nextPos(show, p); eps.push(p); }
     const day = logDay();
     const rows = eps.map(q => [day, Number(show.id), "'" + show.title, q.s, q.e, 1, loggedAt, "'app", '']);
-    const res = await state.mcp.callTool(SERVER, 'append_values', { spreadsheetId: SHEET_ID, range: `${T_LOG}!A1`, values: rows }, { cache: false });
-    const pl = (res && res.payload) || {};
-    const m = String((pl.updates && pl.updates.updatedRange) || pl.updatedRange || '').match(/![A-Z]+(\d+)/);
-    eps.forEach((q, i) => state.entries.push({ date: day, showId: show.id, title: show.title, season: q.s, episode: q.e, eps: 1, loggedAt, source: 'app', _row: m ? Number(m[1]) + i : null }));
+    // An append onto a header-only tab copies the header's formatting (dates come back as serials), so fill rows 2+ directly
+    const empty = (await readRange(`${T_LOG}!A1:A`)).length <= 1;
+    let first = null;
+    if (empty) {
+      await state.mcp.callTool(SERVER, 'update_values', { spreadsheetId: SHEET_ID, range: `${T_LOG}!A2:I${1 + rows.length}`, values: rows }, { cache: false });
+      first = 2;
+    } else {
+      const res = await state.mcp.callTool(SERVER, 'append_values', { spreadsheetId: SHEET_ID, range: `${T_LOG}!A1`, values: rows }, { cache: false });
+      const pl = (res && res.payload) || {};
+      const m = String((pl.updates && pl.updates.updatedRange) || pl.updatedRange || '').match(/![A-Z]+(\d+)/);
+      first = m ? Number(m[1]) : null;
+    }
+    eps.forEach((q, i) => state.entries.push({ date: day, showId: show.id, title: show.title, season: q.s, episode: q.e, eps: 1, loggedAt, source: 'app', _row: first ? first + i : null }));
     renderAll(); notice('');
     // Progress only ever moves forward, even when backdating
     const f = {};
@@ -969,9 +1051,9 @@ function detailRow(b) {
   td.colSpan = LIB_COLS.length;
   const p = b.season || b.episode ? `S${b.season || 1} · E${b.episode || 0}` : '';
   const kv = [['Genre', b.genre], ['Platform', b.platform], ['Year', b.year], ['How to watch', b.howToWatch], ['Starring', b.starring], ['Release date', b.releaseDate],
-    ['Seasons', b.totalSeasons], ['Episodes', b.totalEps], ['Progress', p], ['Started', b.started], ['Finished', b.finished],
+    ['Seasons', b.totalSeasons], ['Episodes', b.totalEps], ['Progress', p], ['Started', fmtDate(b.started)], ['Finished', fmtDate(b.finished)],
     ['Plan', b.plan ? b.plan + (b.plan === 'Up next' && b.upNext ? ' #' + b.upNext : '') : (b.upNext ? '#' + b.upNext : '')],
-    ['Why', b.why], ['Notes', b.notes], ['Sorted', b.sorted], ['ID', b.id]].filter(([, v]) => v);
+    ['Why', b.why], ['Notes', b.notes], ['Sorted', fmtDate(b.sorted)], ['ID', b.id]].filter(([, v]) => v);
   td.innerHTML = '<dl class="kv"></dl><div style="margin-top:12px"><button class="btn btn-primary" type="button" data-edit="' + esc(b.id) + '">Edit show</button></div>';
   const dl = td.querySelector('.kv');
   for (const [k, v] of kv) { const dt = document.createElement('dt'), dd = document.createElement('dd'); dt.textContent = k; dd.textContent = v; dl.append(dt, dd); }
@@ -986,7 +1068,7 @@ const FORM = [
   { k: 'starring', w: 'w2' }, { k: 'releaseDate', label: 'Release date' }, { k: 'plan', type: 'select' },
   { sec: 'Progress' }, { k: 'totalSeasons', type: 'number', label: 'Total seasons' }, { k: 'totalEps', type: 'number', label: 'Total episodes' },
   { k: 'season', type: 'number' }, { k: 'episode', type: 'number' },
-  { k: 'started', type: 'date' }, { k: 'finished', type: 'date' }, { k: 'upNext', type: 'number', label: 'Up next #' },
+  { k: 'started', type: 'date' }, { k: 'finished', type: 'date' }, { k: 'upNext', type: 'number', label: 'Up next #' }, { k: 'sorted', type: 'date' },
   { sec: 'Notes' }, { k: 'why', w: 'w4', label: 'Why it\'s on the list' }, { k: 'notes', type: 'textarea', w: 'w4' }
 ];
 let editing = null;
@@ -1053,6 +1135,256 @@ async function saveShowDialog(e) {
   } finally { state.busy = false; btn.disabled = false; btn.textContent = 'Save'; }
 }
 
+/* ---------- Plan: Up next / Soon / Someday ---------- */
+const PLAN_STATUSES = ['Watchlist', 'Next Up', 'New Season', 'Rewatch', 'Paused'];   // shows that can be planned
+const UP_TARGET = 10;
+const isPlannable = s => PLAN_STATUSES.includes(s.status);
+const plannedIn = tier => state.shows.filter(s => isPlannable(s) && s.plan === tier);
+const byNum = (a, b) => (toNum(a.upNext) || 9999) - (toNum(b.upNext) || 9999) || a._row - b._row;
+const upKept = () => plannedIn('Up next').sort(byNum);
+// Next Up shows with no Plan yet: listed at the end of Up next, but nothing is written until you press Keep
+const upFromStatus = () => state.shows.filter(s => s.status === 'Next Up' && !s.plan).sort(byNum);
+const upNext = () => [...upKept(), ...upFromStatus()];
+const soonList = () => plannedIn('Soon');
+const isStale = s => s.plan === 'Someday' && (!toDate(s.sorted) || daysBetween(toDate(s.sorted), today()) >= 365);
+const nextPremiere = id => (state.premieres.get(String(id)) || []).find(d => d >= today()) || '';
+
+// Plan writes go through a queue so taps feel instant; each one finds the row by id before writing
+const planQ = { chain: Promise.resolve(), pending: 0 };
+const sameField = (k, a, b) => {
+  a = String(a ?? '').trim(); b = String(b ?? '').trim();
+  if (NUM_FIELDS.includes(k)) return a === '' || b === '' ? a === b : toNum(a) === toNum(b);
+  if (DATE_FIELDS.includes(k)) return (toDate(a) || '') === (toDate(b) || '');
+  return a === b;
+};
+function planGuard() {
+  if (isLive()) return true;
+  notice('Planning needs the live connection. ' + connectHint(), 'error');
+  return false;
+}
+function savePlan(s, fields) {
+  const diff = {};
+  for (const [k, v] of Object.entries(fields)) if (!sameField(k, s[k], v)) diff[k] = v;   // changed cells only
+  if (!Object.keys(diff).length) return;
+  const prev = Object.fromEntries(Object.keys(diff).map(k => [k, s[k]]));
+  Object.assign(s, Object.fromEntries(Object.entries(diff).map(([k, v]) => [k, String(v ?? '').trim()])));
+  planQ.pending++; planStatus();
+  planQ.chain = planQ.chain.then(() => writeShowFields(s.id, diff, { noLocal: true })).catch(err => {
+    Object.assign(s, prev);
+    notice(`Couldn't save the plan change for “${s.title}”: ${(err && err.message) || explain(err)} Press Refresh to reload from the sheet.`, 'error');
+    renderAll();
+  }).finally(() => { planQ.pending--; planStatus(); });
+}
+function planStatus() { setStatus('live', planQ.pending ? `Saving plan… (${planQ.pending})` : 'Plan saved'); }
+const repaintPlan = () => { renderAll(); renderPlan(); };
+
+function setTier(s, tier, extra = {}) {
+  if (!planGuard()) return;
+  const wasUp = upNext().includes(s);
+  const f = { plan: tier, sorted: today(), ...extra };
+  if (tier === 'Up next') {
+    if (s.plan !== 'Up next') f.upNext = upKept().length + 1;
+    if (s.status === 'Watchlist') f.status = 'Next Up';
+  } else {
+    f.upNext = '';
+    if (wasUp && s.status === 'Next Up') f.status = 'Watchlist';
+  }
+  savePlan(s, f);
+  renumberUpNext();
+  repaintPlan();
+}
+// Take a show out of Up next without placing it anywhere
+function clearUp(s) {
+  if (!planGuard()) return;
+  const f = { plan: '', upNext: '' };
+  if (s.status === 'Next Up') f.status = 'Watchlist';
+  savePlan(s, f); renumberUpNext(); repaintPlan();
+}
+// Keep Up next numbered 1..n, writing only the shows whose number changed
+function renumberUpNext() {
+  upKept().forEach((s, i) => savePlan(s, { upNext: i + 1 }));
+}
+function moveUp(s, dir) {
+  if (!planGuard()) return;
+  const list = upKept(), i = list.indexOf(s), j = i + dir;
+  if (i < 0 || j < 0 || j >= list.length) return;
+  savePlan(list[j], { upNext: i + 1 }); savePlan(s, { upNext: j + 1 });
+  repaintPlan();
+}
+function startFromPlan(s) {
+  if (!planGuard()) return;
+  const f = { status: 'Watching', plan: '', upNext: '' };
+  if (!s.started) f.started = today();
+  if (s.season === '') f.season = 1;
+  if (s.episode === '') f.episode = 0;
+  savePlan(s, f); renumberUpNext(); repaintPlan();
+}
+
+const planUI = { limit: 50, whyOpen: null, deckDone: 0, deckSkipped: new Set() };
+function planRow(s, { num, kind, fromStatus }) {
+  const li = document.createElement('li');
+  li.dataset.id = s.id;
+  if (kind === 'sheet' && s.plan === 'Someday') li.className = 'someday';
+  li.innerHTML = '<span class="n tnum"></span><span class="main"><span class="t"></span><span class="m"></span></span><span class="acts"></span><span class="why"></span>';
+  li.querySelector('.n').textContent = fromStatus ? '' : (num ?? '');
+  li.querySelector('.t').textContent = s.title;
+  const m = li.querySelector('.m');
+  const bit = (text, cls) => { const x = document.createElement('span'); if (cls) x.className = cls; x.textContent = text; m.appendChild(x); return x; };
+  if (s.platform) bit(s.platform, 'pchip');
+  if (kind === 'up') {
+    if (s.howToWatch) bit(s.howToWatch);
+    if (s.season !== '') bit(`S${nextPos(s, curPos(s)).s} next`, 'tnum');
+    if (fromStatus) bit('from status', 'hint');
+  } else {
+    for (const v of [s.genre, s.year, s.howToWatch, s.status !== 'Watchlist' ? s.status : '', kind === 'sheet' && s.plan === 'Someday' ? 'Someday' : '']) if (v) bit(v);
+  }
+  li.querySelector('.why').textContent = s.why ? '“' + s.why + '”' : '';
+  const acts = li.querySelector('.acts');
+  const btn = (label, fn, opts = {}) => {
+    const x = document.createElement('button'); x.type = 'button'; x.textContent = label;
+    if (opts.aria) x.setAttribute('aria-label', opts.aria + ' ' + s.title);
+    if (opts.disabled) x.disabled = true;
+    if (opts.cls) x.className = opts.cls;
+    x.dataset.a = opts.a || label;
+    x.addEventListener('click', fn); acts.appendChild(x);
+  };
+  const whyBtn = () => btn('Why', () => { planUI.whyOpen = planUI.whyOpen === s.id ? null : s.id; renderPlan(); }, { aria: 'Edit why for' });
+  if (kind === 'up') {
+    if (fromStatus) btn('Keep', () => setTier(s, 'Up next'), { aria: 'Keep in Up next:', cls: 'go' });
+    else {
+      btn('↑', () => moveUp(s, -1), { aria: 'Move up', disabled: num === 1, a: 'up' });
+      btn('↓', () => moveUp(s, 1), { aria: 'Move down', disabled: num === upKept().length, a: 'down' });
+    }
+    whyBtn();
+    btn('Start watching', () => startFromPlan(s), { aria: 'Start watching', cls: 'go', a: 'start' });
+    btn('Soon', () => setTier(s, 'Soon'), { aria: 'Move to Soon:' });
+    btn('Remove', () => clearUp(s), { aria: 'Remove from Up next:', a: 'remove' });
+  } else if (kind === 'soon') {
+    btn('Up next', () => setTier(s, 'Up next'), { aria: 'Move to Up next:' });
+    whyBtn();
+    btn('Someday', () => setTier(s, 'Someday'), { aria: 'Move to Someday:' });
+  } else {
+    btn('Up next', () => setTier(s, 'Up next'), { aria: 'Add to Up next:' });
+    btn('Soon', () => setTier(s, 'Soon'), { aria: 'Add to Soon:' });
+  }
+  if (planUI.whyOpen === s.id) {
+    const w = document.createElement('div'); w.className = 'whyedit';
+    w.innerHTML = '<input type="text" maxlength="200" aria-label="Why it\'s on the list" placeholder="Why it\'s on the list"><button class="btn btn-primary" type="button">Save</button>';
+    const inp = w.querySelector('input'); inp.value = s.why || '';
+    const save = () => { const v = inp.value.trim(); planUI.whyOpen = null; if (planGuard()) savePlan(s, { why: v }); renderPlan(); };
+    w.querySelector('button').addEventListener('click', save);
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') save(); if (e.key === 'Escape') { planUI.whyOpen = null; renderPlan(); } });
+    li.appendChild(w);
+    setTimeout(() => inp.focus());
+  }
+  return li;
+}
+
+function renderPlan() {
+  const ids = ['upList', 'soonList', 'cslList', 'sheetList'];
+  if (!state.live) {
+    for (const id of ids) $(id).innerHTML = `<li class="empty muted">${esc(emptyMsg())}</li>`;
+    $('deckBody').innerHTML = `<p class="empty">${esc(emptyMsg())}</p>`;
+    for (const id of ['upNote', 'soonNote', 'cslNote', 'sheetNote', 'deckNote']) $(id).textContent = '';
+    $('upWarn').hidden = true; $('sheetMore').hidden = true;
+    return;
+  }
+  const kept = upKept(), ups = upNext(), soon = soonList();
+  $('upNote').textContent = `${ups.length} of ${UP_TARGET}`;
+  $('upWarn').hidden = ups.length <= UP_TARGET;
+  $('upWarn').textContent = `That's more than ${UP_TARGET}. It still works, but a shorter list is easier to choose from.`;
+  $('soonNote').textContent = `${soon.length} show${soon.length === 1 ? '' : 's'}`;
+  const fill = (el, list, empty, make) => {
+    el.textContent = '';
+    if (!list.length) { el.innerHTML = `<li class="empty muted">${empty}</li>`; return; }
+    list.forEach((s, i) => el.appendChild(make(s, i)));
+  };
+  fill($('upList'), ups, 'Pick up to 10 shows from Soon, the deck or the backlog.', (s, i) => planRow(s, { num: i + 1, kind: 'up', fromStatus: i >= kept.length }));
+  fill($('soonList'), soon, 'Nothing here yet.', s => planRow(s, { kind: 'soon' }));
+  // Coming Soon shows can't be planned yet: soonest premiere first, undated last
+  const cs = state.shows.filter(s => s.status === 'Coming Soon').map(s => ({ s, d: nextPremiere(s.id) }))
+    .sort((a, b) => (a.d && b.d ? (a.d < b.d ? -1 : a.d > b.d ? 1 : 0) : a.d ? -1 : b.d ? 1 : 0) || a.s._row - b.s._row);
+  $('cslNote').textContent = `${cs.length} show${cs.length === 1 ? '' : 's'}`;
+  fill($('cslList'), cs, 'Nothing is marked Coming Soon.', ({ s, d }) => {
+    const li = document.createElement('li');
+    li.dataset.id = s.id;
+    li.innerHTML = '<span class="n"></span><span class="main"><span class="t"></span><span class="m"></span></span>';
+    li.querySelector('.t').textContent = s.title;
+    const m = li.querySelector('.m');
+    for (const v of [s.platform, s.releaseDate, d ? 'Premieres ' + fmtDate(d) : '']) if (v) { const x = document.createElement('span'); x.textContent = v; m.appendChild(x); }
+    return li;
+  });
+  // Everything else plannable, in sheet order
+  const rest = state.shows.filter(s => isPlannable(s) && s.plan !== 'Up next' && s.plan !== 'Soon' && !upFromStatus().includes(s));
+  $('sheetNote').textContent = `${fmt(rest.length)} show${rest.length === 1 ? '' : 's'}`;
+  const sl = $('sheetList'); sl.textContent = '';
+  if (!rest.length) sl.innerHTML = '<li class="empty muted">Nothing left to plan.</li>';
+  for (const s of rest.slice(0, planUI.limit)) sl.appendChild(planRow(s, { kind: 'sheet' }));
+  $('sheetMore').hidden = rest.length <= planUI.limit;
+  renderDeck();
+}
+$('sheetMore').addEventListener('click', () => { planUI.limit += 50; renderPlan(); });
+
+/* Sort deck: unsorted shows (and Someday picks over a year old), most promising first */
+function planProfile() {
+  const rated = state.shows.filter(s => s.status === 'Watched' && toNum(s.rating) > 0);
+  const avg = rated.length ? rated.reduce((a, s) => a + toNum(s.rating), 0) / rated.length : 0;
+  const g = new Map();
+  for (const s of rated) { const x = g.get(s.genre) || { sum: 0, n: 0 }; x.sum += toNum(s.rating); x.n++; g.set(s.genre, x); }
+  return { avg, genreAvg: name => { const x = name && g.get(name); return x ? x.sum / x.n : null; } };
+}
+function scoreShow(s, P) {
+  const parts = [];   // { t: chip text, w: weight }
+  const add = (t, w) => parts.push({ t, w });
+  if (s.status === 'New Season') add('New season', 3);
+  else if (s.status === 'Next Up') add('Next up', 3);
+  else if (s.status === 'Rewatch') add('Rewatch', 1);
+  const r = toNum(s.rating);
+  if (r > 0) add(`Rated ${r}`, Math.min(10, r) / 10 * 3);
+  const ga = P.genreAvg(s.genre);
+  if (ga != null) add(`${s.genre}: you rate ${(Math.round(ga * 10) / 10).toString()}`, Math.max(-3, Math.min(3, ga - P.avg)) * 2 / 3);
+  if (['Owned', 'Subscription', 'Pirate'].includes(s.howToWatch)) add(s.howToWatch, 1);
+  else if (s.howToWatch === 'To Purchase') add('To purchase', -0.5);
+  const y = toNum(s.year);
+  if (y && y >= new Date().getFullYear() - 3) add(`Recent (${y})`, 1);
+  const score = parts.reduce((a, p) => a + p.w, 0);
+  return { s, score, why: parts.filter(p => p.w > 0.2).sort((a, b) => b.w - a.w).slice(0, 4).map(p => p.t) };
+}
+function deckQueue() {
+  const P = planProfile(), fromStatus = new Set(upFromStatus());
+  return state.shows.filter(s => isPlannable(s) && !fromStatus.has(s) && (!s.plan || isStale(s)) && !planUI.deckSkipped.has(s.id))
+    .map(s => scoreShow(s, P)).sort((a, b) => b.score - a.score || a.s._row - b.s._row);
+}
+function renderDeck() {
+  const q = deckQueue(), box = $('deckBody');
+  $('deckNote').textContent = `${fmt(q.length)} to sort${planUI.deckDone ? ` · ${planUI.deckDone} sorted this visit` : ''}`;
+  if (!q.length) { box.innerHTML = '<p class="empty">All sorted. Shows you put in Someday come back here after a year.</p>'; return; }
+  const { s, why } = q[0];
+  box.innerHTML = `<div class="deck-card" data-id="${esc(s.id)}"><div><h3></h3><div class="m muted small"></div><div class="chips"></div><input class="deck-why" type="text" maxlength="200" aria-label="Why (optional)" placeholder="Why (optional)"></div>
+    <div class="deck-btns"><button class="btn btn-primary" type="button" data-t="Up next">Up next<kbd>1</kbd></button><button class="btn" type="button" data-t="Soon">Soon<kbd>2</kbd></button>
+    <button class="btn" type="button" data-t="Someday">Someday<kbd>3</kbd></button><button class="btn" type="button" data-t="">Skip<kbd>4</kbd></button></div></div>`;
+  box.querySelector('h3').textContent = s.title;
+  box.querySelector('.m').textContent = [s.genre, s.platform, s.howToWatch, s.year, s.status !== 'Watchlist' ? s.status : '', isStale(s) ? 'Someday for over a year' : ''].filter(Boolean).join(' · ');
+  const ch = box.querySelector('.chips');
+  for (const t of why) { const c = document.createElement('span'); c.className = 'why-chip'; c.textContent = t; ch.appendChild(c); }
+  if (!why.length) ch.remove();
+  const wi = box.querySelector('.deck-why'); wi.value = s.why || '';
+  box.querySelectorAll('.deck-btns button').forEach(x => x.addEventListener('click', () => deckPick(s, x.dataset.t, wi.value.trim())));
+}
+function deckPick(s, tier, why) {
+  if (tier) {
+    if (!planGuard()) return;
+    setTier(s, tier, why !== (s.why || '') ? { why } : {}); planUI.deckDone++; renderPlan();
+  } else { planUI.deckSkipped.add(s.id); renderDeck(); }   // Skip writes nothing
+}
+document.addEventListener('keydown', e => {
+  if ($('view-plan').hidden || /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName) || document.querySelector('dialog[open]')) return;
+  const i = ['1', '2', '3', '4'].indexOf(e.key);
+  if (i < 0) return;
+  const b = document.querySelectorAll('#deckBody .deck-btns button')[i];
+  if (b) { e.preventDefault(); b.click(); }
+});
+
 /* ---------- wiring ---------- */
 function showTab(name) {
   if (!TABS.includes(name)) name = 'log';
@@ -1062,6 +1394,7 @@ function showTab(name) {
     if (view) view.hidden = t !== name;
   }
   if (name === 'library') renderLibrary();
+  if (name === 'plan') renderPlan();
   if (name === 'log') { chartBase(); renderWeekly(dailyTotals()); }
   try { localStorage.setItem(TAB_KEY, name); } catch (e) {}
 }
