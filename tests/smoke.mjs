@@ -93,8 +93,9 @@ function check(name, ok, detail) {
 const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium', args: ['--no-sandbox'] });
 const CHART_STUB = 'window.__charts=[];window.Chart=class{constructor(el,cfg){this.cfg=cfg;window.__charts.push(cfg)}destroy(){}};Chart.defaults={font:{},color:"",borderColor:""};';
 
-async function open(viewport, label) {
+async function open(viewport, label, prep) {
   const sheet = new FakeSheet();
+  if (prep) prep(sheet);
   const ctx = await browser.newContext({ viewport, deviceScaleFactor: 1 });
   const page = await ctx.newPage();
   const errors = [];
@@ -137,7 +138,7 @@ for (const [label, vp] of [['390', { width: 390, height: 844 }], ['1280', { widt
   await page.screenshot({ path: `${SHOTS}/log-more-${label}.png`, fullPage: true });
   check(`[${label}] Log with More panel open has no horizontal scroll`, await noHScroll(page));
   await page.click('#tab-library');
-  check(`[${label}] Library renders all 12 shows`, await page.evaluate(() => document.querySelectorAll('#libBody tr.row').length === 12));
+  check(`[${label}] Library renders all 24 shows`, await page.evaluate(() => document.querySelectorAll("#libBody tr.row").length === 24));
   check(`[${label}] Library has no horizontal scroll`, await noHScroll(page));
   await page.click('#libBody tr.row >> nth=0');
   await page.screenshot({ path: `${SHOTS}/library-${label}.png`, fullPage: true });
@@ -145,6 +146,16 @@ for (const [label, vp] of [['390', { width: 390, height: 844 }], ['1280', { widt
   await page.click('[data-edit]');
   await page.screenshot({ path: `${SHOTS}/dialog-${label}.png` });
   check(`[${label}] Edit dialog has no horizontal scroll`, await noHScroll(page));
+  await page.keyboard.press('Escape');
+  await page.click('#tab-plan');
+  check(`[${label}] Plan renders (5 in Up next, 3 Coming Soon, deck card)`, await page.evaluate(() =>
+    document.querySelectorAll('#upList li').length === 5 && document.querySelectorAll('#cslList li').length === 3 && !!document.querySelector('#deckBody .deck-card') && document.getElementById('upNote').textContent === '5 of 10'));
+  check(`[${label}] Plan has no horizontal scroll`, await noHScroll(page));
+  check(`[${label}] Plan acts fit inside the viewport`, await page.evaluate(() => [...document.querySelectorAll('#view-plan button, #view-plan li')].every(e => { const r = e.getBoundingClientRect(); return r.width === 0 || (r.left >= -1 && r.right <= window.innerWidth + 1); })));
+  const cols = await page.evaluate(() => { const a = document.getElementById('upH').closest('.panel').getBoundingClientRect(), b = document.getElementById('soonH').closest('.panel').getBoundingClientRect(), d = document.getElementById('deckH').closest('.panel').getBoundingClientRect(); return { sideBySide: b.left > a.left + 100, deckUnderUp: d.left === a.left && d.top > a.top }; });
+  check(`[${label}] Plan layout: ${label === '1280' ? 'two columns (Up next + deck | Soon + backlog)' : 'single column'}`, label === '1280' ? cols.sideBySide && cols.deckUnderUp : !cols.sideBySide, cols);
+  check(`[${label}] dates render as "d Mon yy"`, await page.evaluate(() => { const re = /^\d{1,2} [A-Z][a-z]{2} \d{2}$/; const prem = [...document.querySelectorAll('#cslList .m span')].map(x => x.textContent).filter(x => x.startsWith('Premieres ')).map(x => x.slice(10)); const rec = [...document.querySelectorAll('#recentList .m')].map(x => x.textContent.split(' · ').pop()).filter(x => !['Today', 'Yesterday'].includes(x)); return prem.length === 2 && prem.every(x => re.test(x)) && rec.length > 0 && rec.every(x => re.test(x)) && re.test(fmtDate('2026-10-19')) && fmtDate('2026-10-19') === '19 Oct 26'; }));
+  await page.screenshot({ path: `${SHOTS}/plan-${label}.png`, fullPage: true });
   check(`[${label}] no console errors`, t.errors.length === 0, t.errors);
   await t.ctx.close();
 }
@@ -334,6 +345,133 @@ for (const [label, vp] of [['390', { width: 390, height: 844 }], ['1280', { widt
   check('Pause sets Status Paused (one cell)', sheet.writes.length === 1 && sheet.writes[0].values[0][0] === "'Paused", sheet.writes);
   check('only 📺 tabs were touched', sheet.calls.every(c => c.input.range.startsWith("'📺")));
   check('no console errors in log editing', t.errors.length === 0, t.errors);
+  await t.ctx.close();
+}
+
+/* ---------- 6. Plan tab ---------- */
+const cells = sheet => sheet.writes.map(x => x.range + '=' + x.values[0][0]).sort();
+const same = (a, b) => JSON.stringify(a) === JSON.stringify([...b].sort());
+const planOpen = async (prep) => { const t = await open({ width: 390, height: 844 }, '', prep); await t.page.click('#tab-plan'); t.sheet.clearWrites(); return t; };
+const queueDone = page => page.waitForFunction(() => planQ.pending === 0);
+const idReadFirst = sheet => { const i = sheet.calls.findIndex(c => c.tool === 'update_values'); return i > 0 && sheet.calls.slice(0, i).some(c => c.tool === 'get_values' && /^'📺'!M1:M\d*$/.test(c.input.range)); };
+{
+  const t = await planOpen(); const { page, sheet } = t;
+  check('Plan tab opening writes nothing (from-status rows are shown, not written)', sheet.writes.length === 0, sheet.writes);
+  check('Up next order: kept by number, then Next Up with blank Plan ("from status", Keep button)', await page.evaluate(() => [...document.querySelectorAll('#upList li')].map(li => li.dataset.id).join() === '12,20,23,14,17' && [...document.querySelectorAll('#upList li')].slice(3).every(li => /from status/.test(li.textContent) && li.querySelector('[data-a="Keep"]'))));
+  check('Up next row shows platform chip, How to Watch and Why', await page.evaluate(() => { const li = document.querySelector('#upList li[data-id="20"]'); return li.querySelector('.pchip').textContent === 'Plex' && /Owned/.test(li.querySelector('.m').textContent) && li.querySelector('.why').textContent.includes('Comfort rewatch'); }));
+  // Up next on a Watchlist show
+  const row = sheet.rowOfId(7);
+  await page.click('#sheetList li[data-id="7"] [data-a="Up next"]'); await queueDone(page);
+  check('Backlog Up next on a Watchlist show writes exactly Plan, Up next #, Sorted and Status=Next Up', same(cells(sheet), [`'📺'!C${row}='Next Up`, `'📺'!R${row}='Up next`, `'📺'!S${row}=4`, `'📺'!U${row}=${TODAY}`]), cells(sheet));
+  check('...and found the row by re-reading the id column first', idReadFirst(sheet));
+  check('...and the show now sits at #4 in Up next (before the from-status rows)', await page.evaluate(() => [...document.querySelectorAll('#upList li')].map(li => li.dataset.id).join() === '12,20,23,7,14,17'));
+  await t.ctx.close();
+}
+{
+  const t = await planOpen(); const { page, sheet } = t;
+  const dune = sheet.rowOfId(12), nec = sheet.rowOfId(20), pine = sheet.rowOfId(23);
+  await page.click('#upList li[data-id="12"] [data-a="Soon"]'); await queueDone(page);
+  check('Moving a Next Up show to Soon writes Plan, Sorted, Status=Watchlist, clears Up next # (and renumbers only the others)', same(cells(sheet), [`'📺'!C${dune}='Watchlist`, `'📺'!R${dune}='Soon`, `'📺'!S${dune}=`, `'📺'!U${dune}=${TODAY}`, `'📺'!S${nec}=1`, `'📺'!S${pine}=2`]), cells(sheet));
+  check('...it shows in Soon', await page.evaluate(() => !!document.querySelector('#soonList li[data-id="12"]')));
+  await t.ctx.close();
+}
+{
+  const t = await planOpen(); const { page, sheet } = t;
+  const nec = sheet.rowOfId(20), pine = sheet.rowOfId(23);
+  await page.click('#upList li[data-id="23"] [data-a="up"]'); await queueDone(page);
+  check('Reordering writes only the two changed Up next # cells', same(cells(sheet), [`'📺'!S${pine}=2`, `'📺'!S${nec}=3`]), cells(sheet));
+  check('...and the order flips in the UI', await page.evaluate(() => [...document.querySelectorAll('#upList li')].slice(0, 3).map(li => li.dataset.id).join() === '12,23,20'));
+  check('Top row has Move up disabled', await page.evaluate(() => document.querySelector('#upList li[data-id="12"] [data-a="up"]').disabled));
+  sheet.clearWrites();
+  await page.click('#upList li[data-id="23"] [data-a="remove"]'); await queueDone(page);
+  check('Removing from Up next clears Plan and #, then renumbers only the shows below it', same(cells(sheet), [`'📺'!R${pine}=`, `'📺'!S${pine}=`, `'📺'!S${nec}=2`]), cells(sheet));
+  await t.ctx.close();
+}
+{
+  const t = await planOpen(); const { page, sheet } = t;
+  const dune = sheet.rowOfId(12), nec = sheet.rowOfId(20), pine = sheet.rowOfId(23);
+  await page.click('#upList li[data-id="12"] [data-a="start"]'); await queueDone(page);
+  check('Start watching: Status Watching, Started today, S1/E0, Plan and # cleared, others renumbered', same(cells(sheet), [`'📺'!C${dune}='Watching`, `'📺'!N${dune}=1`, `'📺'!O${dune}=0`, `'📺'!P${dune}=${TODAY}`, `'📺'!R${dune}=`, `'📺'!S${dune}=`, `'📺'!S${nec}=1`, `'📺'!S${pine}=2`]), cells(sheet));
+  check('...it moves from Up next to Watching now', await page.evaluate(() => !document.querySelector('#upList li[data-id="12"]') && !!document.querySelector('#watching .nb[data-id="12"]')));
+  await t.ctx.close();
+}
+{
+  const t = await planOpen(); const { page, sheet } = t;
+  const ev = sheet.rowOfId(14);
+  await page.click('#upList li[data-id="14"] [data-a="Keep"]'); await queueDone(page);
+  check('Keep on a from-status show writes Plan, Up next # and Sorted (status already Next Up)', same(cells(sheet), [`'📺'!R${ev}='Up next`, `'📺'!S${ev}=4`, `'📺'!U${ev}=${TODAY}`]), cells(sheet));
+  sheet.clearWrites();
+  await page.click('#upList li[data-id="17"] [data-a="remove"]'); await queueDone(page);
+  const fx = sheet.rowOfId(17);
+  check('Removing a from-status Next Up show writes Status=Watchlist and clears its #', same(cells(sheet), [`'📺'!C${fx}='Watchlist`, `'📺'!S${fx}=`]), cells(sheet));
+  await t.ctx.close();
+}
+{
+  const t = await planOpen(); const { page, sheet } = t;
+  const order = await page.evaluate(() => deckQueue().map(x => x.s.id));
+  console.log('deck order', order.join());
+  const scores = await page.evaluate(() => deckQueue().map(x => x.score));
+  check('Deck is ordered by promise score, New Season show first', order[0] === '33' && scores.every((v, i) => !i || scores[i - 1] >= v), { order, scores });
+  check('Deck holds unsorted shows plus stale Someday only (Jade Coast 365+ days, Hollow Bay blank Sorted; not Ivy Pass)', order.includes('15') && order.includes('25') && !order.includes('13') && !order.includes('16') && !order.includes('14') && !order.includes('31'), order);
+  check('Deck card shows reason chips (New season, genre affinity, availability)', await page.evaluate(() => { const c = [...document.querySelectorAll('#deckBody .why-chip')].map(x => x.textContent); return c.includes('New season') && c.includes('Subscription') && c.some(x => /^Comedy: you rate 8\.5$/.test(x)); }), await page.$$eval('#deckBody .why-chip', e => e.map(x => x.textContent)));
+  const first = await page.$eval('#deckBody .deck-card', e => e.dataset.id);
+  await page.click('#deckBody [data-t=""]');
+  check('Skip writes nothing and shows the next card', sheet.writes.length === 0 && (await page.$eval('#deckBody .deck-card', e => e.dataset.id)) !== first, sheet.writes);
+  // pick with a Why on the next card (Kestrel Lane, Rewatch)
+  const id = await page.$eval('#deckBody .deck-card', e => e.dataset.id);
+  const r = sheet.rowOfId(id);
+  await page.fill('#deckBody .deck-why', 'Binge it');
+  await page.click('#deckBody [data-t="Soon"]'); await queueDone(page);
+  check('Deck Soon with a Why writes Plan, Why and Sorted only', same(cells(sheet), [`'📺'!R${r}='Soon`, `'📺'!T${r}='Binge it`, `'📺'!U${r}=${TODAY}`]), cells(sheet));
+  check('...the card advances', await page.$eval('#deckBody .deck-card', e => e.dataset.id) !== id);
+  check('no console errors in plan', t.errors.length === 0, t.errors);
+  await t.ctx.close();
+}
+{
+  const t = await planOpen(); const { page, sheet } = t;
+  const names = await page.$$eval('#cslList .t', e => e.map(x => x.textContent));
+  check('Not out yet is sorted by next premiere, undated last', JSON.stringify(names) === JSON.stringify(['Glass Orchard', 'Fable Heights', 'Iron Lantern']), names);
+  check('Not out yet shows Release Date text and premiere date', await page.evaluate(() => /Nov/.test(document.querySelector('#cslList li .m').textContent) && /Premieres/.test(document.querySelector('#cslList li .m').textContent)));
+  check('Coming Soon shows are not in the backlog or deck', await page.evaluate(() => !document.querySelector('#sheetList li[data-id="31"]') && !deckQueue().some(x => x.s.status === 'Coming Soon')));
+  // inline why
+  const nec = sheet.rowOfId(20);
+  await page.click('#upList li[data-id="20"] [data-a="Why"]');
+  await page.fill('#upList li[data-id="20"] .whyedit input', 'Cold nights');
+  await page.keyboard.press('Enter'); await queueDone(page);
+  check('Inline Why edit writes only the Why cell', same(cells(sheet), [`'📺'!T${nec}='Cold nights`]), cells(sheet));
+  // failure rolls back
+  sheet.clearWrites();
+  const realCall = sheet.call.bind(sheet);
+  sheet.call = (s, tool, input) => { if (tool === 'update_values') throw new Error('boom'); return realCall(s, tool, input); };
+  await page.click('#sheetList li[data-id="9"] [data-a="Soon"]'); await queueDone(page);
+  check('A failed plan write rolls back the optimistic change and shows a notice', await page.evaluate(() => showById('9').plan === '' && !document.getElementById('notice').hidden && /boom/.test(document.getElementById('notice').textContent)));
+  await t.ctx.close();
+}
+{
+  const t = await open({ width: 1280, height: 900 }); const { page } = t;
+  await page.click('#tab-library'); await page.click('#libBody tr.row[data-id="20"]'); await page.click('[data-edit="20"]');
+  const opts = await page.$$eval('#f-plan option', o => o.map(x => x.value));
+  check('Library dialog Plan select is exactly blank/Up next/Soon/Someday, with Up next #, Why and Sorted fields', JSON.stringify(opts) === JSON.stringify(['', 'Up next', 'Soon', 'Someday']) && (await page.$eval('#f-upNext', e => e.value)) === '2' && (await page.$eval('#f-why', e => e.value)) === 'Comfort rewatch' && (await page.$eval('#f-sorted', e => e.type)) === 'date', opts);
+  await t.ctx.close();
+}
+
+/* ---------- 7. empty Log + date serials ---------- */
+{
+  const t = await open({ width: 390, height: 844 }, '', sh => { sh.tabs['📺 Log'] = [sh.tabs['📺 Log'][0]]; }); const { page, sheet } = t;
+  sheet.clearWrites();
+  await page.click('#watching .nb[data-id="3"] button[data-a="plus"]'); await settle(page);
+  const lw = sheet.writes.filter(w => w.range.startsWith("'📺 Log'"));
+  check('+1 ep on an empty Log uses update_values at A2:I2 and no append', lw.length === 1 && lw[0].tool === 'update_values' && lw[0].range === "'📺 Log'!A2:I2" && !sheet.writes.some(w => w.tool === 'append_values') && lw[0].values[0][1] === 3, sheet.writes);
+  check('...the row landed on sheet row 2 and shows in Recent', sheet.tabs['📺 Log'].length === 2 && await page.evaluate(() => state.entries.length === 1 && state.entries[0]._row === 2));
+  sheet.clearWrites();
+  await page.click('#watching .nb[data-id="3"] button[data-a="plus"]'); await settle(page);
+  check('...the next +1 ep appends again once the Log has data', sheet.writes.some(w => w.tool === 'append_values' && w.range === "'📺 Log'!A1") && !sheet.writes.some(w => w.tool === 'update_values' && w.range.startsWith("'📺 Log'")), sheet.writes);
+  await t.ctx.close();
+}
+{
+  const t = await open({ width: 390, height: 844 }, '', sh => { sh.tabs['📺 Log'].push(['46319', 3, 'Alpha Station', 2, 2, 1, '', 'import', '']); }); const { page } = t;
+  check('toDate converts Sheets serials (46319 = 2026-10-24) and leaves ISO dates alone', await page.evaluate(() => toDate('46319') === '2026-10-24' && toDate(46319) === '2026-10-24' && toDate('25569') === '1970-01-01' && toDate('2026-10-24') === '2026-10-24' && toDate('2024') === null && toDate('') === null && toDate('150000') === null));
+  check('A Log row whose date came back as a serial still loads', await page.evaluate(() => state.entries.some(e => e.date === '2026-10-24' && e.episode === 2 && e.source === 'import')));
   await t.ctx.close();
 }
 
