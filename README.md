@@ -15,7 +15,7 @@ See `CLAUDE.md` for the data model and sheet rules.
   Start watching from Next Up, Today / Yesterday / date backdating, recent episodes with edit and delete, episodes per week)
   and Library tab (search, status chips, sortable table, details, edit/add dialog writing only changed cells).
 - Hosted as a private claude.ai artifact (mcp: Google Sheets get_values / append_values / update_values) and as `index.html` on GitHub Pages.
-- `node tests/smoke.mjs`: Playwright smoke test against a fake sheet built from `tests/fixture.json` (53 checks, 390px and 1280px).
+- `node tests/smoke.mjs`: Playwright smoke test against a fake sheet built from `tests/fixture.json` (390px and 1280px; also covers all 13 themes).
 
 ## Stage 3 (2026-10-24): Plan
 - Plan tab: Up next (about 10, ordered, with a why, Start watching), Soon, Not out yet (by premiere date), backlog in sheet order
@@ -26,3 +26,13 @@ See `CLAUDE.md` for the data model and sheet rules.
   (Robocop and Sucker Punch left out: no reliable match). Checked by script against the source file.
 - Fix: the first rows written to an empty tab took the header's formatting, so dates read back as serial numbers.
   The app now writes the first log rows directly into row 2 and reads serial dates correctly.
+
+## Themes
+The app wears one show's look for the whole month (no drift): Jan Breaking Bad / Better Call Saul, Feb Deadwood, Mar Mr Inbetween,
+Apr Chernobyl, May Hannibal, Jun Ripley, Jul The Sopranos, Aug Succession, Sep Fleabag, Oct Arcane, Nov Mad Men, Dec Blackadder the Third.
+A plain navy **Default** is always one tap away. Source: `design/themes-board.html` (notes in `design/theme-notes.md`).
+- Header: the palette button opens the menu (This month / shows by month / Your themes / Default); the arrows flick to the next or previous theme.
+  "This month" is the default.
+- Settings (gear): pick a theme and edit its colours, heading and text fonts, roundness, grain and light/dark. Reset this theme, Save as a copy.
+- Fonts change the wordmark and panel titles only. Body text stays Figtree, numbers stay Atkinson Hyperlegible; status chips keep the sheet's colours.
+- Stored in this browser only, never in the sheet: `tv-theme` (choice, `auto` = this month), `tv-theme-edits`, `tv-theme-custom`.

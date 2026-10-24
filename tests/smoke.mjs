@@ -93,10 +93,11 @@ function check(name, ok, detail) {
 const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium', args: ['--no-sandbox'] });
 const CHART_STUB = 'window.__charts=[];window.Chart=class{constructor(el,cfg){this.cfg=cfg;window.__charts.push(cfg)}destroy(){}};Chart.defaults={font:{},color:"",borderColor:""};';
 
-async function open(viewport, label, prep) {
+// extra: { ls: {key: value} seeded once before the first load, month: 0-11 to pin Date to, reduceMotion, blockStorage }
+async function open(viewport, label, prep, extra = {}) {
   const sheet = new FakeSheet();
   if (prep) prep(sheet);
-  const ctx = await browser.newContext({ viewport, deviceScaleFactor: 1 });
+  const ctx = await browser.newContext({ viewport, deviceScaleFactor: 1, ...(extra.reduceMotion ? { reducedMotion: 'reduce' } : {}) });
   const page = await ctx.newPage();
   const errors = [];
   page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
@@ -112,6 +113,18 @@ async function open(viewport, label, prep) {
   await page.exposeFunction('__fakeCall', (server, tool, input) => {
     try { return { ok: true, res: sheet.call(server, tool, input) }; } catch (e) { return { ok: false, msg: e.message }; }
   });
+  await page.addInitScript(ex => {
+    if (ex.blockStorage) {
+      const boom = () => { throw new Error('storage blocked'); };
+      Storage.prototype.getItem = boom; Storage.prototype.setItem = boom; Storage.prototype.removeItem = boom;
+    } else {
+      try { if (!sessionStorage.getItem('__seeded')) { sessionStorage.setItem('__seeded', '1'); for (const [k, v] of Object.entries(ex.ls || {})) localStorage.setItem(k, v); } } catch (e) {}
+    }
+    if (ex.month != null) {
+      const Real = Date, fixed = new Real(2026, ex.month, 15, 12).getTime();
+      window.Date = class extends Real { constructor(...a) { if (a.length) super(...a); else super(fixed); } static now() { return fixed; } };
+    }
+  }, { ls: extra.ls, month: extra.month, blockStorage: extra.blockStorage });
   await page.addInitScript(() => {
     window.claude = { use: async name => name === 'mcp' ? { callTool: async (server, tool, input) => {
       const r = await window.__fakeCall(server, tool, input);
@@ -473,6 +486,155 @@ const idReadFirst = sheet => { const i = sheet.calls.findIndex(c => c.tool === '
   check('toDate converts Sheets serials (46319 = 2026-10-24) and leaves ISO dates alone', await page.evaluate(() => toDate('46319') === '2026-10-24' && toDate(46319) === '2026-10-24' && toDate('25569') === '1970-01-01' && toDate('2026-10-24') === '2026-10-24' && toDate('2024') === null && toDate('') === null && toDate('150000') === null));
   check('A Log row whose date came back as a serial still loads', await page.evaluate(() => state.entries.some(e => e.date === '2026-10-24' && e.episode === 2 && e.source === 'import')));
   await t.ctx.close();
+}
+
+/* ---------- 8. themes ---------- */
+// The board is the source of truth for the 13 themes: the app's tokens must equal what was approved.
+const BOARD = fs.readFileSync(path.join(root, 'design', 'themes-board.html'), 'utf8');
+const BTHEMES = (0, eval)('(' + BOARD.match(/const THEMES = (\[[\s\S]*?\n\]);/)[1] + ')');
+const lumHex = h => { const v = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16) / 255).map(x => x <= .03928 ? x / 12.92 : ((x + .055) / 1.055) ** 2.4); return .2126 * v[0] + .7152 * v[1] + .0722 * v[2]; };
+const contrast = (a, b) => { const [x, y] = [lumHex(a), lumHex(b)].sort((p, q) => q - p); return (x + .05) / (y + .05); };
+const rgbOf = h => { const [r, g, b] = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)); return `rgb(${r}, ${g}, ${b})`; };
+const cssVar = (page, n) => page.evaluate(n => getComputedStyle(document.documentElement).getPropertyValue(n).trim(), n);
+const tvTheme = page => page.evaluate(() => document.documentElement.dataset.tvTheme);
+const lsGet = (page, k) => page.evaluate(k => localStorage.getItem(k), k);
+check('Board has 13 themes (default + 12 months, each month once)', BTHEMES.length === 13 && BTHEMES.filter(t => t.month).map(t => t.month).sort((a, b) => a - b).join() === '1,2,3,4,5,6,7,8,9,10,11,12');
+check('The app carries the same 13 theme ids, tokens, radius and grain as the board', await (async () => {
+  const t = await open({ width: 390, height: 844 }, ''); const got = await t.page.evaluate(() => THEMES.map(x => ({ id: x.id, month: x.month, c: x.c, r: x.r, grain: x.grain, fonts: x.fonts, fp: x.fp || null }))); await t.ctx.close();
+  return JSON.stringify(got) === JSON.stringify(BTHEMES.map(x => ({ id: x.id, month: x.month, c: x.c, r: x.r, grain: x.grain, fonts: x.fonts, fp: x.fp || null })));
+})());
+const planTab = async page => { await page.click('#tab-plan'); };
+for (const [label, vp] of [['390', { width: 390, height: 844 }], ['1280', { width: 1280, height: 900 }]]) {
+  for (const th of BTHEMES) {
+    const t = await open(vp, label, null, { ls: { 'tv-theme': th.id } }); const { page } = t;
+    const out = [];
+    out.push(['set', (await tvTheme(page)) === th.id]);
+    out.push(['tokens', (await cssVar(page, '--bg')) === th.c.bg && (await cssVar(page, '--accent')) === th.c.accent && (await cssVar(page, '--surface')) === th.c.surface && (await cssVar(page, '--fg')) === th.c.fg]);
+    out.push(['log', await noHScroll(page)]);
+    await page.click('#tab-library'); out.push(['library', await noHScroll(page)]);
+    await page.click('#libBody tr.row >> nth=0'); out.push(['library open row', await noHScroll(page)]);
+    await page.click('#tab-plan'); out.push(['plan', await noHScroll(page)]);
+    await page.click('#tab-log');
+    await page.click('#themeBtn'); out.push(['menu', await noHScroll(page) && await page.evaluate(() => { const r = document.getElementById('themeMenu').getBoundingClientRect(); return r.left >= 0 && r.right <= innerWidth; })]);
+    await page.keyboard.press('Escape');
+    await page.click('#settingsBtn'); out.push(['settings', await noHScroll(page)]);
+    if (label === '390' || th.id === 'madmen') await page.screenshot({ path: `${SHOTS}/app-theme-settings-${th.id}-${label}.png` });
+    await page.click('#setClose');
+    out.push(['wordmark', await page.evaluate(() => { const w = document.getElementById('wordmark').getBoundingClientRect(); return w.width > 20 && w.right <= innerWidth + 1; })]);
+    out.push(['chart colours', await page.evaluate(([a, l]) => { const c = window.__charts.at(-1); return c.data.datasets[0].backgroundColor.every(x => x === a || x.toLowerCase() === l.toLowerCase()) && c.options.scales.y.grid.color === document.documentElement.style.getPropertyValue('--line'); }, [th.c.accent, (await cssVar(page, '--under'))])]);
+    out.push(['contrast fg/bg >= 7', contrast(th.c.fg, th.c.bg) >= 7 && contrast(th.c.fg, th.c.surface) >= 7]);
+    check(`[${label}] ${th.id}: Log, Library, Plan, menu and Settings fit without horizontal scroll, tokens match the board, no console errors`, out.every(o => o[1]) && t.errors.length === 0, { failed: out.filter(o => !o[1]).map(o => o[0]), errors: t.errors });
+    await t.ctx.close();
+  }
+}
+// Auto follows the calendar: pin Date to the 15th of each month
+{
+  const got = [];
+  for (let m = 0; m < 12; m++) { const t = await open({ width: 390, height: 844 }, '', null, { month: m }); got.push(await tvTheme(t.page)); await t.ctx.close(); }
+  const want = [...BTHEMES.filter(x => x.month)].sort((a, b) => a.month - b.month).map(x => x.id);
+  check("'This month' (the default preference) picks each month's theme, January to December", JSON.stringify(got) === JSON.stringify(want), { got, want });
+}
+{
+  const t = await open({ width: 390, height: 844 }, ''); const { page } = t;
+  const want = BTHEMES.find(x => x.month === new Date().getMonth() + 1).id;
+  check('With nothing stored the app wears this real month\'s theme and the stored pref stays empty', (await tvTheme(page)) === want && (await lsGet(page, 'tv-theme')) === null, { got: await tvTheme(page), want });
+  check('...and there is no drift: the accent is the theme\'s own, not a mix', (await cssVar(page, '--accent')) === BTHEMES.find(x => x.id === want).c.accent && !(await page.evaluate(() => document.documentElement.style.getPropertyValue('--accent-next'))));
+  check("Header theme button names the active theme; menu lists This month, 12 shows and Default", await page.evaluate(() => { document.getElementById('themeBtn').click(); const b = [...document.querySelectorAll('#themeMenu button')]; const ok = b.length === 14 && /This month/.test(b[0].textContent) && b.at(-1).textContent.includes('Default') && b[0].getAttribute('aria-checked') === 'true' && !document.getElementById('themeMenu').hidden; document.getElementById('themeBtn').click(); return ok; }));
+  // menu switches theme and persists
+  await page.click('#themeBtn'); await page.click('#themeMenu [data-theme="ripley"]');
+  check('Menu: choosing Ripley switches the theme, closes the menu and stores tv-theme', (await tvTheme(page)) === 'ripley' && (await cssVar(page, '--bg')) === '#0c0c0c' && (await page.$eval('#themeMenu', e => e.hidden)) && (await lsGet(page, 'tv-theme')) === 'ripley');
+  await page.reload(); await page.waitForFunction(() => document.getElementById('status').dataset.state === 'live');
+  check('...and the choice persists across a reload', (await tvTheme(page)) === 'ripley');
+  const chartsBefore = await page.evaluate(() => window.__charts.length);
+  await page.click('#themeNext');
+  check('Next arrow flicks to the following month (Ripley to The Sopranos) and redraws the chart in the new colours', (await tvTheme(page)) === 'sopranos' && await page.waitForFunction(n => window.__charts.length > n && window.__charts.at(-1).data.datasets[0].backgroundColor.every(x => x === '#d93a30' || x === document.documentElement.style.getPropertyValue('--under').trim()) && window.__charts.at(-1).data.datasets[0].backgroundColor.join() !== window.__charts[n - 1].data.datasets[0].backgroundColor.join(), chartsBefore).then(() => true, () => false));
+  await page.click('#themePrev'); await page.click('#themePrev');
+  check('Previous arrow flicks back (Sopranos, Ripley, Hannibal) and the order wraps from Default to January', (await tvTheme(page)) === 'hannibal' && await page.evaluate(() => { setThemePref('default'); flickTheme(1); return document.documentElement.dataset.tvTheme === 'saul'; }));
+  // keyboard
+  await page.focus('#themeBtn'); await page.keyboard.press('ArrowDown');
+  check('Keyboard: ArrowDown on the theme button opens the menu and focuses the checked item', await page.evaluate(() => !document.getElementById('themeMenu').hidden && document.activeElement.getAttribute('aria-checked') === 'true'));
+  await page.keyboard.press('ArrowDown'); await page.keyboard.press('Enter');
+  check('Keyboard: ArrowDown + Enter picks the next item and returns focus to the button', (await tvTheme(page)) === 'deadwood' && (await page.evaluate(() => document.activeElement.id)) === 'themeBtn');
+  await page.keyboard.press('ArrowDown'); await page.keyboard.press('Escape');
+  check('Keyboard: Escape closes the menu without changing the theme', (await page.$eval('#themeMenu', e => e.hidden)) && (await tvTheme(page)) === 'deadwood');
+  // Default
+  await page.click('#themeBtn'); await page.click('#themeMenu [data-theme="default"]');
+  check('Default is always selectable: navy tokens, stored as tv-theme=default', (await tvTheme(page)) === 'default' && (await cssVar(page, '--bg')) === '#0d1424' && (await lsGet(page, 'tv-theme')) === 'default');
+  await page.click('#themeBtn'); await page.click('#themeMenu [data-theme="auto"]');
+  check("Choosing 'This month' again returns to the calendar theme", (await tvTheme(page)) === want && (await lsGet(page, 'tv-theme')) === 'auto');
+  check('no console errors across menu use', t.errors.length === 0, t.errors);
+  await t.ctx.close();
+}
+// Settings editor: edits, Reset, Save as a copy
+{
+  const t = await open({ width: 390, height: 844 }, '', null, { ls: { 'tv-theme': 'hannibal' } }); const { page } = t;
+  await page.click('#settingsBtn');
+  check('Settings: theme select lists This month, 12 shows, Default and shows the pref', await page.evaluate(() => document.querySelectorAll('#setTheme option').length === 14 && document.getElementById('setTheme').value === 'hannibal'));
+  check('Settings: Reset is disabled until something is edited', await page.$eval('#edReset', e => e.disabled));
+  await page.$eval('#edc-accent', e => { e.value = '#00aa44'; e.dispatchEvent(new Event('input', { bubbles: true })); });
+  await page.$eval('#edRadius', e => { e.value = '20'; e.dispatchEvent(new Event('input', { bubbles: true })); });
+  await page.selectOption('#edFontD', 'Lora');
+  check('Edit: colour, roundness and heading font apply live and are stored in tv-theme-edits', (await cssVar(page, '--accent')) === '#00aa44' && (await cssVar(page, '--r')) === '20px' && /Lora/.test(await cssVar(page, '--display')) && /Lora/.test(await cssVar(page, '--fp')) && JSON.parse(await lsGet(page, 'tv-theme-edits')).hannibal.c.accent === '#00aa44');
+  check('Edit: the theme link in the page head now requests Lora (one extra themeFonts link)', await page.evaluate(() => document.querySelectorAll('link#themeFonts').length === 1 && /Lora/.test(document.getElementById('themeFonts').href)));
+  await page.click('#edReset');
+  check('Reset this theme clears the edits and restores the board values', (await cssVar(page, '--accent')) === '#c8161f' && (await cssVar(page, '--r')) === '10px' && !JSON.parse(await lsGet(page, 'tv-theme-edits')).hannibal && await page.$eval('#edReset', e => e.disabled));
+  await page.$eval('#edc-accent', e => { e.value = '#2288ee'; e.dispatchEvent(new Event('input', { bubbles: true })); });
+  await page.click('#edCopy');
+  check('Save as a copy makes a custom theme (wearing the edits) and puts the original back', await page.evaluate(() => themeState.custom.length === 1 && /copy/.test(themeState.custom[0].show) && activeThemeId() === themeState.custom[0].id && effTheme('hannibal').c.accent === '#c8161f') && (await cssVar(page, '--accent')) === '#2288ee' && (await tvTheme(page)) === 'hannibal' && JSON.parse(await lsGet(page, 'tv-theme-custom')).length === 1);
+  await page.click('#setClose'); await page.click('#themeBtn');
+  check('Your themes appears in the menu with the copy checked', await page.evaluate(() => /Your themes/.test(document.getElementById('themeMenu').textContent) && !!document.querySelector('#themeMenu [aria-checked="true"][data-theme^="my-"]')));
+  await page.keyboard.press('Escape');
+  await page.click('#settingsBtn'); await page.click('#edDelete'); await page.click('#setClose');
+  check('Delete this theme removes the copy and falls back to This month', await page.evaluate(() => themeState.custom.length === 0 && themeState.pref === 'auto'));
+  check('no console errors in the editor', t.errors.length === 0, t.errors);
+  await t.ctx.close();
+}
+// Light themes really are light; status chips keep their sheet colours
+{
+  const t = await open({ width: 1280, height: 900 }, '', null, { ls: { 'tv-theme': 'madmen' } }); const { page } = t;
+  const mm = BTHEMES.find(x => x.id === 'madmen').c;
+  check('Mad Men (light): page background is its light bg and Library text is dark', await (async () => {
+    await page.click('#tab-library');
+    const r = await page.evaluate(() => ({ body: getComputedStyle(document.body).backgroundColor, cell: getComputedStyle(document.querySelector('#libBody td .t')).color, scheme: getComputedStyle(document.documentElement).colorScheme, panel: getComputedStyle(document.querySelector('.table-wrap')).backgroundColor, th: getComputedStyle(document.querySelector('.lib th')).backgroundColor }));
+    return r.body === rgbOf(mm.bg) && r.cell === rgbOf(mm.fg) && r.scheme === 'light' && r.panel === rgbOf(mm.surface) && r.th === rgbOf(mm.raise);
+  })());
+  check('Mad Men: dialogs and inputs follow the light tokens (no dark leftovers)', await (async () => {
+    await page.click('#libBody tr.row >> nth=0'); await page.click('[data-edit]');
+    const r = await page.evaluate(() => ({ dlg: getComputedStyle(document.getElementById('showDlg')).backgroundColor, inp: getComputedStyle(document.querySelector('#showDlg input')).backgroundColor, scheme: getComputedStyle(document.querySelector('#showDlg input')).colorScheme, backdrop: getComputedStyle(document.documentElement).getPropertyValue('--scrim').trim() }));
+    await page.keyboard.press('Escape');
+    return r.dlg === rgbOf(mm.surface) && r.inp === rgbOf(mm.bg) && r.scheme === 'light' && /rgba\(30,25,20/.test(r.backdrop);
+  })());
+  await page.click('#tab-log');
+  check('Mad Men: stat tiles and progress tracks use light tokens (track is the line colour, tile is the panel colour)', await page.evaluate(([surf, line]) => getComputedStyle(document.querySelector('.stat:not(.streak)')).backgroundColor === surf && getComputedStyle(document.querySelector('.goalbar')).backgroundColor === line && getComputedStyle(document.querySelector('.prog')).backgroundColor === line, [rgbOf(mm.surface), rgbOf(mm.line)]));
+  const pill = async () => { await page.click('#tab-library'); return page.evaluate(() => { const p = [...document.querySelectorAll('#libBody .pill')].find(x => x.dataset.s === 'Watching'); const c = getComputedStyle(p); return [c.color, c.backgroundColor]; }); };
+  const pLight = await pill();
+  await page.evaluate(() => setThemePref('arcane')); const pDark = await pill();
+  check('Status chips keep their fixed sheet colours in a light and a dark theme', JSON.stringify(pLight) === JSON.stringify(pDark) && pLight[0] === 'rgb(143, 184, 242)', { pLight, pDark });
+  check('no console errors in Mad Men', t.errors.length === 0, t.errors);
+  await t.ctx.close();
+}
+// Motion and storage
+{
+  const snow = async extra => { const t = await open({ width: 390, height: 844 }, '', null, { ls: { 'tv-theme': 'sopranos' }, ...extra }); const a = await t.page.evaluate(() => getComputedStyle(document.querySelector('.hdband .fx2')).animationName); await t.ctx.close(); return a; };
+  check('Sopranos snow animates by default and not under prefers-reduced-motion: reduce', (await snow({})) === 'tv-snow' && (await snow({ reduceMotion: true })) === 'none');
+  const t = await open({ width: 390, height: 844 }, '', null, { blockStorage: true }); const { page } = t;
+  check('With browser storage blocked the page still renders (this month\'s theme, no errors) and the menu still switches themes for the session', await (async () => {
+    const ok1 = !!(await tvTheme(page)) && t.errors.length === 0;
+    await page.click('#themeBtn'); await page.click('#themeMenu [data-theme="fleabag"]');
+    return ok1 && (await tvTheme(page)) === 'fleabag' && t.errors.length === 0;
+  })(), t.errors);
+  await t.ctx.close();
+  const c = await open({ width: 390, height: 844 }, '', null, { ls: { 'tv-theme': '"><x', 'tv-theme-edits': '{"arcane":{"c":{"accent":"red;x"},"r":"zzz"}}', 'tv-theme-custom': '[{"id":"bad","c":{}}]' } });
+  check('Corrupt stored theme data is ignored (falls back to this month\'s theme, no errors)', (await tvTheme(c.page)) === BTHEMES.find(x => x.month === new Date().getMonth() + 1).id && c.errors.length === 0, c.errors);
+  await c.ctx.close();
+}
+// Screenshots of the Log tab for review
+for (const id of ['default', 'hannibal', 'ripley', 'madmen', 'blackadder', 'saul', 'deadwood', 'inbetween', 'chernobyl', 'sopranos', 'succession', 'fleabag', 'arcane']) {
+  for (const [label, vp] of [['390', { width: 390, height: 844 }], ['1280', { width: 1280, height: 900 }]]) {
+    const t = await open(vp, label, null, { ls: { 'tv-theme': id } });
+    await t.page.screenshot({ path: `${SHOTS}/app-theme-${id}-${label}.png`, fullPage: label === '390' });
+    await t.ctx.close();
+  }
 }
 
 await browser.close();
