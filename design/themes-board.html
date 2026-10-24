@@ -139,9 +139,9 @@ td.n,th.n{font-family:"Atkinson Hyperlegible",ui-sans-serif,system-ui,sans-serif
 [data-tv-theme="chernobyl"] .hd .fx2{background:radial-gradient(ellipse 60% 45% at 25% 100%,rgba(205,215,205,.17),transparent 70%),radial-gradient(ellipse 50% 40% at 78% 92%,rgba(205,215,205,.13),transparent 70%);filter:blur(5px)}
 /* Hannibal */
 [data-tv-theme="hannibal"] .hd{padding-top:22px}
-[data-tv-theme="hannibal"] .hd .fx{background:linear-gradient(90deg,#d29a4a,#8a6a5a 45%,#26314d) 0 0/100% 4px no-repeat}
+[data-tv-theme="hannibal"] .hd .fx{background:linear-gradient(90deg,#c8161f,#5a0a10 50%,#131314) 0 0/100% 4px no-repeat}
 .ant{display:none}
-[data-tv-theme="hannibal"] .ant{display:block;flex:none;width:44px;height:32px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='44' viewBox='0 0 60 44' fill='none' stroke='%23e6dcc4' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M30 42C28 30 20 24 12 8M20 22L9 22M16 14L7 11M24 29L15 31M30 42C32 30 40 24 48 8M40 22L51 22M44 14L53 11M36 29L45 31'/%3E%3C/svg%3E") center/contain no-repeat}
+[data-tv-theme="hannibal"] .ant{display:block;flex:none;width:44px;height:32px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='44' viewBox='0 0 60 44' fill='none' stroke='%23c9ccd2' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M30 42C28 30 20 24 12 8M20 22L9 22M16 14L7 11M24 29L15 31M30 42C32 30 40 24 48 8M40 22L51 22M44 14L53 11M36 29L45 31'/%3E%3C/svg%3E") center/contain no-repeat}
 /* Ripley */
 [data-tv-theme="ripley"] .app::before{background:repeating-linear-gradient(90deg,rgba(255,255,255,.022) 0 14px,rgba(0,0,0,.18) 14px 22px)}
 [data-tv-theme="ripley"] .hd .fx{background:repeating-linear-gradient(90deg,rgba(255,255,255,.07) 0 12px,rgba(0,0,0,.38) 12px 20px),linear-gradient(105deg,transparent 30%,rgba(255,255,255,.10) 50%,transparent 70%)}
@@ -221,8 +221,8 @@ const THEMES = [
     motif: 'Heavy film grain, and a soft orange glow rising from the bottom of the header band with a thin fog drifting over it.',
     c: { bg: '#111513', surface: '#191e1b', raise: '#212824', line: '#313a34', fg: '#e9eee8', muted: '#9faca2', accent: '#ef7a3c', ink: '#1a0a02', accent2: '#b5c3b0', danger: '#ff8a6a' }, r: 6, grain: .4 },
   { id: 'hannibal', show: 'Hannibal', month: 5, mode: 'dark', fonts: ['Cormorant Garamond', 'Figtree'],
-    motif: 'A small stag-antler silhouette against a thin dusk-amber-to-navy band at the very top of the header.',
-    c: { bg: '#0b1120', surface: '#121a2c', raise: '#19233a', line: '#26314d', fg: '#eef0f6', muted: '#a2aac0', accent: '#d5605a', ink: '#1a0606', accent2: '#e6dcc4', danger: '#ff8a7a' }, r: 10, grain: 0 },
+    motif: 'Near-black ground and panels, blood-red highlight, and a small silver stag-antler silhouette beside the wordmark under a thin blood-red band at the very top of the header.',
+    c: { bg: '#08080a', surface: '#131314', raise: '#1b1b1d', line: '#2b2b2f', fg: '#f0f0f2', muted: '#a3a3aa', accent: '#c8161f', ink: '#ffffff', accent2: '#c9ccd2', danger: '#ff8a7a' }, r: 10, grain: 0 },
   { id: 'ripley', show: 'Ripley', month: 6, mode: 'dark', fonts: ['Italiana', 'Figtree'],
     motif: 'Vertical window-blind slats across the header and very faintly across the page background; wordmark letters widely spaced. A homage to classic black-and-white TV, pure greyscale.',
     c: { bg: '#0c0c0c', surface: '#151515', raise: '#1e1e1e', line: '#2e2e2e', fg: '#f2f2f2', muted: '#9a9a9a', accent: '#e6e6e6', ink: '#111111', accent2: '#8a8a8a', danger: '#d0d0d0' }, r: 2, grain: .25 },
