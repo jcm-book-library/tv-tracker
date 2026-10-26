@@ -43,3 +43,10 @@ A plain navy **Default** is always one tap away. Source: `design/themes-board.ht
 - Settings (gear): pick a theme and edit its colours, heading and text fonts, roundness, grain and light/dark. Reset this theme, Save as a copy.
 - Fonts change the wordmark and panel titles only. Body text stays Figtree, numbers stay Atkinson Hyperlegible; status chips keep the sheet's colours.
 - Stored in this browser only, never in the sheet: `tv-theme` (choice, `auto` = this month), `tv-theme-edits`, `tv-theme-custom`.
+
+## Sheet change 2026-10-26: Favourite
+- Full copy of `📺` kept as `📺 backup 2026-10-26 (before Favourite)`.
+- Added column V `Favourite` (date, yyyy-mm-dd): a date means favourited that day, blank means not a favourite. Independent of the rating.
+- Pre-marked 13 favourites on 2026-10-26: Hannibal, Arcane, Breaking Bad, Better Call Saul, Blackadder the Third, Fleabag, Chernobyl,
+  Deadwood, Mad Men, Mr Inbetween, Ripley, Succession, The Sopranos.
+- Checked by script: A–U identical to the backup; V holds exactly those 13 dates.
