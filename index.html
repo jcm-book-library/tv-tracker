@@ -357,8 +357,9 @@ body::after{opacity:var(--grain);mix-blend-mode:overlay;background-image:url("da
 .dash-2{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;margin-bottom:20px;align-items:stretch}
 .dash-2 .panel + .panel{margin-top:0}
 .dash-2 > .panel:last-child:nth-child(odd){grid-column:1/-1}
+.dash-tiles > .stat:last-child:nth-child(odd){grid-column:1/-1}
 @media (min-width:600px){.dash-tiles{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media (min-width:900px){.dash-tiles{grid-template-columns:repeat(6,minmax(0,1fr))}.dash-2{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:900px){.dash-tiles{grid-template-columns:repeat(4,minmax(0,1fr))}.dash-tiles > .stat:last-child:nth-child(odd){grid-column:span 2}.dash-2{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .dash-msg{margin:0}
 .hbars{display:flex;flex-direction:column;gap:7px;margin:0;padding:0;list-style:none}
 .hbar{display:grid;grid-template-columns:minmax(0,8.5em) minmax(0,1fr) auto;gap:10px;align-items:center;font-size:13px}
@@ -404,6 +405,60 @@ body::after{opacity:var(--grain);mix-blend-mode:overlay;background-image:url("da
 .drill-list li.plain:first-child{border-top:0}
 .chart-box canvas{cursor:default}
 
+/* favourites: the remote's heart button. Off = outline in --muted. On = body filled with --accent, heart in --accent-ink. */
+.fv{width:32px;height:22px;display:block;overflow:visible;flex:none}
+.fv-body{fill:none;stroke:currentColor;stroke-width:1.6}
+.fv-heart{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round}
+[aria-pressed="true"]>.fv .fv-body,[data-on="true"]>.fv .fv-body{fill:var(--accent);stroke:var(--accent)}
+[aria-pressed="true"]>.fv .fv-heart,[data-on="true"]>.fv .fv-heart{fill:var(--accent-ink);stroke:var(--accent-ink)}
+.fav{display:inline-flex;align-items:center;justify-content:center;flex:none;padding:0;border:0;background:transparent;color:var(--muted);border-radius:var(--rc);min-width:40px;min-height:32px}
+.fav:hover{color:var(--fg)}
+.fav[aria-pressed="true"]:hover{color:var(--muted)}
+.fav.ro{min-width:0;min-height:0;margin-left:8px;vertical-align:-3px;pointer-events:none}
+.fav.ro .fv{width:24px;height:16px}
+.favpill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:transparent;color:var(--fg);border-radius:999px;padding:3px 14px 3px 8px;min-height:34px;font-size:13px;font-weight:600;white-space:nowrap}
+.favpill .fv{color:var(--muted)}
+.favpill:hover{border-color:var(--muted)}
+.favpill[aria-pressed="true"]{background:color-mix(in srgb,var(--accent) 24%,var(--surface));border-color:var(--accent)}
+.chip-fav{display:inline-flex;align-items:center}
+.chip-fav .fvico{display:inline-flex;margin-right:7px}
+.chip-fav .fv{width:22px;height:15px}
+.det-acts{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.lib th.fav-th{text-align:center}
+.lib td.fav-td{text-align:center;width:1%;padding-block:4px}
+.fav-field{display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+@media (max-width:560px){
+  .fav{min-width:44px;min-height:44px}
+  .lib td.fav-td .fav{margin:-6px -6px}
+  .favpill,.chip-fav{min-height:44px}
+}
+
+/* front page panel on the Log tab: stacked on phones, three columns from 900px */
+.home{display:grid;grid-template-columns:minmax(0,1fr);padding:0;margin-bottom:20px}
+.home-part{padding:16px;min-width:0}
+.home-part + .home-part{border-top:1px solid var(--line)}
+.home .panel-head{margin-bottom:10px}
+@media (min-width:900px){.home{grid-template-columns:repeat(3,minmax(0,1fr))}.home-part + .home-part{border-top:0;border-left:1px solid var(--line)}}
+.hp-title{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.hp-title h3{font-family:var(--data);font-size:20px;line-height:1.25;margin:0;overflow-wrap:anywhere;min-width:0}
+.hp-meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-top:6px;font-size:13px;color:var(--muted)}
+.hp-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.home .why-chip{font-size:12px;padding:2px 9px;border-radius:999px;background:var(--raise);color:var(--fg)}
+.hp-why{margin:10px 0 0;font-size:13px;font-style:italic;color:var(--fg);overflow-wrap:anywhere}
+.hp-acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.hp-acts .btn{padding:9px 14px}
+.home-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.home-list li{display:flex;align-items:center;gap:8px;border-top:1px solid var(--line);min-width:0}
+.home-list li:first-child{border-top:0}
+.home-list li.empty{display:block;padding:4px 0}
+.home-list .hl{all:unset;box-sizing:border-box;flex:1 1 auto;min-width:0;cursor:pointer;display:flex;flex-direction:column;gap:1px;padding:8px 6px;margin-inline:-6px;border-radius:var(--rc)}
+.home-list .hl:hover,.home-list .hl:focus-visible{background:color-mix(in srgb,var(--accent) 12%,var(--surface))}
+.home-list .hl:focus-visible{outline:2px solid var(--accent)}
+.home-list .t{font-weight:600;overflow-wrap:anywhere}
+.home-list .m{font-size:12px;color:var(--muted)}
+.home-all{margin-top:10px}
+@media (max-width:560px){.home-list .hl{min-height:44px;justify-content:center}.hp-acts .btn,.home-all{min-height:44px}}
+
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
@@ -442,6 +497,12 @@ body::after{opacity:var(--grain);mix-blend-mode:overlay;background-image:url("da
   </nav>
 
   <div id="view-log" role="tabpanel" aria-labelledby="tab-log">
+    <section class="panel home" id="homePanel" aria-label="Front page">
+      <div class="home-part" aria-labelledby="homePickH"><div class="panel-head"><h2 id="homePickH">Tonight's pick</h2></div><div id="homePick"></div></div>
+      <div class="home-part" aria-labelledby="homeLastH"><div class="panel-head"><h2 id="homeLastH">Last 5 watched</h2></div><ul class="home-list" id="homeLast"></ul></div>
+      <div class="home-part" aria-labelledby="homeFavH"><div class="panel-head"><h2 id="homeFavH">Favourites</h2></div><ul class="home-list" id="homeFav"></ul><button class="btn home-all" type="button" id="homeFavAll" hidden>See all</button></div>
+    </section>
+
     <section class="stats" aria-label="Summary">
       <div class="stat streak">
         <span class="eyebrow">Watching streak</span>
@@ -950,19 +1011,29 @@ const state = {
   premieres: new Map(), // showId -> sorted premiere dates (yyyy-mm-dd) from 📺 Seasons
   settings: { weeklyGoalEps: 7, streakMinEps: 1, appName: 'TV Tracker' },
   mcp: null, live: false, busy: false, logDate: null, editing: null, more: null, logN: 2,
-  pickAll: false, lib: { q: '', status: 'All', sort: 'sheet', dir: 1, limit: 100, open: null }
+  pickAll: false, lib: { q: '', status: 'All', fav: false, sort: 'sheet', dir: 1, limit: 100, open: null }
 };
 
 /* ---------- show columns, mapped by header name (never by position) ---------- */
 const SHOW_KEYS = { title: 'title', rating: 'rating', status: 'status', howtowatch: 'howToWatch', genre: 'genre', platform: 'platform',
   starring: 'starring', releasedate: 'releaseDate', year: 'year', totalseasons: 'totalSeasons', totaleps: 'totalEps', notes: 'notes',
-  id: 'id', season: 'season', episode: 'episode', started: 'started', finished: 'finished', plan: 'plan', upnext: 'upNext', why: 'why', sorted: 'sorted' };
+  id: 'id', season: 'season', episode: 'episode', started: 'started', finished: 'finished', plan: 'plan', upnext: 'upNext', why: 'why', sorted: 'sorted', favourite: 'favourite' };
 const normH = h => String(h ?? '').replace(/\(.*?\)/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
 const keyOfHeader = h => SHOW_KEYS[normH(h)] || null;
 const NUM_FIELDS = ['rating', 'year', 'totalSeasons', 'totalEps', 'season', 'episode', 'upNext'];
-const DATE_FIELDS = ['started', 'finished', 'sorted'];
+const DATE_FIELDS = ['started', 'finished', 'sorted', 'favourite'];
 const colLetter = i => { let s = ''; i++; while (i) { const r = (i - 1) % 26; s = String.fromCharCode(65 + r) + s; i = Math.floor((i - 1) / 26); } return s; };
 const showById = id => state.shows.find(s => s.id === String(id));
+
+/* ---------- favourites: "the remote's heart button" ----------
+   A favourite is a show whose Favourite cell (📺 column V) holds a date (the day it was favourited). Blank = not a favourite.
+   The sticker is a rubber remote-control button with a heart on it. Its colours come from the theme: filled with --accent and an
+   --accent-ink heart when on, an outline in --muted when off (see .fv-* in the stylesheet). */
+const FAV_SVG = '<svg class="fv" viewBox="0 0 32 22" aria-hidden="true" focusable="false"><rect class="fv-body" x="1.2" y="1.8" width="29.6" height="18.4" rx="8"/><path class="fv-heart" d="M16 16.1C13.6 14.4 10.3 12.2 10.3 9.1c0-1.7 1.3-2.9 2.8-2.9 1.1 0 2.2.6 2.9 1.7.7-1.1 1.8-1.7 2.9-1.7 1.5 0 2.8 1.2 2.8 2.9 0 3.1-3.3 5.3-5.7 7z"/></svg>';
+const favOf = s => String(s.favourite ?? '').trim() !== '';
+const favBtn = (s, ctx) => `<button class="fav" type="button" data-fav="${esc(s.id)}" data-fk="fav:${ctx}:${esc(s.id)}" aria-pressed="${favOf(s)}" aria-label="Favourite: ${esc(s.title)}">${FAV_SVG}</button>`;
+const favPill = (s, ctx) => `<button class="favpill" type="button" data-fav="${esc(s.id)}" data-fk="fav:${ctx}:${esc(s.id)}" aria-pressed="${favOf(s)}" aria-label="Favourite: ${esc(s.title)}">${FAV_SVG}Favourite</button>`;
+const favRo = s => favOf(s) ? `<span class="fav ro" data-on="true" role="img" aria-label="Favourite">${FAV_SVG}</span>` : '';
 
 /* ---------- derived numbers ---------- */
 function dailyTotals() {
@@ -1252,6 +1323,7 @@ function renderAll() {
   applyTheme(); // picks up a new month if the page has been open across midnight on the 1st
   const totals = dailyTotals();
   renderStats(totals);
+  renderHome();
   renderWatching();
   renderPick();
   renderRecent();
@@ -1298,7 +1370,7 @@ async function refresh() {
   $('refreshBtn').disabled = true;
   try {
     const [shows, log, seasons, settings] = await Promise.all([
-      readRange(`${T_SHOWS}!A2:U`),
+      readRange(`${T_SHOWS}!A2:V`),
       readRange(`${T_LOG}!A1:I`),
       readRange(`${T_SEASONS}!A1:H`),
       readRange(`${T_SETTINGS}!A1:C`)
@@ -1359,7 +1431,7 @@ function cellValue(field, v) {
   return "'" + v; // keep text as text
 }
 async function showHeaderNow() {
-  const h = ((await readRange(`${T_SHOWS}!A2:U2`))[0] || []).map(x => String(x).trim());
+  const h = ((await readRange(`${T_SHOWS}!A2:V2`))[0] || []).map(x => String(x).trim());
   return h;
 }
 async function findShowRow(id) {
@@ -1502,17 +1574,19 @@ $('recentList').addEventListener('click', ev => {
 /* ---------- library view ---------- */
 const LIB_COLS = [
   { k: 'title', label: 'Title' }, { k: 'rating', label: 'Rating', num: true }, { k: 'status', label: 'Status' },
-  { k: 'genre', label: 'Genre', sm: true }, { k: 'platform', label: 'Platform', sm: true }, { k: 'year', label: 'Year', num: true, sm: true }
+  { k: 'genre', label: 'Genre', sm: true }, { k: 'platform', label: 'Platform', sm: true }, { k: 'year', label: 'Year', num: true, sm: true },
+  { k: 'favourite', label: 'Fav', fav: true }
 ];
 const sortKey = (b, k) => {
   if (k === 'sheet') return b._row;
+  if (k === 'favourite') return toDate(b.favourite) || (favOf(b) ? '0' : '');
   if (['rating', 'year'].includes(k)) return b[k] === '' || b[k] == null ? -1 : toNum(b[k]);
   return String(b[k] || '').toLowerCase();
 };
 function libFiltered() {
   const L = state.lib, q = L.q.toLowerCase();
   return state.shows.filter(b =>
-    (L.status === 'All' || b.status === L.status) &&
+    (L.status === 'All' || b.status === L.status) && (!L.fav || favOf(b)) &&
     (!q || [b.title, b.genre, b.platform, b.starring, b.status].some(v => String(v || '').toLowerCase().includes(q))));
 }
 function renderLibrary() {
@@ -1520,8 +1594,9 @@ function renderLibrary() {
   const counts = { All: state.shows.length };
   for (const b of state.shows) counts[b.status] = (counts[b.status] || 0) + 1;
   const extra = Object.keys(counts).filter(k => k !== 'All' && k && !STATUSES.includes(k));
-  $('libChips').innerHTML = ['All', ...STATUSES, ...extra].map(st => `<button class="chip" type="button" data-st="${esc(st)}" aria-pressed="${L.status === st}">${esc(st)}<span class="n">${fmt(counts[st] || 0)}</span></button>`).join('');
-  $('libHead').innerHTML = LIB_COLS.map(c => `<th scope="col" data-k="${c.k}" class="${c.num ? 'num ' : ''}${c.sm ? 'hide-sm' : ''}" ${L.sort === c.k ? `aria-sort="${L.dir > 0 ? 'ascending' : 'descending'}"` : ''}>${c.label}</th>`).join('');
+  $('libChips').innerHTML = ['All', ...STATUSES, ...extra].map(st => `<button class="chip" type="button" data-st="${esc(st)}" aria-pressed="${L.status === st}">${esc(st)}<span class="n">${fmt(counts[st] || 0)}</span></button>`).join('')
+    + `<button class="chip chip-fav" type="button" data-favfilter aria-pressed="${L.fav}"><span class="fvico" data-on="true" aria-hidden="true">${FAV_SVG}</span>Favourites<span class="n">${fmt(state.shows.filter(favOf).length)}</span></button>`;
+  $('libHead').innerHTML = LIB_COLS.map(c => `<th scope="col" data-k="${c.k}" class="${c.num ? 'num ' : ''}${c.sm ? 'hide-sm' : ''}${c.fav ? ' fav-th' : ''}" ${L.sort === c.k ? `aria-sort="${L.dir > 0 ? 'ascending' : 'descending'}"` : ''}>${c.label}</th>`).join('');
   body.textContent = '';
   if (!state.live) {
     body.innerHTML = `<tr><td colspan="${LIB_COLS.length}" class="muted" style="padding:18px">${esc(emptyMsg())}</td></tr>`;
@@ -1535,9 +1610,9 @@ function renderLibrary() {
     const cells = {
       title: '<span class="t"></span>', rating: b.rating === '' ? '' : esc(b.rating),
       status: b.status ? `<span class="pill" data-s="${esc(b.status)}">${esc(b.status)}</span>` : '',
-      genre: esc(b.genre), platform: esc(b.platform), year: esc(b.year)
+      genre: esc(b.genre), platform: esc(b.platform), year: esc(b.year), favourite: favBtn(b, 'row')
     };
-    tr.innerHTML = LIB_COLS.map(c => `<td class="${c.num ? 'num tnum ' : ''}${c.sm ? 'hide-sm' : ''}">${cells[c.k]}</td>`).join('');
+    tr.innerHTML = LIB_COLS.map(c => `<td class="${c.num ? 'num tnum ' : ''}${c.sm ? 'hide-sm' : ''}${c.fav ? ' fav-td' : ''}">${cells[c.k]}</td>`).join('');
     tr.querySelector('.t').textContent = b.title;
     body.appendChild(tr);
     if (L.open === b.id) body.appendChild(detailRow(b));
@@ -1556,8 +1631,8 @@ function detailRow(b) {
   const kv = [['Genre', b.genre], ['Platform', b.platform], ['Year', b.year], ['How to watch', b.howToWatch], ['Starring', b.starring], ['Release date', b.releaseDate],
     ['Seasons', b.totalSeasons], ['Episodes', b.totalEps], ['Progress', p], ['Started', fmtDate(b.started)], ['Finished', fmtDate(b.finished)],
     ['Plan', b.plan ? b.plan + (b.plan === 'Up next' && b.upNext ? ' #' + b.upNext : '') : (b.upNext ? '#' + b.upNext : '')],
-    ['Why', b.why], ['Notes', b.notes], ['Sorted', fmtDate(b.sorted)], ['ID', b.id]].filter(([, v]) => v);
-  td.innerHTML = '<dl class="kv"></dl><div style="margin-top:12px"><button class="btn btn-primary" type="button" data-edit="' + esc(b.id) + '">Edit show</button></div>';
+    ['Why', b.why], ['Notes', b.notes], ['Sorted', fmtDate(b.sorted)], ['Favourite', fmtDate(b.favourite)], ['ID', b.id]].filter(([, v]) => v);
+  td.innerHTML = '<dl class="kv"></dl><div class="det-acts"><button class="btn btn-primary" type="button" data-edit="' + esc(b.id) + '">Edit show</button>' + favPill(b, 'det') + '</div>';
   const dl = td.querySelector('.kv');
   for (const [k, v] of kv) { const dt = document.createElement('dt'), dd = document.createElement('dd'); dt.textContent = k; dd.textContent = v; dl.append(dt, dd); }
   tr.appendChild(td);
@@ -1568,7 +1643,7 @@ function detailRow(b) {
 const FORM = [
   { sec: 'Show' }, { k: 'title', w: 'w2', req: true }, { k: 'status', type: 'select' }, { k: 'rating', type: 'number', label: 'Rating (/10)' },
   { k: 'genre', type: 'select' }, { k: 'platform', type: 'select' }, { k: 'howToWatch', type: 'select', label: 'How to watch' }, { k: 'year', type: 'number' },
-  { k: 'starring', w: 'w2' }, { k: 'releaseDate', label: 'Release date' }, { k: 'plan', type: 'select' },
+  { k: 'starring', w: 'w2' }, { k: 'releaseDate', label: 'Release date' }, { k: 'plan', type: 'select' }, { k: 'favourite', type: 'fav', w: 'w2' },
   { sec: 'Progress' }, { k: 'totalSeasons', type: 'number', label: 'Total seasons' }, { k: 'totalEps', type: 'number', label: 'Total episodes' },
   { k: 'season', type: 'number' }, { k: 'episode', type: 'number' },
   { k: 'started', type: 'date' }, { k: 'finished', type: 'date' }, { k: 'upNext', type: 'number', label: 'Up next #' }, { k: 'sorted', type: 'date' },
@@ -1586,6 +1661,13 @@ function openShowDialog(show) {
     const wrap = document.createElement('div');
     wrap.className = 'field ' + (f.w || '');
     const id = 'f-' + f.k;
+    if (f.type === 'fav') { // a toggle, not a date field: the date is today's when switched on (or the existing one), blank when off
+      const cur = show ? (toDate(show.favourite) || '') : '';
+      wrap.classList.add('fav-field');
+      wrap.innerHTML = `<span class="flabel">Favourite</span><input type="hidden" id="${id}" name="${f.k}" value="${esc(cur)}"><button class="favpill" type="button" data-favform="${esc(cur)}" aria-pressed="${cur !== ''}" aria-label="Favourite: ${esc(show ? show.title : 'this show')}">${FAV_SVG}Favourite</button>`;
+      body.appendChild(wrap);
+      continue;
+    }
     const lab = document.createElement('label');
     lab.htmlFor = id; lab.textContent = f.label || (f.k[0].toUpperCase() + f.k.slice(1));
     let el;
@@ -1888,6 +1970,136 @@ document.addEventListener('keydown', e => {
   if (b) { e.preventDefault(); b.click(); }
 });
 
+/* ---------- Favourites: toggle, front page panel ---------- */
+const favQ = { chain: Promise.resolve() };
+// One cell: today's date when switching on, '' when switching off. Optimistic; the write finds the row by id first (writeShowFields) and rolls back on failure.
+function toggleFav(s) {
+  if (!s) return;
+  if (!isLive()) { notice('Favourites need the live connection. ' + connectHint(), 'error'); return; }
+  const want = !favOf(s), prev = s.favourite, val = want ? today() : '';
+  const a = document.activeElement, fk = a && a.dataset ? a.dataset.fk : null;
+  s.favourite = val;
+  setStatus('live', want ? `${s.title} added to Favourites` : `${s.title} removed from Favourites`);
+  renderAll(); refocusFav(fk);
+  favQ.chain = favQ.chain.then(() => writeShowFields(s.id, { favourite: val }, { noLocal: true })).catch(err => {
+    if (s.favourite === val) s.favourite = prev;
+    setStatus('error', 'Favourite not saved');
+    notice(`Couldn't save the favourite for “${s.title}”, so it's back as it was: ${(err && err.message) || explain(err)} Press Refresh to reload from the sheet.`, 'error');
+    renderAll();
+  });
+}
+function refocusFav(fk) {
+  if (!fk) return;
+  const el = [...document.querySelectorAll('[data-fk]')].find(e => e.dataset.fk === fk);
+  if (el) el.focus({ preventScroll: true });
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('button[data-fav]');
+  if (b) { e.preventDefault(); toggleFav(showById(b.dataset.fav)); return; }
+  const f = e.target.closest('button[data-favform]');
+  if (f) { // edit dialog: just flips the form value; Save writes it with the other changes
+    const inp = $('f-favourite'), on = f.getAttribute('aria-pressed') !== 'true';
+    inp.value = on ? (f.dataset.favform || today()) : '';
+    f.setAttribute('aria-pressed', String(on));
+  }
+});
+
+// Five favourites a day: ordered by a hash of (date, id), so the pick is stable all day, changes tomorrow, and does not reshuffle when one is removed
+const hash32 = str => { let h = 2166136261; for (const ch of str) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; };
+const favShows = () => state.shows.filter(favOf);
+const favPicks = (day = today(), n = 5) => favShows().map(s => ({ s, k: hash32(day + '|' + s.id) })).sort((a, b) => a.k - b.k || a.s._row - b._row).slice(0, n).map(x => x.s);
+
+// Tonight's pick: Up next #1, else the top of the Plan sort deck. Plannable statuses only, so never a Watching show.
+function tonightPick() {
+  const up = upNext().find(s => isPlannable(s));
+  if (up) return scoreShow(up, planProfile());
+  return deckQueue()[0] || null;
+}
+// Last 5 watched: distinct shows from the log, newest first; then Finished dates; then Watched 10/10 with no date
+function lastWatched(n = 5) {
+  const out = [], seen = new Set();
+  const es = [...state.entries].sort((a, b) => b.date.localeCompare(a.date) || String(b.loggedAt).localeCompare(String(a.loggedAt)) || (b._row || 0) - (a._row || 0));
+  for (const e of es) {
+    const s = showById(e.showId);
+    if (!s || seen.has(s.id)) continue;
+    seen.add(s.id); out.push({ s, ep: `S${e.season} · E${e.episode}`, when: dayLabel(e.date) });
+    if (out.length >= n) return out;
+  }
+  const fin = state.shows.filter(s => !seen.has(s.id) && toDate(s.finished)).sort((a, b) => toDate(b.finished).localeCompare(toDate(a.finished)) || b._row - a._row);
+  for (const s of fin) { seen.add(s.id); out.push({ s, ep: '', when: 'Finished ' + fmtDate(toDate(s.finished)) }); if (out.length >= n) return out; }
+  const tens = state.shows.filter(s => !seen.has(s.id) && s.status === 'Watched' && ratingOf(s) === 10).sort((a, b) => b._row - a._row);
+  for (const s of tens) { out.push({ s, ep: '', when: '' }); if (out.length >= n) break; }
+  return out;
+}
+function renderHome() {
+  const pick = $('homePick'), last = $('homeLast'), fav = $('homeFav'), all = $('homeFavAll');
+  if (!state.live) {
+    pick.innerHTML = last.innerHTML = fav.innerHTML = `<p class="empty">${esc(emptyMsg())}</p>`;
+    all.hidden = true; return;
+  }
+  // a. Tonight's pick
+  const t = tonightPick();
+  if (!t) pick.innerHTML = '<p class="empty">Nothing to plan yet. Add shows to your Watchlist, then pick some on the Plan tab.</p>'
+      + '<div class="hp-acts"><button class="btn" type="button" data-home="plan">See Plan</button></div>';
+  else {
+    const s = t.s, why = t.why.slice(0, 3);
+    pick.innerHTML = `<div class="hp-title"><h3></h3>${favBtn(s, 'home-pick')}</div>
+      <div class="hp-meta"><span class="pchip"></span><span class="hp-how"></span></div>
+      <div class="hp-chips"></div><p class="hp-why"></p>
+      <div class="hp-acts"><button class="btn btn-primary" type="button" data-home="start"></button><button class="btn" type="button" data-home="plan">See Plan</button></div>`;
+    pick.querySelector('h3').textContent = s.title;
+    const pc = pick.querySelector('.pchip'); if (s.platform) pc.textContent = s.platform; else pc.remove();
+    const hw = pick.querySelector('.hp-how'); if (s.howToWatch) hw.textContent = s.howToWatch; else hw.remove();
+    if (!pick.querySelector('.hp-meta').children.length) pick.querySelector('.hp-meta').remove();
+    const ch = pick.querySelector('.hp-chips');
+    for (const w of why) { const c = document.createElement('span'); c.className = 'why-chip'; c.textContent = w; ch.appendChild(c); }
+    if (!why.length) ch.remove();
+    const wp = pick.querySelector('.hp-why'); if (s.why) wp.textContent = '“' + s.why + '”'; else wp.remove();
+    const sb = pick.querySelector('[data-home="start"]'); sb.textContent = 'Start watching'; sb.dataset.id = s.id; sb.setAttribute('aria-label', 'Start watching ' + s.title);
+  }
+  // b. Last 5 watched
+  const lw = lastWatched();
+  last.textContent = '';
+  if (!lw.length) last.innerHTML = '<li class="empty">Nothing watched yet. Log an episode and it shows up here.</li>';
+  for (const x of lw) {
+    const li = document.createElement('li');
+    li.innerHTML = '<button type="button" data-open="" class="hl"><span class="t"></span><span class="m tnum"></span></button>';
+    li.querySelector('button').dataset.open = x.s.id;
+    li.querySelector('.t').textContent = x.s.title;
+    li.querySelector('.m').textContent = [x.ep, x.when].filter(Boolean).join(' · ');
+    if (!li.querySelector('.m').textContent) li.querySelector('.m').remove();
+    last.appendChild(li);
+  }
+  // c. Favourites (5 a day)
+  const favs = favShows(), picks = favPicks();
+  fav.textContent = '';
+  if (!picks.length) fav.innerHTML = '<li class="empty">No favourites yet. Tap the ♥ remote button on a show.</li>';
+  for (const s of picks) {
+    const li = document.createElement('li');
+    li.dataset.id = s.id;
+    li.innerHTML = '<button type="button" class="hl" data-open=""><span class="t"></span><span class="m tnum"></span></button>' + favBtn(s, 'home-fav');
+    li.querySelector('[data-open]').dataset.open = s.id;
+    li.querySelector('.t').textContent = s.title;
+    const r = ratingOf(s); const m = li.querySelector('.m');
+    if (r != null) m.textContent = one(r).replace(/\.0$/, '') + '/10'; else m.remove();
+    fav.appendChild(li);
+  }
+  all.hidden = !favs.length;
+  all.textContent = `See all ${fmt(favs.length)}`;
+  all.setAttribute('aria-label', `See all ${fmt(favs.length)} favourites in the Library`);
+}
+$('homePanel').addEventListener('click', e => {
+  const b = e.target.closest('button[data-home], button[data-open]'); if (!b) return;
+  if (b.dataset.open) { const s = showById(b.dataset.open); if (s) openShowDialog(s); return; }
+  if (b.dataset.home === 'plan') showTab('plan');
+  else if (b.dataset.home === 'start') { const s = showById(b.dataset.id); if (s) startFromPlan(s); }
+});
+$('homeFavAll').addEventListener('click', () => {
+  state.lib.fav = true; state.lib.status = 'All'; state.lib.q = ''; state.lib.limit = 100; state.lib.open = null;
+  $('libSearch').value = '';
+  showTab('library');
+});
+
 /* ---------- Dashboard (read-only: nothing here ever writes to the sheet) ---------- */
 const lc = s => String(s || '').trim().toLowerCase();
 const one = n => (Math.round(n * 10) / 10).toFixed(1);
@@ -1953,7 +2165,7 @@ const pillHtml = s => s ? `<span class="pill" data-s="${esc(s)}">${esc(s)}</span
 function showItem(s, extra) {
   const r = ratingOf(s);
   return { id: s.id, title: s.title, meta: [s.year, s.platform, s.genre, ...(extra && extra.meta ? [extra.meta] : [])].filter(Boolean).join(' · '),
-    big: extra && extra.big != null ? extra.big : (r != null ? one(r).replace(/\.0$/, '') + '/10' : '–'), status: s.status, sort: extra && extra.sort != null ? extra.sort : (r ?? -1) };
+    big: extra && extra.big != null ? extra.big : (r != null ? one(r).replace(/\.0$/, '') + '/10' : '–'), status: s.status, fav: favOf(s), sort: extra && extra.sort != null ? extra.sort : (r ?? -1) };
 }
 const showItems = shows => shows.map(s => showItem(s)).sort((a, b) => b.sort - a.sort || a.title.localeCompare(b.title));
 function epRange(rows) {
@@ -1968,7 +2180,7 @@ function episodeItems(rows, withDates) {
   return [...by].map(([id, a]) => {
     const show = showById(id), n = a.reduce((x, e) => x + e.eps, 0), days = [...new Set(a.map(e => e.date))].sort();
     const when = !withDates ? '' : days.length > 1 ? `${days.length} days, last ${fmtDate(days[days.length - 1])}` : fmtDate(days[0]);
-    return { id: show ? id : null, title: show ? show.title : (a[0].title || id), meta: [epRange(a), when].filter(Boolean).join(' · '), big: fmt(n), small: n === 1 ? 'episode' : 'episodes', sort: n };
+    return { id: show ? id : null, title: show ? show.title : (a[0].title || id), meta: [epRange(a), when].filter(Boolean).join(' · '), big: fmt(n), small: n === 1 ? 'episode' : 'episodes', fav: !!show && favOf(show), sort: n };
   }).sort((a, b) => b.sort - a.sort || a.title.localeCompare(b.title));
 }
 function openDrill(spec, opener) {
@@ -1985,6 +2197,7 @@ function openDrill(spec, opener) {
     const inner = '<span class="t"></span><span class="m"></span><span class="r"><b></b><span></span></span>';
     if (it.id) li.innerHTML = '<button type="button">' + inner + '</button>'; else { li.className = 'plain'; li.innerHTML = inner; }
     li.querySelector('.t').textContent = it.title;
+    if (it.fav) li.querySelector('.t').insertAdjacentHTML('beforeend', favRo({ favourite: '1' }));
     li.querySelector('.m').textContent = it.meta || '';
     li.querySelector('.r b').textContent = it.big;
     if (it.small) li.querySelector('.r span').textContent = it.small; else li.querySelector('.r span').innerHTML = pillHtml(it.status);
@@ -2109,6 +2322,7 @@ function renderDashboard() {
   const tens = shows.filter(s => ratingOf(s) === 10);
   const watching = shows.filter(s => s.status === 'Watching');
   const backlog = shows.filter(s => BACKLOG.includes(s.status));
+  const favs = shows.filter(favOf);
   const yrRows = state.entries.filter(e => e.date.startsWith(yr));
   const yrEps = yrRows.reduce((a, e) => a + e.eps, 0);
   const avg = avgRating(rated);
@@ -2118,7 +2332,8 @@ function renderDashboard() {
     ['10/10 shows', loaded ? fmt(tens.length) : '–', 'rated a perfect 10', { title: 'Rated 10/10', items: showItems(tens) }],
     ['Episodes this year', hasLog ? fmt(yrEps) : '–', hasLog ? `logged in ${yr}` : LOG_EMPTY, hasLog ? { title: `Episodes in ${yr}`, episodes: yrEps, items: episodeItems(yrRows, true) } : null],
     ['Watching now', loaded ? fmt(watching.length) : '–', watching.length === 1 ? 'show in progress' : 'shows in progress', { title: 'Watching now', items: showItems(watching) }],
-    ['Backlog', loaded ? fmt(backlog.length) : '–', 'Watchlist, Next Up, New Season, Rewatch, Paused', { title: 'Backlog', items: showItems(backlog) }]
+    ['Backlog', loaded ? fmt(backlog.length) : '–', 'Watchlist, Next Up, New Season, Rewatch, Paused', { title: 'Backlog', items: showItems(backlog) }],
+    ['Favourites', loaded ? fmt(favs.length) : '–', 'marked with the ♥ remote button', { title: 'Favourites', items: showItems(favs) }]
   ];
   const tb = $('dashTiles'); tb.textContent = '';
   for (const [label, value, sub, drill] of tiles) {
@@ -2251,10 +2466,13 @@ function showTab(name) {
 for (const t of TABS) $('tab-' + t).addEventListener('click', () => showTab(t));
 let searchT;
 $('libSearch').addEventListener('input', e => { clearTimeout(searchT); searchT = setTimeout(() => { state.lib.q = e.target.value; state.lib.limit = 100; renderLibrary(); }, 150); });
-$('libChips').addEventListener('click', e => { const c = e.target.closest('.chip'); if (!c) return; state.lib.status = c.dataset.st; state.lib.limit = 100; renderLibrary(); });
+$('libChips').addEventListener('click', e => {
+  const c = e.target.closest('.chip'); if (!c) return;
+  if (c.dataset.favfilter != null) { state.lib.fav = !state.lib.fav; state.lib.limit = 100; renderLibrary(); return; }
+  state.lib.status = c.dataset.st; state.lib.limit = 100; renderLibrary(); });
 $('libHead').addEventListener('click', e => {
   const th = e.target.closest('th'); if (!th) return; const k = th.dataset.k, L = state.lib;
-  const first = ['rating', 'year'].includes(k) ? -1 : 1;
+  const first = ['rating', 'year', 'favourite'].includes(k) ? -1 : 1;
   if (L.sort !== k) { L.sort = k; L.dir = first; }
   else if (L.dir === first) L.dir = -first;
   else { L.sort = 'sheet'; L.dir = 1; }
@@ -2262,6 +2480,7 @@ $('libHead').addEventListener('click', e => {
 });
 $('libSheetOrder').addEventListener('click', () => { state.lib.sort = 'sheet'; state.lib.dir = 1; renderLibrary(); });
 $('libBody').addEventListener('click', e => {
+  if (e.target.closest('[data-fav]')) return;   // the heart button toggles the favourite; it must not open the row (see the document handler)
   const ed = e.target.closest('[data-edit]');
   if (ed) { openShowDialog(showById(ed.dataset.edit)); return; }
   const tr = e.target.closest('tr.row'); if (!tr) return;

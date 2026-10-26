@@ -10,13 +10,13 @@ Model use: see "Using models" in the house rules. In this repo, TVmaze episode-c
 ## Sheet: "Entertainment Tracker" `1558jWeUc8gCzQuph6wOVyOocvTBhQf22UuCSXza8klc`
 
 Only touch these tabs: `📺` (sheetId 133341767), `📺 Log` (920000002), `📺 Seasons` (920000003),
-`📺 Quotes` (920000004), `📺 Settings` (920000005). Backup: `📺 backup 2026-10-18` (920000001), never write to it.
+`📺 Quotes` (920000004), `📺 Settings` (920000005). Backups: `📺 backup 2026-10-18` (920000001) and `📺 backup 2026-10-26 (before Favourite)` (920000006); never write to them.
 Never read or write Books, Reading Log, App Settings, Ratings, Contents, Wishlist, Calibre Review, any "Books backup",
 or other apps' tabs (🎥, 🎮, 🎸 …).
 
 ### 📺 (headers on row 2, data from row 3; row 1 has "RATINGS" in C1)
 A Title · B Rating (/10) · C Status* · D How to Watch* · E Genre* · F Platform* · G Starring · H Release Date (free text, e.g. "25 Nov") ·
-I Year · J Total Seasons · K Total Eps · L Notes · **M id** · N Season · O Episode · P Started · Q Finished · R Plan* · S Up next # · T Why · U Sorted
+I Year · J Total Seasons · K Total Eps · L Notes · **M id** · N Season · O Episode · P Started · Q Finished · R Plan* · S Up next # · T Why · U Sorted · V Favourite (date; blank = not a favourite)
 
 `*` = dropdown with CHIP formatting. Status: Coming Soon, Rewatch, Watchlist, Watched, Watching, New Season, Next Up, DNF, Paused.
 How to Watch: NA, Owned, To Purchase, Subscription, Pirate. Plan: Up next, Soon, Someday.

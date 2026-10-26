@@ -175,8 +175,8 @@ for (const th of Object.keys(THEMES)) {
   for (const [label, vp] of [['390', { width: 390, height: 844 }], ['1280', { width: 1280, height: 900 }]]) {
     const t = await dashOpen(vp, th); const { page } = t;
     check(`[${th} ${label}] Dashboard tab is last (Log, Library, Plan, Dashboard) and its panel shows`, await page.evaluate(() => [...document.querySelectorAll('.tabs .tab')].map(b => b.textContent).join() === 'Log,Library,Plan,Dashboard' && !document.getElementById('view-dashboard').hidden && document.getElementById('tab-dashboard').getAttribute('aria-selected') === 'true'));
-    check(`[${th} ${label}] Dashboard renders: 6 tiles, 12-month chart, calendar, bars, actors`, await page.evaluate(() =>
-      document.querySelectorAll('#dashTiles .stat').length === 6 && window.__charts.at(-1).data.labels.length === 12 && document.querySelectorAll('#heat .c').length > 300 &&
+    check(`[${th} ${label}] Dashboard renders: 7 tiles, 12-month chart, calendar, bars, actors`, await page.evaluate(() =>
+      document.querySelectorAll('#dashTiles .stat').length === 7 && window.__charts.at(-1).data.labels.length === 12 && document.querySelectorAll('#heat .c').length > 300 &&
       document.querySelectorAll('#bingeBars .hbar').length === 4 && document.querySelectorAll('#actList li').length === 4 && document.querySelectorAll('#stBars .hbar').length === 9));
     check(`[${th} ${label}] no horizontal scroll`, await noHScroll(page));
     check(`[${th} ${label}] every panel sits inside the viewport`, await page.evaluate(() => [...document.querySelectorAll('#view-dashboard .panel, #view-dashboard .stat')].every(e => { const r = e.getBoundingClientRect(); return r.left >= -1 && r.right <= window.innerWidth + 1; })));
@@ -197,7 +197,7 @@ for (const th of Object.keys(THEMES)) {
   const tiles = await page.$$eval('#dashTiles .stat', els => els.map(e => ({ l: e.children[0].textContent, v: e.children[1].textContent, s: e.children[2].textContent })));
   const yr = String(new Date().getFullYear());
   const yearEps = logRows(sheet).filter(r => r.date.startsWith(yr)).reduce((a, r) => a + r.eps, 0);
-  check('Tiles: labels in the agreed order', tiles.map(x => x.l).join('|') === 'Shows watched|Average rating|10/10 shows|Episodes this year|Watching now|Backlog', tiles);
+  check('Tiles: labels in the agreed order', tiles.map(x => x.l).join('|') === 'Shows watched|Average rating|10/10 shows|Episodes this year|Watching now|Backlog|Favourites', tiles);
   check('Tiles: Shows watched (Watched + Rewatch) = 9', tiles[0].v === String(EXPECT.watched), tiles[0]);
   check('Tiles: Average rating = 7.8 over 12 rated shows', tiles[1].v === EXPECT.avg && /12 rated/.test(tiles[1].s), tiles[1]);
   check('Tiles: 10/10 shows = 3', tiles[2].v === String(EXPECT.tens), tiles[2]);
