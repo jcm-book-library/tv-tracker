@@ -34,6 +34,10 @@ See `CLAUDE.md` for the data model and sheet rules.
 - Log-based panels show "Fills in as you log episodes on the Log tab." until the log has rows. Dashboard tests: `node tests/dashboard.mjs`
   (own fixture `tests/dash-fixture.json`); `node tests/smoke.mjs` still covers the rest.
 
+## Favourites (2026-10-26)
+- Each show has a Favourite date (column V). The sticker is a TV-remote rubber button with a heart: tap it on a Library row, in the expanded details, in the edit dialog or on the Log tab front page. It writes only that one cell (today's date, or blank to remove).
+- Log tab front page: Tonight's pick (Up next #1, else the Plan deck's top card), Last 5 watched, and 5 favourites that rotate daily. Library has a Favourites filter and a sort by favourite date; the Dashboard has a Favourites tile. Tests: `node tests/favourites.mjs`.
+
 ## Themes
 The app wears one show's look for the whole month (no drift): Jan Breaking Bad / Better Call Saul, Feb Deadwood, Mar Mr Inbetween,
 Apr Chernobyl, May Hannibal, Jun Ripley, Jul The Sopranos, Aug Succession, Sep Fleabag, Oct Arcane, Nov Mad Men, Dec Blackadder the Third.

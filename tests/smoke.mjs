@@ -279,7 +279,7 @@ for (const [label, vp] of [['390', { width: 390, height: 844 }], ['1280', { widt
   await page.waitForFunction(() => !document.getElementById('showDlg').open);
   const add = sheet.writes.filter(w => w.tool === 'append_values');
   const r = add[0] && add[0].values[0];
-  check('Add appends exactly one full A:U row', sheet.writes.length === 1 && add.length === 1 && r.length === 21, sheet.writes);
+  check('Add appends exactly one full A:V row', sheet.writes.length === 1 && add.length === 1 && r.length === 22, sheet.writes);
   check('Add uses highest id + 1 (42) in column M, header order', r && r[12] === 42 && r[0] === "'Zephyr Tower" && r[2] === "'Next Up" && r[5] === "'Plex" && r[8] === 2026 && r[1] === '' && r[13] === '', r);
   check('New show appears in the library', await page.evaluate(() => [...document.querySelectorAll('#libBody .t')].some(x => x.textContent === 'Zephyr Tower')));
   // filters
