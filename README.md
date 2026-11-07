@@ -13,7 +13,7 @@ See `CLAUDE.md` for the data model and sheet rules.
 ## Stage 2 (2026-10-18): Log and Library
 - `app.html`: Log tab (stat tiles, Watching now with +1 ep / log several / set position / next season / pause / finish,
   Start watching from Next Up, Today / Yesterday / date backdating, recent episodes with edit and delete, episodes per week)
-  and Library tab (search, status chips, sortable table, details, edit/add dialog writing only changed cells).
+  and Library tab (search, status chips, sortable table; a row opens the show panel (see Library rework below), which edits or adds a show writing only changed cells).
 - Hosted as a private claude.ai artifact (mcp: Google Sheets get_values / append_values / update_values) and as `index.html` on GitHub Pages.
 - `node tests/smoke.mjs`: Playwright smoke test against a fake sheet built from `tests/fixture.json` (390px and 1280px; also covers all 13 themes).
 
@@ -30,12 +30,12 @@ See `CLAUDE.md` for the data model and sheet rules.
 ## Stage 4 (2026-10-24): Dashboard
 - Dashboard tab (read-only, never writes to the sheet): six tiles, episodes per month (last 12), a 53-week calendar, binge or weekly per show,
   ratings, genres, library by status, platforms, how to watch, top actors and decades. Every tile, bar, row and calendar day opens a list;
-  tapping a show in it opens the Library edit dialog.
+  tapping a show in it opens the show panel.
 - Log-based panels show "Fills in as you log episodes on the Log tab." until the log has rows. Dashboard tests: `node tests/dashboard.mjs`
   (own fixture `tests/dash-fixture.json`); `node tests/smoke.mjs` still covers the rest.
 
 ## Favourites (2026-10-26)
-- Each show has a Favourite date (column V). The sticker is a TV-remote rubber button with a heart: tap it on a Library row, in the expanded details, in the edit dialog or on the Log tab front page. It writes only that one cell (today's date, or blank to remove).
+- Each show has a Favourite date (column V). The sticker is a TV-remote rubber button with a heart: tap it on a Library row, in the show panel (header pill, or the toggle in its form that is saved with Save) or on the Log tab front page. It writes only that one cell (today's date, or blank to remove).
 - Log tab, top to bottom: Watching now, stat tiles, Episodes per week, Last 5 watched and Favourites (5 that rotate daily; two columns from 900px), then Next Up (Start buttons). Tonight's pick was removed; Recent episodes moved to the Plan tab. Library has a Favourites filter and a sort by favourite date; the Dashboard has a Favourites tile. Tests: `node tests/favourites.mjs`.
 
 ## Themes
@@ -69,3 +69,14 @@ A plain navy **Default** is always one tap away. Source: `design/themes-board.ht
   matches (e.g. Spawn, Molly, The Transformers, Formula 1, Bait, The Twelve) and specials, stand-up and single episodes with no TVmaze entry were left blank.
 - Checked by script afterwards: A–V identical to the backup, W and X empty, Y equal to the intended list (306 filled, 0 missing, 0 extra, 0 wrong).
 - A round Back to top button appears bottom-right on every tab after scrolling. Layout tests: `node tests/layout.mjs`.
+
+## Library rework (2026-11-07): chips, show panel, Based on / Source title / Poster
+- Library, top to bottom: search box, category chips, the list. The chips (All, Favourites, then the nine statuses) are all one size and the rows are centred as a group
+  (about 6 per row on a laptop, 3 on a phone); each keeps its status dot, count and pressed state.
+- Clicking a row no longer expands it: it selects the row and opens a floating panel with that show (another row swaps it; the same row, the close button or Escape closes it).
+  The panel is docked on the left on screens wider than 900px (the page moves over so nothing sits under it) and is a bottom sheet (up to 70% of the height, with a grab bar) on phones.
+  It shows the heading, a Favourite pill, the details and the full edit form, with Save and Cancel always in view. Unsaved changes ask "Discard changes?" inside the panel before another row or close replaces them.
+- The same panel opens from Dashboard drills, the Log tab's Last 5 and Favourites cards, Tools and Discover. Add show opens it with an empty form (Status Watchlist).
+- New fields in the form and details: Based on (select), Source title and Poster link (blank or starting with https://, otherwise an inline error and nothing is written). A small Based on chip sits beside the title in the list.
+- Reads cover `A2:Y`; a new show appends a full 25-column row. Writes are unchanged: the row is found by id first, only changed cells are written.
+- Tests: `node tests/library.mjs` (chips, panel, writes, guards, all 13 themes at 390px and 1280px).

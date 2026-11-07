@@ -155,11 +155,10 @@ for (const [label, vp] of [['390', { width: 390, height: 844 }], ['1280', { widt
   check(`[${label}] Library has no horizontal scroll`, await noHScroll(page));
   await page.click('#libBody tr.row >> nth=0');
   await page.screenshot({ path: `${SHOTS}/library-${label}.png`, fullPage: true });
-  check(`[${label}] Library expanded row has no horizontal scroll`, await noHScroll(page));
-  await page.click('[data-edit]');
+  check(`[${label}] Library row opens the show panel (row selected) with no horizontal scroll`, await noHScroll(page) && await page.evaluate(() => !!document.querySelector('.fpanel') && document.querySelector('#libBody tr.row').getAttribute('aria-selected') === 'true'));
   await page.screenshot({ path: `${SHOTS}/dialog-${label}.png` });
-  check(`[${label}] Edit dialog has no horizontal scroll`, await noHScroll(page));
   await page.keyboard.press('Escape');
+  await page.waitForFunction(() => !document.querySelector('.fpanel'));
   await page.click('#tab-plan');
   check(`[${label}] Plan renders (5 in Up next, 3 Coming Soon, deck card)`, await page.evaluate(() =>
     document.querySelectorAll('#upList li').length === 5 && document.querySelectorAll('#cslList li').length === 3 && !!document.querySelector('#deckBody .deck-card') && document.getElementById('upNote').textContent === '5 of 10'));
@@ -242,31 +241,28 @@ for (const [label, vp] of [['390', { width: 390, height: 844 }], ['1280', { widt
   const t = await open({ width: 1280, height: 900 }); const { page, sheet } = t;
   await page.click('#tab-library');
   await page.click('#libBody tr.row[data-id="22"]');
-  await page.click('[data-edit="22"]');
   const opts = await page.$$eval('#f-status option', o => o.map(x => x.value));
   check('Status select has the nine options plus blank', JSON.stringify(opts.filter(Boolean).sort()) === JSON.stringify(['Coming Soon', 'DNF', 'New Season', 'Next Up', 'Paused', 'Rewatch', 'Watched', 'Watching', 'Watchlist']) && opts[0] === '', opts);
   sheet.clearWrites();
   await page.fill('#f-rating', '7');
   await page.click('#dlgSave');
-  await page.waitForFunction(() => !document.getElementById('showDlg').open);
+  await page.waitForFunction(() => state.busy === false && document.getElementById('dlgSave').textContent === 'Save');
   const ups = sheet.writes;
   const row22 = sheet.rowOfId(22);
   check('Editing one field makes exactly one update_values call for that cell', ups.length === 1 && ups[0].tool === 'update_values' && ups[0].range === `'📺'!B${row22}` && ups[0].values[0][0] === 7, ups);
   check('Edit found the row by re-reading the id column first', sheet.calls.some(c => c.tool === 'get_values' && /^'📺'!M1:M\d*$/.test(c.input.range)));
   // text field + non-list value kept
   await page.click('#libBody tr.row[data-id="8"]');
-  await page.click('[data-edit="8"]');
   check('Unlisted genre ("Lore") is kept as an extra option', await page.$eval('#f-genre', s => s.value === 'Lore' && [...s.options].some(o => o.value === 'Lore')));
   sheet.clearWrites();
   await page.fill('#f-notes', '1984 rewatch');
   await page.click('#dlgSave');
-  await page.waitForFunction(() => !document.getElementById('showDlg').open);
+  await page.waitForFunction(() => state.busy === false && document.getElementById('dlgSave').textContent === 'Save');
   check('Text edits are written with a leading apostrophe', sheet.writes.length === 1 && sheet.writes[0].values[0][0] === "'1984 rewatch" && sheet.writes[0].range === `'📺'!L${sheet.rowOfId(8)}`, sheet.writes);
   // no-op save writes nothing
-  await page.click('[data-edit="8"]');
   sheet.clearWrites();
   await page.click('#dlgSave');
-  await page.waitForFunction(() => !document.getElementById('showDlg').open);
+  await page.waitForFunction(() => state.busy === false && document.getElementById('dlgSave').textContent === 'Save');
   check('Saving with no changes writes nothing', sheet.writes.length === 0, sheet.writes);
   // add
   sheet.clearWrites();
@@ -276,10 +272,10 @@ for (const [label, vp] of [['390', { width: 390, height: 844 }], ['1280', { widt
   await page.selectOption('#f-platform', 'Plex');
   await page.fill('#f-year', '2026');
   await page.click('#dlgSave');
-  await page.waitForFunction(() => !document.getElementById('showDlg').open);
+  await page.waitForFunction(() => state.busy === false && document.getElementById('dlgSave').textContent === 'Save');
   const add = sheet.writes.filter(w => w.tool === 'append_values');
   const r = add[0] && add[0].values[0];
-  check('Add appends exactly one full A:V row', sheet.writes.length === 1 && add.length === 1 && r.length === 22, sheet.writes);
+  check('Add appends exactly one full A:Y row', sheet.writes.length === 1 && add.length === 1 && r.length === 25, sheet.writes);
   check('Add uses highest id + 1 (42) in column M, header order', r && r[12] === 42 && r[0] === "'Zephyr Tower" && r[2] === "'Next Up" && r[5] === "'Plex" && r[8] === 2026 && r[1] === '' && r[13] === '', r);
   check('New show appears in the library', await page.evaluate(() => [...document.querySelectorAll('#libBody .t')].some(x => x.textContent === 'Zephyr Tower')));
   // filters
@@ -465,9 +461,9 @@ const idReadFirst = sheet => { const i = sheet.calls.findIndex(c => c.tool === '
 }
 {
   const t = await open({ width: 1280, height: 900 }); const { page } = t;
-  await page.click('#tab-library'); await page.click('#libBody tr.row[data-id="20"]'); await page.click('[data-edit="20"]');
+  await page.click('#tab-library'); await page.click('#libBody tr.row[data-id="20"]');
   const opts = await page.$$eval('#f-plan option', o => o.map(x => x.value));
-  check('Library dialog Plan select is exactly blank/Up next/Soon/Someday, with Up next #, Why and Sorted fields', JSON.stringify(opts) === JSON.stringify(['', 'Up next', 'Soon', 'Someday']) && (await page.$eval('#f-upNext', e => e.value)) === '2' && (await page.$eval('#f-why', e => e.value)) === 'Comfort rewatch' && (await page.$eval('#f-sorted', e => e.type)) === 'date', opts);
+  check('Library panel Plan select is exactly blank/Up next/Soon/Someday, with Up next #, Why and Sorted fields', JSON.stringify(opts) === JSON.stringify(['', 'Up next', 'Soon', 'Someday']) && (await page.$eval('#f-upNext', e => e.value)) === '2' && (await page.$eval('#f-why', e => e.value)) === 'Comfort rewatch' && (await page.$eval('#f-sorted', e => e.type)) === 'date', opts);
   await t.ctx.close();
 }
 
@@ -601,11 +597,11 @@ for (const [label, vp] of [['390', { width: 390, height: 844 }], ['1280', { widt
     const r = await page.evaluate(() => ({ body: getComputedStyle(document.body).backgroundColor, cell: getComputedStyle(document.querySelector('#libBody td .t')).color, scheme: getComputedStyle(document.documentElement).colorScheme, panel: getComputedStyle(document.querySelector('.table-wrap')).backgroundColor, th: getComputedStyle(document.querySelector('.lib th')).backgroundColor }));
     return r.body === rgbOf(mm.bg) && r.cell === rgbOf(mm.fg) && r.scheme === 'light' && r.panel === rgbOf(mm.surface) && r.th === rgbOf(mm.raise);
   })());
-  check('Mad Men: dialogs and inputs follow the light tokens (no dark leftovers)', await (async () => {
-    await page.click('#libBody tr.row >> nth=0'); await page.click('[data-edit]');
-    const r = await page.evaluate(() => ({ dlg: getComputedStyle(document.getElementById('showDlg')).backgroundColor, inp: getComputedStyle(document.querySelector('#showDlg input')).backgroundColor, scheme: getComputedStyle(document.querySelector('#showDlg input')).colorScheme, backdrop: getComputedStyle(document.documentElement).getPropertyValue('--scrim').trim() }));
+  check('Mad Men: the show panel and inputs follow the light tokens (no dark leftovers)', await (async () => {
+    await page.click('#libBody tr.row >> nth=0');
+    const r = await page.evaluate(() => ({ dlg: getComputedStyle(document.querySelector('.fpanel')).backgroundColor, inp: getComputedStyle(document.querySelector('.fpanel input')).backgroundColor, scheme: getComputedStyle(document.querySelector('.fpanel input')).colorScheme }));
     await page.keyboard.press('Escape');
-    return r.dlg === rgbOf(mm.surface) && r.inp === rgbOf(mm.bg) && r.scheme === 'light' && /rgba\(30,25,20/.test(r.backdrop);
+    return r.dlg === rgbOf(mm.raise) && r.inp === rgbOf(mm.bg) && r.scheme === 'light';
   })());
   await page.click('#tab-log');
   check('Mad Men: stat tiles and progress tracks use light tokens (track is the line colour, tile is the panel colour)', await page.evaluate(([surf, line]) => getComputedStyle(document.querySelector('.stat:not(.streak)')).backgroundColor === surf && getComputedStyle(document.querySelector('.goalbar')).backgroundColor === line && getComputedStyle(document.querySelector('.prog')).backgroundColor === line, [rgbOf(mm.surface), rgbOf(mm.line)]));

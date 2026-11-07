@@ -28,7 +28,10 @@
     "Up next #",
     "Why",
     "Sorted",
-    "Favourite"
+    "Favourite",
+    "Based on",
+    "Source title",
+    "Poster"
    ],
    [
     "Alpha Station",
@@ -52,7 +55,10 @@
     "",
     "",
     "",
-    "@-5"
+    "@-5",
+    "Book",
+    "The Alpha Papers",
+    "https://example.com/alpha.jpg"
    ],
    [
     "Bluebell Row",
@@ -99,6 +105,9 @@
     "",
     "",
     "",
+    "",
+    "",
+    "True story",
     "",
     ""
    ],
