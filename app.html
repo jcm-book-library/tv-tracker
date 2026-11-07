@@ -420,6 +420,71 @@ body::after{opacity:var(--grain);mix-blend-mode:overlay;background-image:url("da
   .favpill,.chip-fav{min-height:44px}
 }
 
+/* Tools and Discover */
+.tool-input{width:100%;font:inherit;font-size:15px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:var(--rc);padding:9px 12px;min-height:40px}
+.tool-input:focus,.tool-sel:focus{border-color:var(--accent);outline:none}
+.tool-sel{font:inherit;font-size:14px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:var(--rc);padding:5px 8px}
+.tl-list{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column}
+.panel-head + .tl-list,.panel-head + .chips{margin-top:0}
+.tl-list li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:center;padding:9px 0;border-top:1px solid var(--line)}
+.tl-list li:first-child{border-top:0}
+.tl-list li.empty,.tl-list li.muted{display:block}
+.tl-list .main{display:flex;flex-direction:column;gap:3px;min-width:0}
+.tl-list .t{font-weight:600;overflow-wrap:anywhere;text-align:left}
+.tl-list .m{font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:2px 8px;align-items:center}
+.tl-list .v{font-weight:700;font-size:14px;color:var(--fg);text-align:right;overflow-wrap:anywhere;max-width:15em}
+.tl-list .acts{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.tl-list .acts button{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:999px;padding:4px 10px;min-height:32px;cursor:pointer;white-space:nowrap}
+.tl-list .acts button:hover{color:var(--fg);border-color:var(--accent)}
+.tl-list .acts button:disabled{opacity:.5;cursor:default}
+.tl-list .acts .btn-primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-size:13px}
+.linkbtn{all:unset;box-sizing:border-box;cursor:pointer;color:var(--fg);font-weight:600;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.linkbtn:hover,.linkbtn:focus-visible{text-decoration-color:var(--accent)}
+.linkbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.dip h3{font-family:var(--data);font-size:22px;line-height:1.25;margin:0 0 4px;overflow-wrap:anywhere}
+.tl-meta{margin-bottom:2px}
+.tl-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.tl-chips .why-chip{font-size:12px;padding:2px 9px;border-radius:999px;background:var(--raise);color:var(--fg);border:1px solid var(--line)}
+.goal-in{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
+.goal-in .field{flex:1 1 120px}
+.goal-big{font-family:var(--data);font-size:22px}
+.goal-big b{font-size:30px}
+.gl{margin:8px 0 0;font-size:14px}
+.gl[data-pace="off"]{font-weight:600}
+.yir{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 14px}
+.yir-item{display:flex;flex-direction:column;gap:1px;min-width:0}
+.yir-item .val{font-family:var(--data);font-size:18px;font-weight:700;overflow-wrap:anywhere}
+.mbars{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:4px;align-items:end;height:96px}
+.mb{display:flex;flex-direction:column;justify-content:flex-end;align-items:stretch;height:100%;text-align:center;gap:2px}
+.mb i{display:block;background:var(--accent);border-radius:3px 3px 0 0;min-height:0}
+.mb .mv{font-size:10px;color:var(--muted);min-height:12px;line-height:12px}
+.mb .ml{font-size:11px;color:var(--muted);line-height:14px}
+.rec-list{display:flex;flex-direction:column}
+.rec{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 12px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.rec:first-child{border-top:0}
+.rec .n{font-family:var(--data);font-weight:700;min-width:1.4em;text-align:right}
+.rec .t{font-weight:600;font-size:16px;overflow-wrap:anywhere}
+.rec .acts .btn{white-space:nowrap}
+.quote{margin:0;padding:4px 0 4px 16px;border-left:3px solid var(--accent)}
+.quote p{margin:0 0 8px;font-size:18px;line-height:1.5;font-style:italic;overflow-wrap:anywhere}
+.quote footer{font-size:13px;color:var(--muted)}
+.links{display:flex;flex-wrap:wrap;gap:8px}
+.links a{text-decoration:none;color:var(--fg);display:inline-flex;align-items:center;min-height:36px}
+.link-chip{border:1px solid var(--line);background:var(--raise);border-radius:999px;padding:6px 14px;font-size:13px;font-weight:600}
+.link-chip:hover{border-color:var(--accent)}
+@media (max-width:560px){
+  .tl-list li{grid-template-columns:minmax(0,1fr)}
+  .tl-list .acts,.tl-list .v{justify-content:flex-start;text-align:left;max-width:none}
+  .tl-list .acts button{min-height:44px;padding-inline:14px}
+  .rec{grid-template-columns:auto minmax(0,1fr)}
+  .rec .acts{grid-column:2;justify-self:start}
+  .goal-in .field input{min-height:44px}
+  .rec .acts .btn,.goal-in .btn,#view-tools .chip,#view-discover .chip,.links a,.linkbtn{min-height:44px}
+  #view-tools .chip,#view-discover .chip{display:inline-flex;align-items:center}
+  .linkbtn{display:inline-flex;align-items:center}
+  .hp-acts .btn{min-height:44px}
+  .tool-input,.tool-sel,#qAdd{min-height:44px}
+}
 /* front page panel on the Log tab: stacked on phones, three columns from 900px */
 .home{display:grid;grid-template-columns:minmax(0,1fr);padding:0;margin-bottom:20px}
 .home-part{padding:16px;min-width:0}
@@ -480,7 +545,8 @@ body::after{opacity:var(--grain);mix-blend-mode:overlay;background-image:url("da
     <button class="tab" role="tab" id="tab-library" aria-selected="false" aria-controls="view-library" type="button">Library</button>
     <button class="tab" role="tab" id="tab-plan" aria-selected="false" aria-controls="view-plan" type="button">Plan</button>
     <button class="tab" role="tab" id="tab-dashboard" aria-selected="false" aria-controls="view-dashboard" type="button">Dashboard</button>
-    <!-- Later tabs slot in here: Tools, Discover (add a button + a #view-<name> panel, then add the name to TABS) -->
+    <button class="tab" role="tab" id="tab-tools" aria-selected="false" aria-controls="view-tools" type="button">Tools</button>
+    <button class="tab" role="tab" id="tab-discover" aria-selected="false" aria-controls="view-discover" type="button">Discover</button>
   </nav>
 
   <div id="view-log" role="tabpanel" aria-labelledby="tab-log">
@@ -630,7 +696,71 @@ body::after{opacity:var(--grain);mix-blend-mode:overlay;background-image:url("da
       <section class="panel" aria-labelledby="decH"><div class="panel-head"><h2 id="decH">Decades</h2><span class="muted small" id="decNote"></span></div><ul class="hbars" id="decBars"></ul></section>
     </div>
   </div>
+
+  <div id="view-tools" role="tabpanel" aria-labelledby="tab-tools" hidden>
+    <div class="dash-2">
+      <section class="panel" aria-labelledby="dipH"><div class="panel-head"><h2 id="dipH">Lucky dip</h2><span class="muted small">Pick a mood, get a show from your list</span></div>
+        <div class="chips" id="dipMoods" role="group" aria-label="Mood"></div><div id="dipCard"></div></section>
+      <section class="panel" aria-labelledby="whereH"><div class="panel-head"><h2 id="whereH">Where can I watch this?</h2><span class="muted small">Searches your library</span></div>
+        <input type="search" id="whereQ" class="tool-input" placeholder="Show title" aria-label="Show title to look up" autocomplete="off"><ul class="tl-list" id="whereList"></ul></section>
+    </div>
+    <div class="dash-2">
+      <section class="panel" aria-labelledby="stallH"><div class="panel-head"><h2 id="stallH">Stalled shows</h2><span class="muted small">Watching or Paused, nothing logged for 10+ days</span></div><ul class="tl-list" id="stallList"></ul></section>
+      <section class="panel" aria-labelledby="finH"><div class="panel-head"><h2 id="finH">Finishing soon</h2><span class="muted small">Watching, 3 episodes or fewer to go</span></div><ul class="tl-list" id="finList"></ul></section>
+    </div>
+    <div class="dash-2">
+      <section class="panel" aria-labelledby="goalH"><div class="panel-head"><h2 id="goalH">Goal planner</h2><span class="muted small tnum" id="goalYear"></span></div>
+        <div class="goal-in"><div class="field"><label for="goalWeekIn">Episodes a week</label><input type="number" id="goalWeekIn" min="1" max="200" inputmode="numeric"></div>
+          <div class="field"><label for="goalYearIn">Episodes this year</label><input type="number" id="goalYearIn" min="1" max="5000" inputmode="numeric"></div>
+          <button class="btn btn-primary" type="button" id="goalSave">Save goals</button></div>
+        <p class="muted small" id="goalMsg" style="margin:6px 0 0" aria-live="polite"></p>
+        <div id="goalOut" style="margin-top:14px"></div></section>
+      <section class="panel" aria-labelledby="yirH"><div class="panel-head"><h2 id="yirH">Year in review</h2><select id="yirYear" aria-label="Year" class="tool-sel"></select></div><div id="yirBox"></div></section>
+    </div>
+    <section class="panel" aria-labelledby="recsH">
+      <div class="panel-head"><h2 id="recsH">What to watch next</h2><span class="muted small">From your own ratings</span></div>
+      <div class="chips" id="recModes" role="group" aria-label="Mode">
+        <button class="chip" type="button" data-m="best" aria-pressed="true">Best match</button>
+        <button class="chip" type="button" data-m="change" aria-pressed="false">Change of pace</button>
+        <button class="chip" type="button" data-m="quick" aria-pressed="false">Quick win</button>
+        <button class="chip" type="button" data-m="like" aria-pressed="false">More like…</button>
+        <button class="chip" type="button" data-m="revisit" aria-pressed="false">Revisit a favourite</button>
+      </div>
+      <div id="recLikeWrap" hidden style="margin-bottom:12px"><select id="recLike" class="tool-input" aria-label="Show you loved"><option value="">Pick a show you loved…</option></select></div>
+      <p class="muted small" id="recExplain" style="margin:0 0 10px"></p>
+      <div id="recList" class="rec-list"></div>
+    </section>
+  </div>
+
+  <div id="view-discover" role="tabpanel" aria-labelledby="tab-discover" hidden>
+    <div class="dash-2">
+      <section class="panel" aria-labelledby="qH"><div class="panel-head"><h2 id="qH">Quote of the day</h2><button class="btn" type="button" id="qAdd">Add a quote</button></div><div id="qBox"></div></section>
+      <section class="panel" aria-labelledby="odH"><div class="panel-head"><h2 id="odH">On this day</h2><span class="muted small">In earlier years</span></div><ul class="tl-list" id="odList"></ul></section>
+    </div>
+    <div class="dash-2">
+      <section class="panel" aria-labelledby="csH"><div class="panel-head"><h2 id="csH">Coming soon</h2><span class="muted small">Coming Soon and New Season, soonest first</span></div><ul class="tl-list" id="csList"></ul>
+        <div class="eyebrow" style="margin:16px 0 8px">Pipeline</div><div class="chips" id="csPipe" role="group" aria-label="Shows by status. Opens the Library"></div></section>
+      <section class="panel" aria-labelledby="lkH"><div class="panel-head"><h2 id="lkH">Links</h2><span class="muted small">Opens in a new tab</span></div>
+        <input type="search" id="lkTitle" class="tool-input" list="showTitles" placeholder="Show title" aria-label="Show title to search for" autocomplete="off">
+        <div class="links" id="lkSearch" style="margin-top:10px"></div><div class="eyebrow" style="margin:16px 0 8px">Always handy</div><div class="links" id="lkFixed"></div></section>
+    </div>
+  </div>
 </div>
+
+<datalist id="showTitles"></datalist>
+<dialog id="quoteDlg" aria-labelledby="qdTitle">
+  <form id="quoteForm" method="dialog">
+    <div class="dlg-head"><h2 id="qdTitle">Add a quote</h2><button class="btn" type="button" id="qdClose">Close</button></div>
+    <div class="dlg-body">
+      <div class="field w4"><label for="qdText">Quote</label><textarea id="qdText" required></textarea></div>
+      <div class="field w2"><label for="qdWho">Who said it</label><input id="qdWho" autocomplete="off"></div>
+      <div class="field w2"><label for="qdShow">Show</label><input id="qdShow" list="showTitles" autocomplete="off" placeholder="Pick from your library"></div>
+      <div class="field"><label for="qdSeason">Season (optional)</label><input id="qdSeason" type="number" min="1" inputmode="numeric"></div>
+      <div class="field"><label for="qdEp">Episode (optional)</label><input id="qdEp" type="number" min="1" inputmode="numeric"></div>
+    </div>
+    <div class="dlg-foot"><span class="muted" id="qdMsg" style="font-size:13px;align-self:center" aria-live="polite"></span><span><button class="btn btn-primary" type="submit" id="qdSave">Save quote</button></span></div>
+  </form>
+</dialog>
 
 <dialog id="drillDlg" aria-labelledby="drillTitle">
   <div class="dlg-head"><div><h2 id="drillTitle">Shows</h2><div class="muted small" id="drillSub"></div></div><button class="btn" type="button" id="drillClose">Close</button></div>
@@ -691,7 +821,7 @@ body::after{opacity:var(--grain);mix-blend-mode:overlay;background-image:url("da
 const SHEET_ID = '1558jWeUc8gCzQuph6wOVyOocvTBhQf22UuCSXza8klc';
 const SERVER = 'Google Sheets';
 const T_SHOWS = "'📺'", T_LOG = "'📺 Log'", T_SEASONS = "'📺 Seasons'", T_SETTINGS = "'📺 Settings'";
-const TABS = ['log', 'library', 'plan', 'dashboard'];   // later: 'tools', 'discover'
+const TABS = ['log', 'library', 'plan', 'dashboard', 'tools', 'discover'];
 const TAB_KEY = 'tv-tab';
 
 /* ---------- dates (local time) ---------- */
@@ -996,7 +1126,9 @@ const state = {
   showHeader: [],       // raw header of 📺
   seasons: new Map(),   // "showId|season" -> episode count
   premieres: new Map(), // showId -> sorted premiere dates (yyyy-mm-dd) from 📺 Seasons
-  settings: { weeklyGoalEps: 7, streakMinEps: 1, appName: 'TV Tracker' },
+  seasonDates: new Map(), // "showId|season" -> { premiere, finale } (yyyy-mm-dd or '')
+  settings: { weeklyGoalEps: 7, yearGoalEps: 500, streakMinEps: 1, appName: 'TV Tracker' },
+  settingKeys: new Set(), // keys that exist as rows in 📺 Settings
   mcp: null, live: false, busy: false, logDate: null, editing: null, more: null, logN: 2,
   pickAll: false, lib: { q: '', status: 'All', fav: false, sort: 'sheet', dir: 1, limit: 100, open: null }
 };
@@ -1319,6 +1451,8 @@ function renderAll() {
   if (!$('view-library').hidden) renderLibrary();
   if (!$('view-plan').hidden) renderPlan();
   if (!$('view-dashboard').hidden) renderDashboard();
+  if (!$('view-tools').hidden) renderTools();
+  if (!$('view-discover').hidden) renderDiscover();
   setWordmark(state.settings.appName || 'TV Tracker');
   document.title = state.settings.appName || 'TV Tracker';
 }
@@ -1383,21 +1517,25 @@ async function refresh() {
     state.editing = null;
     // 📺 Seasons
     const sh = (seasons[0] || []).map(h => String(h).trim()), si = k => sh.indexOf(k);
-    state.seasons = new Map(); state.premieres = new Map();
+    state.seasons = new Map(); state.premieres = new Map(); state.seasonDates = new Map();
     for (const r of seasons.slice(1)) {
       const id = String(r[si('showId')] ?? '').trim(), s = toNum(r[si('season')]), n = toNum(r[si('episodes')]);
       if (id && s && n) state.seasons.set(id + '|' + s, n);
       const pr = toDate(r[si('premiere')]);
       if (id && pr) state.premieres.set(id, [...(state.premieres.get(id) || []), pr].sort());
+      if (id && s && (pr || toDate(r[si('finale')]))) state.seasonDates.set(id + '|' + s, { premiere: pr || '', finale: toDate(r[si('finale')]) || '' });
     }
     // 📺 Settings
+    state.settingKeys = new Set();
     for (const r of settings.slice(1)) {
-      const k = String(r[0] ?? '').trim(), v = r[1];
-      if (k === 'weeklyGoalEps') state.settings.weeklyGoalEps = toNum(v) || 7;
+      const k = String(r[0] ?? '').trim().replace(/^'/, ''), v = r[1];
+      state.settingKeys.add(k);
+      if (k === 'yearGoalEps') state.settings.yearGoalEps = toNum(v) || 500;
+      else if (k === 'weeklyGoalEps') state.settings.weeklyGoalEps = toNum(v) || 7;
       else if (k === 'streakMinEps') state.settings.streakMinEps = toNum(v) || 1;
       else if (k === 'appName' && String(v ?? '').trim()) state.settings.appName = String(v).trim();
     }
-    state.live = true;
+    state.live = true; disc.loaded = false;
     notice('');
     setStatus('live', 'Live from your sheet · ' + new Date().toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit' }));
     renderAll();
@@ -2195,7 +2333,11 @@ function openDrill(spec, opener) {
   $('drillDlg').showModal();
 }
 function restoreDrillFocus() {
+  // A late 'close' from the edit dialog can arrive while a drill is open; it must not use up the opener,
+  // and a call with no opener has nothing to restore (the browser returns focus itself).
+  if ($('drillDlg').open) return;
   const o = drillOpener; drillOpener = null;
+  if (!o) return;
   let el = o && o.isConnected ? o : null;
   if (!el && o && o.dataset && o.dataset.fk) el = [...document.querySelectorAll('[data-fk]')].find(e => e.dataset.fk === o.dataset.fk);
   if (!el && !$('view-dashboard').hidden) el = $('tab-dashboard');
@@ -2436,6 +2578,624 @@ function renderDashboard() {
   if (fk) { const el = [...document.querySelectorAll('[data-fk]')].find(e => e.dataset.fk === fk); if (el) el.focus({ preventScroll: true }); }
 }
 
+/* ---------- Tools and Discover ----------
+   Read-only except the buttons that say what they write: Start watching, +1 ep, Pause, Call it DNF (the existing 📺 writers),
+   Save goals (📺 Settings, column B of the key's row, or one appended row) and Add a quote (one row in 📺 Quotes).
+   Opening tabs, choosing a mood, searching, switching the year or mode and opening the Add dialog never write. */
+const T_QUOTES = "'📺 Quotes'";
+const tl = { mood: null, pick: null, rec: 'best', like: '', yir: '' };
+const disc = { loaded: false, loading: null, quotes: [], err: null, pinned: null };
+const normQ = t => String(t || '').toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+const inList = (v, list) => list.some(g => lc(g) === lc(v));
+const agoText = n => n <= 0 ? 'today' : n === 1 ? '1 day ago' : `${fmt(n)} days ago`;
+const inText = n => n <= 0 ? 'today' : n === 1 ? 'tomorrow' : `in ${fmt(n)} days`;
+const pickRandom = a => a[Math.floor(Math.random() * a.length)];
+const seasonNums = id => [...state.seasons.keys()].filter(k => k.startsWith(id + '|')).map(k => +k.split('|')[1]);
+const toolsEmpty = () => `<p class="empty">${esc(emptyMsg())}</p>`;
+const addChips = (box, list, cls) => { for (const t of list.filter(Boolean)) { const c = document.createElement('span'); c.className = cls || 'why-chip'; c.textContent = t; box.appendChild(c); } };
+
+// Episodes watched so far in the whole run: needs every earlier season's episode count (null = can't tell)
+function epsDone(s) {
+  const p = curPos(s); let n = p.e;
+  for (let i = 1; i < p.s; i++) { const c = seasonCount(s.id, i); if (!c) return null; n += c; }
+  return n;
+}
+const isShort = s => toNum(s.totalSeasons) === 1 || (toNum(s.totalEps) > 0 && toNum(s.totalEps) <= 10) || (!s.totalSeasons && seasonNums(s.id).length === 1);
+const shortWhy = s => toNum(s.totalSeasons) === 1 || (!s.totalSeasons && seasonNums(s.id).length === 1) ? '1 season' : `${fmt(toNum(s.totalEps))} episodes`;
+function showPace(id) { // episodes a day over up to the last 28 days of this show's own log
+  const rows = state.entries.filter(e => e.showId === String(id)); if (!rows.length) return 0;
+  const t = today(), from = addDays(t, -27), first = rows.reduce((m, e) => e.date < m ? e.date : m, rows[0].date), start = first > from ? first : from;
+  const n = rows.filter(e => e.date >= start && e.date <= t).reduce((a, e) => a + e.eps, 0);
+  return n / (daysBetween(start, t) + 1);
+}
+const progressLine = s => {
+  if (s.status === 'Watched') return toDate(s.finished) ? 'Finished ' + fmtDate(toDate(s.finished)) : 'Watched';
+  if (s.season === '' && s.episode === '') return '';
+  const p = curPos(s), pr = progressOf(s);
+  return `S${p.s} · E${p.e}` + (pr ? ' · ' + pr.text : '');
+};
+
+/* ----- 1. Lucky dip by mood ----- */
+const MOODS = [
+  { id: 'laugh', label: 'Make me laugh', test: s => inList(s.genre, ['Comedy', 'Sitcom', 'Animation']), why: s => [s.genre] },
+  { id: 'edge', label: 'Edge of my seat', test: s => inList(s.genre, ['Thriller', 'Crime', 'Mystery', 'Horror']), why: s => [s.genre] },
+  { id: 'epic', label: 'Big and epic', test: s => inList(s.genre, ['Sci-Fi', 'Fantasy', 'Action']), why: s => [s.genre] },
+  { id: 'real', label: 'Real life', test: s => inList(s.genre, ['Documentary', 'Historical', 'Drama']), why: s => [s.genre] },
+  { id: 'comfort', label: 'Comfort rewatch', test: s => s.status === 'Rewatch' || favOf(s), why: s => [s.status === 'Rewatch' ? 'Rewatch' : '', favOf(s) ? 'Favourite' : ''] },
+  { id: 'short', label: 'Short and sweet', test: isShort, why: s => [shortWhy(s)] }
+];
+const dipPool = m => state.shows.filter(s => isPlannable(s) && s.status !== 'Watching' && m.test(s));
+function renderDip() {
+  $('dipMoods').innerHTML = MOODS.map(m => `<button class="chip" type="button" data-mood="${m.id}" aria-pressed="${tl.mood === m.id}">${esc(m.label)}</button>`).join('');
+  const box = $('dipCard'), m = MOODS.find(x => x.id === tl.mood);
+  if (!m) { box.innerHTML = '<p class="empty">Pick a mood and I will find something on your list.</p>'; return; }
+  const pool = dipPool(m);
+  if (!pool.length) { tl.pick = null; box.innerHTML = `<p class="empty">Nothing on your list fits “${esc(m.label)}” yet.</p>`; return; }
+  let s = pool.find(x => x.id === tl.pick);
+  if (!s) { s = pickRandom(pool); tl.pick = s.id; }
+  box.innerHTML = `<div class="dip"><h3></h3><div class="tl-meta muted small"></div><div class="tl-chips"></div><p class="hp-why"></p>
+    <div class="hp-acts"><button class="btn btn-primary" type="button" data-dip="start"></button><button class="btn" type="button" data-dip="again">Another</button></div>
+    <div class="muted small" style="margin-top:8px">${fmt(pool.length)} ${pool.length === 1 ? 'show fits' : 'shows fit'} “${esc(m.label)}”</div></div>`;
+  box.querySelector('h3').textContent = s.title;
+  box.querySelector('.tl-meta').textContent = [s.platform, s.howToWatch, s.year].filter(Boolean).join(' · ');
+  addChips(box.querySelector('.tl-chips'), [...m.why(s), s.status !== 'Watchlist' ? s.status : '']);
+  const w = box.querySelector('.hp-why'); if (s.why) w.textContent = '“' + s.why + '”'; else w.remove();
+  const sb = box.querySelector('[data-dip="start"]'); sb.textContent = 'Start watching'; sb.setAttribute('aria-label', 'Start watching ' + s.title);
+  const ag = box.querySelector('[data-dip="again"]'); ag.disabled = pool.length < 2;
+}
+$('dipMoods').addEventListener('click', e => { const b = e.target.closest('[data-mood]'); if (!b) return; tl.mood = b.dataset.mood; tl.pick = null; renderDip(); });
+$('dipCard').addEventListener('click', e => {
+  const b = e.target.closest('[data-dip]'); if (!b) return;
+  const m = MOODS.find(x => x.id === tl.mood); if (!m) return;
+  if (b.dataset.dip === 'again') { const others = dipPool(m).filter(x => x.id !== tl.pick); if (others.length) tl.pick = pickRandom(others).id; renderDip(); }
+  else { const s = showById(tl.pick); if (s) startFromPlan(s); }
+});
+
+/* ----- 2. Where can I watch this? ----- */
+function whereVerdict(s) {
+  const p = s.platform;
+  switch (s.howToWatch) {
+    case 'Owned': return 'You own it';
+    case 'Subscription': return p ? `On ${p}, subscription` : 'On a subscription service';
+    case 'Pirate': return p ? `On ${p}` : 'Available, platform not set';
+    case 'To Purchase': return 'Not yet bought';
+    default: return 'No source set';
+  }
+}
+function renderWhere() {
+  const raw = $('whereQ').value.trim(), q = normQ(raw), box = $('whereList');
+  box.textContent = '';
+  if (q.length < 2) { box.innerHTML = '<li class="muted small">Type a few letters of a title. Handy when someone says “you have to watch this”.</li>'; return; }
+  const words = q.split(' ');
+  const hits = state.shows.filter(s => { const h = normQ(s.title); return words.every(w => h.includes(w)); })
+    .sort((a, b) => (normQ(a.title).startsWith(q) ? 0 : 1) - (normQ(b.title).startsWith(q) ? 0 : 1) || a._row - b._row);
+  if (!hits.length) {
+    box.innerHTML = '<li class="nf"><span class="main"><span class="t">Not in your library</span><span class="m"></span></span><span class="acts"><button type="button" class="btn btn-primary" data-addlib>Add to Library</button></span></li>';
+    box.querySelector('.m').textContent = `Nothing matches “${raw}”.`;
+    return;
+  }
+  for (const s of hits.slice(0, 8)) {
+    const li = document.createElement('li');
+    li.innerHTML = '<span class="main"><span class="t"></span><span class="m"></span></span><span class="v"></span>';
+    li.querySelector('.t').textContent = s.title;
+    const m = li.querySelector('.m');
+    m.insertAdjacentHTML('beforeend', pillHtml(s.status));
+    for (const v of [s.platform, s.howToWatch, progressLine(s), s.plan ? 'Plan: ' + s.plan + (s.plan === 'Up next' && s.upNext ? ' #' + s.upNext : '') : '']) if (v) { const x = document.createElement('span'); x.textContent = v; m.appendChild(x); }
+    li.querySelector('.v').textContent = whereVerdict(s);
+    box.appendChild(li);
+  }
+  if (hits.length > 8) box.insertAdjacentHTML('beforeend', `<li class="muted small">And ${fmt(hits.length - 8)} more. Type more of the title to narrow it down.</li>`);
+}
+$('whereQ').addEventListener('input', renderWhere);
+$('whereList').addEventListener('click', e => {
+  if (!e.target.closest('[data-addlib]')) return;
+  if (!state.live) { notice(emptyMsg(), 'error'); return; }
+  const typed = $('whereQ').value.trim();
+  openShowDialog(null); $('f-title').value = typed;
+});
+
+/* ----- 3. Stalled shows ----- */
+function lastActivity(s) { // the last 📺 Log entry, else Started
+  let d = '';
+  for (const e of state.entries) if (e.showId === s.id && e.date > d) d = e.date;
+  return d || toDate(s.started) || '';
+}
+function stalledShows() {
+  const t = today();
+  return state.shows.filter(s => s.status === 'Watching' || s.status === 'Paused').map(s => { const d = lastActivity(s); return { s, d, gap: d ? daysBetween(d, t) : null }; })
+    .filter(x => x.gap != null && x.gap >= 10).sort((a, b) => b.gap - a.gap || a.s._row - b.s._row);
+}
+function renderStalled() {
+  const box = $('stallList'); box.textContent = '';
+  const list = stalledShows();
+  if (!list.length) { box.innerHTML = '<li class="empty muted">Nothing stalled. Every show you’re watching has had an episode in the last 10 days.</li>'; return; }
+  for (const { s, gap } of list) {
+    const p = curPos(s), li = document.createElement('li');
+    li.dataset.id = s.id;
+    li.innerHTML = '<span class="main"><span class="t"></span><span class="m"></span></span><span class="acts"></span>';
+    li.querySelector('.t').textContent = s.title;
+    const m = li.querySelector('.m');
+    for (const v of [s.status, agoText(gap), `S${p.s} · E${p.e}`]) { const x = document.createElement('span'); x.textContent = v; m.appendChild(x); }
+    const acts = li.querySelector('.acts');
+    const btn = (label, a, aria) => { const x = document.createElement('button'); x.type = 'button'; x.textContent = label; x.dataset.a = a; x.setAttribute('aria-label', aria + ' ' + s.title); acts.appendChild(x); };
+    btn('+1 ep', 'plus', 'Log one episode of');
+    if (s.status === 'Watching') btn('Pause', 'pause', 'Pause');
+    btn('Call it DNF', 'dnf', 'Call it DNF:');
+    box.appendChild(li);
+  }
+}
+$('stallList').addEventListener('click', e => {
+  const b = e.target.closest('button[data-a]'); if (!b) return;
+  const s = showById(b.closest('li').dataset.id); if (!s) return;
+  if (b.dataset.a === 'plus') logEpisodes(s, 1, b);
+  else if (b.dataset.a === 'pause') saveFields(s, { status: 'Paused' }, b, `Paused “${s.title}”`);
+  else if (b.dataset.a === 'dnf') saveFields(s, { status: 'DNF' }, b, `Marked “${s.title}” as DNF`);
+});
+
+/* ----- 4. Finishing soon ----- */
+function finishingShows() {
+  const out = [], t = today();
+  for (const s of state.shows.filter(x => x.status === 'Watching')) {
+    const p = curPos(s), n = seasonCount(s.id, p.s), done = epsDone(s), total = toNum(s.totalEps);
+    const seasonLeft = n ? Math.max(0, n - p.e) : null, runLeft = total && done != null ? Math.max(0, total - done) : null;
+    const runOk = runLeft != null && runLeft <= 3, seasonOk = seasonLeft != null && seasonLeft <= 3;
+    if (!runOk && !seasonOk) continue;
+    const scope = runOk ? 'show' : 'season', left = runOk ? runLeft : seasonLeft, pace = showPace(s.id);
+    const est = left > 0 && pace > 0 ? addDays(t, Math.ceil(left / pace)) : '';
+    out.push({ s, p, seasonLeft, runLeft, scope, left, est });
+  }
+  return out.sort((a, b) => a.left - b.left || a.s._row - b.s._row);
+}
+function renderFinishing() {
+  const box = $('finList'); box.textContent = '';
+  const list = finishingShows();
+  if (!list.length) { box.innerHTML = '<li class="empty muted">Nothing is close to the end. A show shows up here with 3 episodes or fewer left in its season or its whole run.</li>'; return; }
+  for (const x of list) {
+    const li = document.createElement('li');
+    li.innerHTML = '<span class="main"><span class="t"></span><span class="m"></span></span><span class="v"></span>';
+    li.querySelector('.t').textContent = x.s.title;
+    const bits = [`S${x.p.s} · E${x.p.e}`];
+    if (x.seasonLeft != null && x.seasonLeft <= 3) bits.push(x.seasonLeft === 0 ? `Season ${x.p.s} done` : `${plural(x.seasonLeft, 'episode')} left in season ${x.p.s}`);
+    if (x.runLeft != null && x.runLeft <= 3) bits.push(x.runLeft === 0 ? 'Whole show done' : `${plural(x.runLeft, 'episode')} left in the show`);
+    if (x.est) bits.push(`${x.scope === 'show' ? 'finish' : 'season ends'} about ${fmtDate(x.est)}`);
+    const m = li.querySelector('.m'); for (const v of bits) { const sp = document.createElement('span'); sp.textContent = v; m.appendChild(sp); }
+    li.querySelector('.v').textContent = x.left === 0 ? 'Done' : `${x.left} left`;
+    box.appendChild(li);
+  }
+}
+
+/* ----- 5. Goal planner ----- */
+function goalNumbers() {
+  const t = today(), y = t.slice(0, 4), yr = state.entries.filter(e => e.date.startsWith(y));
+  const logged = yr.reduce((a, e) => a + e.eps, 0), goal = state.settings.yearGoalEps || 500;
+  const doy = daysBetween(y + '-01-01', t) + 1, diy = daysBetween(y + '-01-01', (+y + 1) + '-01-01'), daysLeft = diy - doy + 1;
+  const remaining = Math.max(0, goal - logged), perWeek = remaining / (daysLeft / 7);
+  const first = yr.reduce((m, e) => !m || e.date < m ? e.date : m, ''), span = first ? daysBetween(first, t) + 1 : 0;
+  const rate = span ? logged / span * 7 : 0, projected = Math.round(logged + rate / 7 * daysLeft);
+  let weekN = 0; const ws = weekStart(t); for (const e of state.entries) if (e.date >= ws && e.date <= t) weekN += e.eps;
+  // episodes still to watch in Watching and Up next shows (Total Eps minus what's done; shows without a count are listed separately)
+  const group = [...state.shows.filter(s => s.status === 'Watching'), ...upNext().filter(s => s.status !== 'Watching')];
+  let eps = 0, unknown = 0;
+  for (const s of group) {
+    const total = toNum(s.totalEps);
+    if (!total) { unknown++; continue; }
+    eps += Math.max(0, total - (s.status === 'Watching' ? (epsDone(s) ?? loggedEps(s.id)) : 0));
+  }
+  return { y, logged, goal, daysLeft, remaining, perWeek, first, rate, projected, weekN, weekGoal: state.settings.weeklyGoalEps || 7, group: group.length, eps, unknown };
+}
+function renderGoal() {
+  const g = goalNumbers();
+  $('goalYear').textContent = g.y;
+  if (document.activeElement !== $('goalWeekIn')) $('goalWeekIn').value = g.weekGoal;
+  if (document.activeElement !== $('goalYearIn')) $('goalYearIn').value = g.goal;
+  const pct = Math.min(100, g.logged / g.goal * 100), out = $('goalOut');
+  const onPace = g.projected >= g.goal;
+  out.innerHTML = `<div class="goal-big tnum"><b>${fmt(g.logged)}</b> <span class="muted">of ${fmt(g.goal)} episodes in ${esc(g.y)}</span></div>
+    <div class="goalbar" aria-hidden="true"><i style="width:${pct}%"></i></div>
+    <p class="gl" id="goalLine1"></p><p class="gl" id="goalLine2"></p><p class="gl" id="goalLine3"></p><p class="gl muted small" id="goalLine4"></p>`;
+  $('goalLine1').innerHTML = g.remaining
+    ? `<b>${fmt(g.remaining)}</b> to go in ${fmt(g.daysLeft)} days: about <b>${one(g.perWeek)}</b> episodes a week.`
+    : '<b>Goal reached.</b> Anything from here is a bonus.';
+  $('goalLine2').textContent = !g.first ? 'No episodes logged this year yet, so there is no pace to compare.'
+    : g.remaining === 0 ? ''
+    : onPace ? `On pace: since ${fmtDate(g.first)} you average ${one(g.rate)} a week, which gets you to about ${fmt(g.projected)}.`
+    : `Off pace: since ${fmtDate(g.first)} you average ${one(g.rate)} a week, which gets you to about ${fmt(g.projected)} (${fmt(g.goal - g.projected)} short).`;
+  $('goalLine2').dataset.pace = !g.first || g.remaining === 0 ? '' : onPace ? 'on' : 'off';
+  $('goalLine3').textContent = `This week: ${fmt(g.weekN)} of ${fmt(g.weekGoal)} episodes.`;
+  $('goalLine4').textContent = g.group ? `Your Watching and Up next shows hold about ${fmt(g.eps)} episodes${g.eps && g.weekGoal ? `, roughly ${one(g.eps / g.weekGoal)} weeks at the weekly goal` : ''}${g.unknown ? ` (${plural(g.unknown, 'show')} without an episode count)` : ''}.` : 'No Watching or Up next shows yet.';
+}
+// 📺 Settings is key | value | note. Re-read column A just before writing; update column B of the key's row, or add one row.
+async function saveSetting(key, value, note, colA) {
+  const hits = colA.map((r, i) => String(r[0] ?? '').trim().replace(/^'/, '') === key ? i + 1 : 0).filter(Boolean);
+  if (hits.length > 1) throw { code: 'tool_error', message: `${key} appears ${hits.length} times in 📺 Settings` };
+  if (hits.length) await writeCell(`${T_SETTINGS}!B${hits[0]}`, value);
+  else {
+    // A tab with only its header row copies the header's formatting onto an appended row, so fill row 2 directly
+    const row = ["'" + key, value, "'" + note];
+    if (colA.length <= 1) await state.mcp.callTool(SERVER, 'update_values', { spreadsheetId: SHEET_ID, range: `${T_SETTINGS}!A2:C2`, values: [row] }, { cache: false });
+    else await state.mcp.callTool(SERVER, 'append_values', { spreadsheetId: SHEET_ID, range: `${T_SETTINGS}!A1`, values: [row] }, { cache: false });
+    colA.push([key]);
+  }
+}
+const GOAL_KEYS = [['weeklyGoalEps', 'goalWeekIn', 'Episodes a week to aim for', 1, 200], ['yearGoalEps', 'goalYearIn', 'Episodes in a year to aim for', 1, 5000]];
+$('goalSave').addEventListener('click', () => {
+  const vals = {};
+  for (const [key, inp, , lo, hi] of GOAL_KEYS) {
+    const raw = $(inp).value.trim(), n = Number(raw);
+    if (!raw || !Number.isInteger(n) || n < lo || n > hi) { $('goalMsg').textContent = `Use whole numbers: the weekly goal ${GOAL_KEYS[0][3]} to ${GOAL_KEYS[0][4]}, the yearly goal ${GOAL_KEYS[1][3]} to ${fmt(GOAL_KEYS[1][4])}.`; return; }
+    vals[key] = n;
+  }
+  $('goalMsg').textContent = '';
+  const todo = GOAL_KEYS.filter(([key]) => vals[key] !== state.settings[key] || !state.settingKeys.has(key));
+  if (!todo.length) { $('goalMsg').textContent = 'Nothing changed.'; return; }
+  act($('goalSave'), async () => {
+    const colA = await readRange(`${T_SETTINGS}!A1:A`);
+    for (const [key, , note] of todo) { await saveSetting(key, vals[key], note, colA); state.settings[key] = vals[key]; state.settingKeys.add(key); }
+    renderAll(); notice('');
+    setStatus('live', 'Goals saved');
+    $('goalMsg').textContent = 'Saved.';
+  });
+});
+
+/* ----- 6. Year in review ----- */
+function yearStats(y) {
+  const rows = state.entries.filter(e => e.date.startsWith(y)), eps = rows.reduce((a, e) => a + e.eps, 0);
+  const inY = k => s => (toDate(s[k]) || '').startsWith(y);
+  const finished = state.shows.filter(inY('finished')).sort((a, b) => toDate(a.finished).localeCompare(toDate(b.finished)) || a._row - b._row);
+  const started = state.shows.filter(inY('started'));
+  const touched = new Set([...rows.map(e => e.showId), ...finished.map(s => s.id), ...started.map(s => s.id)]);
+  const top = key => { const m = new Map(); for (const id of touched) { const s = showById(id); const v = s && s[key] ? s[key].trim() : ''; if (v) m.set(v, (m.get(v) || 0) + 1); } return [...m].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0] || null; };
+  const byDay = new Map(), byDayShow = new Map(), perMonth = Array(12).fill(0);
+  for (const e of rows) {
+    byDay.set(e.date, (byDay.get(e.date) || 0) + e.eps);
+    const k = e.date + '|' + e.showId; byDayShow.set(k, (byDayShow.get(k) || 0) + e.eps);
+    perMonth[Number(e.date.slice(5, 7)) - 1] += e.eps;
+  }
+  const best = (m) => [...m].sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : 1))[0] || null;
+  const min = state.settings.streakMinEps || 1, days = [...byDay].filter(([, n]) => n >= min).map(([d]) => d).sort();
+  let streak = 0, run = 0;
+  days.forEach((d, i) => { run = i && daysBetween(days[i - 1], d) === 1 ? run + 1 : 1; if (run > streak) streak = run; });
+  const bd = best(byDay), bs = best(byDayShow), rated = avgRating(finished);
+  return { eps, finished, started, rated, genre: top('genre'), platform: top('platform'), busiest: bd ? { date: bd[0], n: bd[1] } : null, streak,
+    binge: bs ? { date: bs[0].split('|')[0], n: bs[1], title: (showById(bs[0].split('|')[1]) || {}).title || (rows.find(e => e.showId === bs[0].split('|')[1]) || {}).title || '' } : null, perMonth };
+}
+function renderYear() {
+  const t = today(), cy = t.slice(0, 4), sel = $('yirYear');
+  const years = new Set([cy]);
+  for (const e of state.entries) years.add(e.date.slice(0, 4));
+  for (const s of state.shows) for (const k of ['finished', 'started']) { const d = toDate(s[k]); if (d) years.add(d.slice(0, 4)); }
+  const list = [...years].sort().reverse();
+  if (sel.options.length !== list.length || [...sel.options].some((o, i) => o.value !== list[i])) {
+    const cur = sel.value; sel.innerHTML = list.map(y => `<option>${y}</option>`).join('');
+    sel.value = list.includes(cur) ? cur : cy;
+  }
+  const y = sel.value, st = yearStats(y), box = $('yirBox');
+  const logFirst = state.entries.reduce((m, e) => !m || e.date < m ? e.date : m, '');
+  const empty = !st.eps && !st.finished.length && !st.started.length;
+  const soFar = y === cy ? `${y} so far. ` : '';
+  const note = !logFirst ? 'Your log is empty, so episode numbers fill in as you log.'
+    : y < logFirst.slice(0, 4) ? `Your log began on ${fmtDate(logFirst)}, so ${y} only has Started and Finished dates.`
+    : y === logFirst.slice(0, 4) ? `Your log began on ${fmtDate(logFirst)}, so ${y} counts from there.` : '';
+  if (empty) { box.innerHTML = `<p class="empty">${esc(soFar)}Nothing to show for ${esc(y)} yet. Log an episode or finish a show and this fills in.</p>${note ? `<p class="muted small">${esc(note)}</p>` : ''}`; return; }
+  const items = [
+    ['Episodes logged', fmt(st.eps), ''],
+    ['Shows finished', fmt(st.finished.length), ''],
+    ['Average rating', st.rated != null ? one(st.rated) : '–', st.rated != null ? 'of shows finished' : 'no rated shows finished'],
+    ['Shows started', fmt(st.started.length), ''],
+    ['Top genre', st.genre ? st.genre[0] : '–', st.genre ? plural(st.genre[1], 'show') : ''],
+    ['Top platform', st.platform ? st.platform[0] : '–', st.platform ? plural(st.platform[1], 'show') : ''],
+    ['Busiest day', st.busiest ? fmtDate(st.busiest.date) : '–', st.busiest ? plural(st.busiest.n, 'episode') : ''],
+    ['Longest streak', st.streak ? plural(st.streak, 'day') : '–', ''],
+    ['Biggest binge', st.binge ? plural(st.binge.n, 'episode') : '–', st.binge ? `${st.binge.title}, ${fmtDate(st.binge.date)}` : ''],
+    [st.finished.length > 1 ? 'First finished' : 'Finished', st.finished.length ? st.finished[0].title : '–', st.finished.length ? fmtDate(toDate(st.finished[0].finished)) : ''],
+  ];
+  if (st.finished.length > 1) { const l = st.finished[st.finished.length - 1]; items.push(['Latest finished', l.title, fmtDate(toDate(l.finished))]); }
+  const max = Math.max(1, ...st.perMonth);
+  box.innerHTML = (soFar ? `<p class="muted small" style="margin:0 0 10px">${esc(soFar.trim())}${note ? ' ' + esc(note) : ''}</p>` : note ? `<p class="muted small" style="margin:0 0 10px">${esc(note)}</p>` : '')
+    + '<div class="yir"></div><div class="eyebrow" style="margin:16px 0 6px">Episodes per month</div><div class="mbars" role="img"></div>';
+  const g = box.querySelector('.yir');
+  for (const [l, v, sub] of items) {
+    const d = document.createElement('div'); d.className = 'yir-item';
+    d.innerHTML = '<span class="eyebrow"></span><span class="val"></span><span class="sub muted small"></span>';
+    d.children[0].textContent = l; d.children[1].textContent = v; d.children[2].textContent = sub; if (!sub) d.children[2].remove();
+    g.appendChild(d);
+  }
+  const mb = box.querySelector('.mbars');
+  mb.setAttribute('aria-label', 'Episodes per month in ' + y + ': ' + st.perMonth.map((n, i) => `${MONTHS[i]} ${n}`).join(', '));
+  st.perMonth.forEach((n, i) => {
+    const c = document.createElement('div'); c.className = 'mb'; c.title = `${FULL_MONTHS[i]} ${y}: ${plural(n, 'episode')}`;
+    c.innerHTML = `<span class="mv tnum">${n || ''}</span><i style="height:${n ? Math.max(4, n / max * 100) : 0}%"></i><span class="ml">${MONTHS[i][0]}</span>`;
+    mb.appendChild(c);
+  });
+}
+$('yirYear').addEventListener('change', renderYear);
+
+/* ----- 7. Recommendations from my own ratings ----- */
+function recProfile() {
+  const P = planProfile(), hi = new Map(), favG = new Map(), seen = new Map();
+  for (const s of state.shows) {
+    if (ratingOf(s) >= 9) for (const n of actorNames(s.starring)) if (!hi.has(lc(n))) hi.set(lc(n), { name: n, title: s.title });
+    if (favOf(s) && s.genre) favG.set(lc(s.genre), (favG.get(lc(s.genre)) || 0) + 1);
+    if (['Watched', 'Rewatch'].includes(s.status) && s.genre) seen.set(lc(s.genre), (seen.get(lc(s.genre)) || 0) + 1);
+  }
+  return { P, hi, favG, seen };
+}
+function recScore(s, R) {
+  const parts = [], add = (k, t, w) => parts.push({ k, t, w });
+  const ga = R.P.genreAvg(s.genre);
+  if (ga != null) { const w = Math.max(-3, Math.min(3, ga - R.P.avg)); add('genre', `You rate ${s.genre} ${one(ga)}`, w); }
+  const shared = actorNames(s.starring).filter(n => R.hi.has(lc(n)));
+  if (shared.length) add('cast', `${shared[0]}, in ${R.hi.get(lc(shared[0])).title} (rated 9+)${shared.length > 1 ? ` +${shared.length - 1} more` : ''}`, Math.min(3, shared.length * 1.5));
+  if (['Owned', 'Subscription', 'Pirate'].includes(s.howToWatch)) add('avail', s.howToWatch === 'Owned' ? 'You own it' : s.platform ? `On ${s.platform}` : s.howToWatch, 1);
+  else if (s.howToWatch === 'To Purchase') add('avail', 'Not yet bought', -0.5);
+  const r = ratingOf(s); if (r != null) add('rating', `Rated ${r}`, r / 10 * 3);
+  if (s.status === 'New Season') add('new', 'New season', 2);
+  const fg = R.favG.get(lc(s.genre)); if (fg) add('fav', `Like your favourites (${s.genre})`, Math.min(1.5, fg * 0.5));
+  return parts;
+}
+const sumW = (parts, skip = []) => parts.filter(p => !skip.includes(p.k)).reduce((a, p) => a + p.w, 0);
+const topWhy = (parts, skip = []) => parts.filter(p => !skip.includes(p.k) && p.w > 0.2).sort((a, b) => b.w - a.w).slice(0, 4).map(p => p.t);
+function recList(mode, likeId) {
+  const R = recProfile(), cand = state.shows.filter(s => isPlannable(s) && s.status !== 'Watching');
+  const out = arr => arr.sort((a, b) => b.score - a.score || a.s._row - b.s._row).slice(0, 5);
+  if (mode === 'best') return out(cand.map(s => { const p = recScore(s, R); return { s, score: sumW(p), why: topWhy(p) }; }));
+  if (mode === 'change') {
+    return out(cand.filter(s => s.genre).map(s => {
+      const p = recScore(s, R), ga = R.P.genreAvg(s.genre), unseen = !R.seen.get(lc(s.genre));
+      let bonus = 0; const why = [];
+      if (unseen) { bonus = 2; why.push(`New to you: ${s.genre}`); } else if (ga != null && ga < R.P.avg) { bonus = 1; why.push(`A genre you rate lower (${one(ga)})`); }
+      return bonus ? { s, score: sumW(p, ['genre', 'fav']) + bonus, why: [...why, ...topWhy(p, ['genre', 'fav'])].slice(0, 4) } : null;
+    }).filter(Boolean));
+  }
+  if (mode === 'quick') return out(cand.filter(isShort).map(s => { const p = recScore(s, R); return { s, score: sumW(p), why: [shortWhy(s), ...topWhy(p)].slice(0, 4) }; }));
+  if (mode === 'like') {
+    const base = showById(likeId); if (!base) return null;
+    const actors = new Set(actorNames(base.starring).map(lc));
+    return out(cand.filter(s => s.id !== base.id).map(s => {
+      const same = base.genre && lc(s.genre) === lc(base.genre), sh = actorNames(s.starring).filter(n => actors.has(lc(n)));
+      if (!same && !sh.length) return null;
+      const p = recScore(s, R), why = [];
+      if (same) why.push(`Same genre: ${s.genre}`);
+      if (sh.length) why.push(`Shares ${sh.slice(0, 2).join(', ')}${sh.length > 2 ? ` +${sh.length - 2}` : ''}`);
+      return { s, score: (same ? 3 : 0) + Math.min(4, sh.length * 2) + sumW(p, ['genre', 'cast', 'fav']) * 0.25, why: [...why, ...topWhy(p, ['genre', 'cast', 'fav']).slice(0, 2)] };
+    }).filter(Boolean));
+  }
+  // revisit: favourites and Rewatch shows, anything but a show you're in the middle of
+  return out(state.shows.filter(s => s.status !== 'Watching' && (favOf(s) || s.status === 'Rewatch')).map(s => {
+    const r = ratingOf(s), why = [];
+    if (favOf(s)) why.push('Favourite since ' + fmtDate(toDate(s.favourite) || ''));
+    if (s.status === 'Rewatch') why.push('On your Rewatch list');
+    if (r != null) why.push(`Rated ${r}`);
+    if (['Owned', 'Subscription'].includes(s.howToWatch)) why.push(s.howToWatch === 'Owned' ? 'You own it' : `On ${s.platform || 'subscription'}`);
+    return { s, score: (r || 0) + (favOf(s) ? 2 : 0) + (s.status === 'Rewatch' ? 1 : 0) + (['Owned', 'Subscription'].includes(s.howToWatch) ? 1 : 0), why: why};
+  }));
+}
+const REC_NOTE = {
+  best: 'Score = how you rate the genre against your average + shared stars from shows you rated 9+ + availability + its own rating + a New Season boost + genres like your favourites.',
+  change: 'Genres you have not watched, or rate below your average, ranked by availability and its own rating. Your genre scores are left out on purpose.',
+  quick: 'Shows with one season or 10 episodes or fewer, ranked by the Best match score.',
+  like: 'Shows that share the genre and any stars with the one you pick, with a small nudge from the Best match score.',
+  revisit: 'Favourites and your Rewatch list, ranked by rating, favourite, and whether you can watch it now.'
+};
+function renderRecs() {
+  $('recModes').querySelectorAll('[data-m]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.m === tl.rec)));
+  $('recLikeWrap').hidden = tl.rec !== 'like';
+  $('recExplain').textContent = REC_NOTE[tl.rec];
+  const sel = $('recLike');
+  if (tl.rec === 'like') {
+    const seen = state.shows.filter(s => ['Watched', 'Rewatch', 'Watching'].includes(s.status)).sort((a, b) => (ratingOf(b) ?? 0) - (ratingOf(a) ?? 0) || a.title.localeCompare(b.title));
+    const sig = seen.map(s => s.id).join();
+    if (sel.dataset.sig !== sig) { sel.innerHTML = '<option value="">Pick a show you loved…</option>' + seen.map(s => `<option value="${esc(s.id)}">${esc(s.title)}${s.genre ? ' (' + esc(s.genre) + ')' : ''}</option>`).join(''); sel.dataset.sig = sig; }
+    sel.value = seen.some(s => s.id === tl.like) ? tl.like : '';
+  }
+  const box = $('recList'); box.textContent = '';
+  const list = recList(tl.rec, tl.like);
+  if (list === null) { box.innerHTML = '<p class="empty">Pick a show above and I will find ones like it.</p>'; return; }
+  if (!list.length) { box.innerHTML = `<p class="empty">${tl.rec === 'revisit' ? 'No favourites or Rewatch shows yet. Tap the ♥ on a show you love.' : 'Nothing on your list matches this mode yet.'}</p>`; return; }
+  list.forEach(({ s, why }, i) => {
+    const el = document.createElement('div');
+    el.className = 'rec'; el.dataset.id = s.id;
+    el.innerHTML = '<span class="n tnum"></span><div class="main"><div class="t"></div><div class="m muted small"></div><div class="tl-chips"></div></div><div class="acts"><button class="btn btn-primary" type="button"></button></div>';
+    el.querySelector('.n').textContent = i + 1;
+    el.querySelector('.t').textContent = s.title;
+    el.querySelector('.m').textContent = [s.genre, s.platform, s.howToWatch, s.year, s.status !== 'Watchlist' ? s.status : ''].filter(Boolean).join(' · ');
+    addChips(el.querySelector('.tl-chips'), why);
+    const b = el.querySelector('button');
+    if (isPlannable(s)) { b.textContent = 'Start watching'; b.dataset.a = 'start'; b.setAttribute('aria-label', 'Start watching ' + s.title); }
+    else { b.textContent = 'Open'; b.className = 'btn'; b.dataset.a = 'open'; b.setAttribute('aria-label', 'Open ' + s.title); }
+    box.appendChild(el);
+  });
+}
+$('recModes').addEventListener('click', e => { const b = e.target.closest('[data-m]'); if (!b) return; tl.rec = b.dataset.m; renderRecs(); });
+$('recLike').addEventListener('change', e => { tl.like = e.target.value; renderRecs(); });
+$('recList').addEventListener('click', e => {
+  const b = e.target.closest('button[data-a]'); if (!b) return;
+  const s = showById(b.closest('.rec').dataset.id); if (!s) return;
+  if (b.dataset.a === 'start') startFromPlan(s); else openShowDialog(s);
+});
+
+function renderTools() {
+  if (!state.live) {
+    for (const id of ['dipCard', 'goalOut', 'yirBox', 'recList']) $(id).innerHTML = toolsEmpty();
+    for (const id of ['stallList', 'finList', 'whereList']) $(id).innerHTML = `<li class="empty muted">${esc(emptyMsg())}</li>`;
+    $('dipMoods').textContent = ''; $('recLikeWrap').hidden = true;
+    return;
+  }
+  renderDip(); renderWhere(); renderStalled(); renderFinishing(); renderGoal(); renderYear(); renderRecs();
+}
+
+/* ---------- Discover ---------- */
+const fillTitles = () => { $('showTitles').innerHTML = state.shows.map(s => `<option value="${esc(s.title)}">`).join(''); };
+async function loadQuotes() {
+  if (disc.loaded || !isLive()) return;
+  if (disc.loading) return disc.loading;
+  disc.loading = (async () => {
+    try {
+      const v = await readRange(`${T_QUOTES}!A1:H`);
+      const h = (v[0] || []).map(x => String(x).trim()), ix = k => { const i = h.indexOf(k); return i; };
+      const col = { quote: 0, who: 1, showId: 2, title: 3, season: 4, episode: 5, addedAt: 6, note: 7 };
+      for (const k of Object.keys(col)) if (ix(k) >= 0) col[k] = ix(k);
+      disc.quotes = v.slice(1).map((r, i) => ({ text: String(r[col.quote] ?? '').trim(), who: String(r[col.who] ?? '').trim(), showId: String(r[col.showId] ?? '').trim(),
+        title: String(r[col.title] ?? '').trim(), season: toNum(r[col.season]), episode: toNum(r[col.episode]), added: toDate(r[col.addedAt]) || '', _row: i + 2 })).filter(q => q.text);
+      disc.err = null;
+    } catch (err) { disc.quotes = []; disc.err = err; }
+    disc.loaded = true;
+  })().finally(() => { disc.loading = null; });
+  return disc.loading;
+}
+const quoteIndex = (day, n) => hash32('quote|' + day) % n;
+function quoteOfTheDay() {
+  const t = today();
+  if (!disc.quotes.length) return null;
+  if (!disc.pinned || disc.pinned.day !== t || !disc.quotes.includes(disc.pinned.q)) disc.pinned = { day: t, q: disc.quotes[quoteIndex(t, disc.quotes.length)] };
+  return disc.pinned.q;
+}
+function renderQuote() {
+  const box = $('qBox');
+  if (!disc.loaded) { if (!box.firstChild) box.innerHTML = '<p class="empty">Loading…</p>'; return; }
+  if (disc.err) { box.innerHTML = '<p class="empty"></p>'; box.firstChild.textContent = 'Couldn’t read your Quotes tab: ' + explain(disc.err); return; }
+  const q = quoteOfTheDay();
+  if (!q) { box.innerHTML = '<p class="empty">No quotes yet. Add a line you love.</p>'; return; }
+  box.innerHTML = '<blockquote class="quote"><p></p><footer></footer></blockquote>';
+  box.querySelector('p').textContent = q.text;
+  const show = showById(q.showId), title = q.title || (show && show.title) || '';
+  const by = [q.who, title && (title + (q.season ? ` S${q.season}${q.episode ? ' · E' + q.episode : ''}` : ''))].filter(Boolean).join(', ');
+  box.querySelector('footer').textContent = '— ' + (by || 'unknown');
+}
+function onThisDay() {
+  const t = today(), md = t.slice(5), cy = Number(t.slice(0, 4)), items = [];
+  const earlier = d => d && d.slice(5) === md && Number(d.slice(0, 4)) < cy;
+  const by = new Map();
+  for (const e of state.entries) if (earlier(e.date)) { const k = e.date + '|' + e.showId; if (!by.has(k)) by.set(k, []); by.get(k).push(e); }
+  for (const [k, rows] of by) {
+    const [date, id] = k.split('|'), n = rows.reduce((a, e) => a + e.eps, 0), s = showById(id);
+    items.push({ date, kind: 'Watched', text: `${plural(n, 'episode')} of ${s ? s.title : rows[0].title || 'a show'}`, sub: epRange(rows), id: s ? s.id : '' });
+  }
+  for (const s of state.shows) {
+    if (earlier(toDate(s.started))) items.push({ date: toDate(s.started), kind: 'Started', text: `Started ${s.title}`, id: s.id });
+    if (earlier(toDate(s.finished))) items.push({ date: toDate(s.finished), kind: 'Finished', text: `Finished ${s.title}`, id: s.id });
+  }
+  for (const [k, v] of state.seasonDates) if (earlier(v.premiere)) {
+    const [id, sn] = k.split('|'), s = showById(id);
+    items.push({ date: v.premiere, kind: 'Premiered', text: `${s ? s.title : 'A show'} season ${sn} premiered`, id: s ? s.id : '' });
+  }
+  const rank = { Finished: 0, Started: 1, Watched: 2, Premiered: 3 };
+  return items.sort((a, b) => b.date.localeCompare(a.date) || rank[a.kind] - rank[b.kind] || a.text.localeCompare(b.text));
+}
+function renderOnDay() {
+  const box = $('odList'); box.textContent = '';
+  const list = onThisDay(), cy = Number(today().slice(0, 4));
+  if (!list.length) { box.innerHTML = '<li class="empty muted">Nothing on this day yet. It fills as the log grows.</li>'; return; }
+  for (const x of list.slice(0, 12)) {
+    const li = document.createElement('li');
+    li.innerHTML = '<span class="main"><span class="t"></span><span class="m"></span></span><span class="v"></span>';
+    li.querySelector('.t').textContent = x.text;
+    const m = li.querySelector('.m'); for (const v of [x.kind, x.sub, fmtDate(x.date)]) if (v) { const sp = document.createElement('span'); sp.textContent = v; m.appendChild(sp); }
+    const yrs = cy - Number(x.date.slice(0, 4));
+    li.querySelector('.v').textContent = yrs === 1 ? '1 year ago' : `${yrs} years ago`;
+    box.appendChild(li);
+  }
+  if (list.length > 12) box.insertAdjacentHTML('beforeend', `<li class="muted small">And ${fmt(list.length - 12)} more.</li>`);
+}
+const nextSeasonPremiere = id => {
+  const t = today(); let best = null;
+  for (const [k, v] of state.seasonDates) if (k.startsWith(id + '|') && v.premiere && v.premiere >= t && (!best || v.premiere < best.date)) best = { date: v.premiere, season: +k.split('|')[1] };
+  return best;
+};
+const PIPELINE = ['Coming Soon', 'New Season', 'Next Up', 'Watching', 'Watchlist', 'Rewatch', 'Paused'];
+function renderSoon() {
+  const box = $('csList'); box.textContent = '';
+  const t = today();
+  const list = state.shows.filter(s => s.status === 'Coming Soon' || s.status === 'New Season').map(s => ({ s, n: nextSeasonPremiere(s.id) }))
+    .sort((a, b) => (a.n && b.n ? (a.n.date < b.n.date ? -1 : a.n.date > b.n.date ? 1 : 0) : a.n ? -1 : b.n ? 1 : 0) || a.s._row - b.s._row);
+  if (!list.length) box.innerHTML = '<li class="empty muted">Nothing is coming soon. Shows marked Coming Soon or New Season appear here.</li>';
+  for (const { s, n } of list) {
+    const li = document.createElement('li');
+    li.innerHTML = '<span class="main"><button type="button" class="t linkbtn"></button><span class="m"></span></span><span class="v"></span>';
+    li.querySelector('.t').textContent = s.title; li.querySelector('.t').dataset.open = s.id;
+    const m = li.querySelector('.m');
+    const bits = [s.status, s.platform, n ? `S${n.season} premieres ${fmtDate(n.date)} · ${inText(daysBetween(t, n.date))}` : (s.releaseDate ? `Expected ${s.releaseDate}` : 'No date yet')];
+    for (const v of bits) { const sp = document.createElement('span'); sp.textContent = v; m.appendChild(sp); }
+    if (n) li.querySelector('.v').textContent = inText(daysBetween(t, n.date)); else li.querySelector('.v').remove();
+    box.appendChild(li);
+  }
+  const counts = {}; for (const s of state.shows) counts[s.status] = (counts[s.status] || 0) + 1;
+  $('csPipe').innerHTML = PIPELINE.filter(st => counts[st]).map(st => `<button class="chip" type="button" data-pipe="${esc(st)}" aria-label="${esc(st)}: ${counts[st]} shows. Show in the Library">${esc(st)}<span class="n">${fmt(counts[st])}</span></button>`).join('');
+}
+$('csPipe').addEventListener('click', e => {
+  const b = e.target.closest('[data-pipe]'); if (!b) return;
+  Object.assign(state.lib, { status: b.dataset.pipe, fav: false, q: '', limit: 100, open: null }); $('libSearch').value = '';
+  showTab('library');
+});
+$('csList').addEventListener('click', e => { const b = e.target.closest('[data-open]'); if (b) { const s = showById(b.dataset.open); if (s) openShowDialog(s); } });
+
+const LINK_SITES = [
+  ['TVmaze', q => 'https://www.tvmaze.com/search?q=' + q, 'https://www.tvmaze.com/'],
+  ['IMDb', q => 'https://www.imdb.com/find/?s=tt&ttype=tv&q=' + q, 'https://www.imdb.com/'],
+  ['JustWatch', q => 'https://www.justwatch.com/au/search?q=' + q, 'https://www.justwatch.com/au']
+];
+const LINK_FIXED = [['TVmaze schedule', 'https://www.tvmaze.com/schedule'], ['IMDb popular TV', 'https://www.imdb.com/chart/tvmeter/']];
+function renderLinks() {
+  const q = $('lkTitle').value.trim(), enc = encodeURIComponent(q);
+  $('lkSearch').innerHTML = LINK_SITES.map(([n, f, home]) => `<a class="btn" target="_blank" rel="noopener noreferrer" href="${esc(q ? f(enc) : home)}" data-site="${esc(n)}">${esc(n)}${q ? '' : ' home'}</a>`).join('');
+  if (!$('lkFixed').firstChild) $('lkFixed').innerHTML = LINK_FIXED.map(([n, u]) => `<a class="link-chip" target="_blank" rel="noopener noreferrer" href="${esc(u)}">${esc(n)}</a>`).join('');
+}
+$('lkTitle').addEventListener('input', renderLinks);
+
+function renderDiscover() {
+  if (!state.live) {
+    $('qBox').innerHTML = toolsEmpty();
+    for (const id of ['odList', 'csList']) $(id).innerHTML = `<li class="empty muted">${esc(emptyMsg())}</li>`;
+    $('csPipe').textContent = ''; $('qAdd').disabled = true; renderLinks();
+    return;
+  }
+  $('qAdd').disabled = false;
+  fillTitles();
+  if (!disc.loaded) loadQuotes().then(() => { if (!$('view-discover').hidden) renderQuote(); });
+  renderQuote(); renderOnDay(); renderSoon(); renderLinks();
+}
+
+/* Add a quote: one row in 📺 Quotes */
+function openQuoteDlg() {
+  if (!state.live) { notice(emptyMsg(), 'error'); return; }
+  fillTitles();
+  for (const id of ['qdText', 'qdWho', 'qdShow', 'qdSeason', 'qdEp']) $(id).value = '';
+  $('qdMsg').textContent = ''; $('qdSave').disabled = false;
+  $('quoteDlg').showModal(); $('qdText').focus();
+}
+async function saveQuote(e) {
+  e.preventDefault();
+  if (!isLive()) { $('qdMsg').textContent = 'Saving needs the live connection. ' + connectHint(); return; }
+  const text = $('qdText').value.trim(), who = $('qdWho').value.trim(), typed = $('qdShow').value.trim();
+  const sn = parseInt($('qdSeason').value, 10), ep = parseInt($('qdEp').value, 10);
+  if (!text) { $('qdMsg').textContent = 'Add the quote first.'; return; }
+  const show = typed ? state.shows.find(s => lc(s.title) === lc(typed)) : null;
+  const title = show ? show.title : typed, tx = v => v ? "'" + v : '';
+  const row = [tx(text), tx(who), show ? Number(show.id) : '', tx(title), sn > 0 ? sn : '', ep > 0 ? ep : '', today(), ''];
+  $('qdMsg').textContent = '';
+  let ok = false;
+  await act($('qdSave'), async () => {
+    try {
+      // A tab with only its header row copies the header's formatting onto an appended row, so fill row 2 directly
+      const colA = await readRange(`${T_QUOTES}!A1:A`);
+      let r = null;
+      if (colA.length <= 1) await state.mcp.callTool(SERVER, 'update_values', { spreadsheetId: SHEET_ID, range: `${T_QUOTES}!A2:H2`, values: [row] }, { cache: false });
+      else {
+        const res = await state.mcp.callTool(SERVER, 'append_values', { spreadsheetId: SHEET_ID, range: `${T_QUOTES}!A1`, values: [row] }, { cache: false });
+        const pl = (res && res.payload) || {};
+        const m = String((pl.updates && pl.updates.updatedRange) || pl.updatedRange || '').match(/![A-Z]+(\d+)/);
+        r = m ? Number(m[1]) : null;
+      }
+      disc.quotes.push({ text, who, showId: show ? show.id : '', title, season: sn > 0 ? sn : 0, episode: ep > 0 ? ep : 0, added: today(), _row: colA.length <= 1 ? 2 : r || colA.length + 1 });
+      ok = true;
+    } catch (err) { $('qdMsg').textContent = 'Not saved: ' + (err.message || explain(err)); throw err; }
+  });
+  if (ok) { $('quoteDlg').close(); notice(''); setStatus('live', 'Quote added'); disc.err = null; disc.loaded = true; renderDiscover(); }
+}
+$('qAdd').addEventListener('click', openQuoteDlg);
+$('qdClose').addEventListener('click', () => $('quoteDlg').close());
+$('quoteForm').addEventListener('submit', saveQuote);
+
 /* ---------- wiring ---------- */
 function showTab(name) {
   if (!TABS.includes(name)) name = 'log';
@@ -2447,6 +3207,8 @@ function showTab(name) {
   if (name === 'library') renderLibrary();
   if (name === 'plan') renderPlan();
   if (name === 'dashboard') renderDashboard();
+  if (name === 'tools') renderTools();
+  if (name === 'discover') renderDiscover();
   if (name === 'log') { chartBase(); renderWeekly(dailyTotals()); }
   try { localStorage.setItem(TAB_KEY, name); } catch (e) {}
 }
