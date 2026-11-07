@@ -170,6 +170,62 @@ table.lib{width:100%;border-collapse:collapse;font-size:14px;min-width:620px}
 .kv a{color:var(--fg);text-decoration:underline}
 .lib-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:12px;font-size:13px;color:var(--muted);flex-wrap:wrap}
 
+/* library view toggle and sort */
+.lib-tools{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:center;margin:-2px 0 14px}
+.seg{display:inline-flex;gap:2px;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--surface)}
+.seg button{border:0;background:transparent;color:var(--muted);border-radius:999px;padding:5px 18px;min-height:34px;font-weight:600;font-size:13px}
+.seg button:hover{color:var(--fg)}
+.seg button[aria-pressed="true"]{background:color-mix(in srgb,var(--accent) 24%,var(--surface));color:var(--fg);box-shadow:inset 0 -2px 0 var(--accent)}
+.lib-sort{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);font-weight:600}
+.lib-sort select{font:inherit;font-size:14px;font-weight:400;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:var(--rc);padding:6px 10px;min-height:34px;max-width:100%}
+@media (max-width:560px){.seg button{min-height:40px}.lib-sort select{min-height:40px}}
+
+/* shelf: rows of upright box sets, each row resting on its own ledge */
+.shelf-wrap{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px 14px 10px;min-width:0}
+.shelf-wrap[hidden]{display:none}
+.shelf-rows{display:flex;flex-direction:column;gap:12px;min-width:0}
+.shelf-empty{margin:8px 4px;padding:6px 0}
+.shelf-row{min-width:0}
+.shelf-boxes{display:grid;grid-template-columns:repeat(var(--cap,3),minmax(0,1fr));gap:var(--gap,12px);align-items:end;padding-top:12px}
+.ledge{position:relative;height:13px;margin:0 -6px;border-radius:3px 3px 7px 7px;background:linear-gradient(180deg,var(--line),var(--raise));box-shadow:inset 0 1px 0 color-mix(in srgb,var(--fg) 20%,transparent),0 9px 14px -8px var(--shade),0 2px 3px -1px var(--shade)}
+.bx{all:unset;box-sizing:border-box;display:flex;align-items:stretch;min-width:0;cursor:pointer;border-radius:4px;position:relative;transition:transform .14s ease-out,box-shadow .14s ease-out;box-shadow:0 7px 10px -5px var(--shade),0 2px 4px var(--shade)}
+.bx:hover,.bx:focus-visible{transform:translateY(-4px)}
+.bx:focus-visible{outline:2px solid var(--fg);outline-offset:3px}
+.bx[aria-pressed="true"]{transform:translateY(-9px);box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--accent),0 14px 16px -6px var(--shade)}
+.bx-spine{flex:none;width:9px;position:relative;border-radius:4px 0 0 4px;background:linear-gradient(90deg,color-mix(in srgb,var(--fg) 16%,var(--raise)),var(--raise) 70%,color-mix(in srgb,var(--bg) 40%,var(--raise)))}
+.bx-spine::before{content:"";position:absolute;left:1px;top:6%;bottom:6%;width:3px;border-radius:2px;background:var(--sc,var(--muted))}
+.bx-face{flex:1 1 0;min-width:0;aspect-ratio:2/3;position:relative;overflow:hidden;border-radius:0 4px 4px 0;background:var(--raise);container-type:inline-size}
+.bx-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;background:var(--raise)}
+.bx-fav{position:absolute;top:5px;right:5px;z-index:2;display:block;filter:drop-shadow(0 1px 2px var(--shade))}
+.bx-fav .fv{width:26px;height:18px}
+.bx-prog{position:absolute;left:0;right:0;bottom:0;height:5px;z-index:2;background:color-mix(in srgb,var(--bg) 70%,transparent)}
+.bx-prog i{display:block;height:100%;background:var(--accent)}
+.cv,.sp-poster .cv{position:absolute;inset:0;display:flex;flex-direction:column;gap:6cqw;padding:9cqw 9cqw 10cqw;color:var(--fg);overflow:hidden;
+  background:linear-gradient(var(--ang,150deg),color-mix(in srgb,var(--accent) var(--p1,18%),var(--raise)),color-mix(in srgb,var(--accent-2) var(--p2,18%),var(--raise)))}
+.cv-tv{width:15cqw;min-width:12px;height:auto;flex:none;color:var(--fg)}
+.cv-t{flex:1 1 auto;min-height:0;font-family:var(--display);font-weight:var(--dweight);text-transform:var(--dcase);letter-spacing:min(var(--dtrack),.03em);font-size:max(11px,12.5cqw);line-height:1.12;overflow-wrap:break-word;word-break:normal;hyphens:manual;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:5;line-clamp:5;overflow:hidden;align-content:center}
+.cv-m{flex:none;font-size:max(9px,8.5cqw);line-height:1.2;letter-spacing:.04em;text-transform:uppercase;font-weight:600;color:var(--fg);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (prefers-reduced-motion:reduce){.bx{transition:none}.bx:hover,.bx:focus-visible{transform:none}}
+
+/* panel: poster beside the title, Find poster */
+.sp-head{flex-wrap:nowrap;align-items:flex-start}
+.sp-poster{flex:none;width:96px;aspect-ratio:2/3;position:relative;overflow:hidden;border-radius:6px;background:var(--raise);border:1px solid var(--line);container-type:inline-size;box-shadow:0 6px 10px -5px var(--shade)}
+.sp-poster img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;background:var(--raise)}
+.sp-hd{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;flex:1 1 0;min-width:0}
+.sp-head .sp-hd h3{flex:1 1 100%}
+.fp-row{display:flex;gap:8px;align-items:stretch}
+.fp-row input{flex:1 1 auto}
+.fp-row .btn{flex:none;white-space:nowrap}
+.fp-out:empty{display:none}
+.fp-note{margin:4px 0 0;font-size:12px;color:var(--muted)}
+.fp-cands{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:4px}
+.fp-cand{all:unset;box-sizing:border-box;display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:2px 10px;align-items:center;width:100%;padding:4px 6px;border:1px solid var(--line);border-radius:var(--rc);background:var(--bg);color:var(--fg);cursor:pointer;min-height:48px}
+.fp-cand:hover{border-color:var(--muted)}
+.fp-cand:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.fp-cand img{width:36px;height:50px;object-fit:cover;border-radius:3px;background:var(--raise);grid-row:1}
+.fp-nm{font-size:13px;font-weight:600;overflow-wrap:anywhere;line-height:1.25}
+.fp-yr{font-size:12px;color:var(--muted)}
+
 /* dialogs */
 dialog{background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:calc(var(--r) + 4px);padding:0;width:min(760px,calc(100vw - 32px));max-height:calc(100vh - 40px)}
 dialog::backdrop{background:var(--scrim)}
@@ -686,7 +742,14 @@ body::after{opacity:var(--grain);mix-blend-mode:overlay;background-image:url("da
       <button class="btn btn-primary" id="addShowBtn" type="button">Add show</button>
     </div>
     <div class="chips" id="libChips" role="group" aria-label="Status"></div>
-    <div class="table-wrap">
+    <div class="lib-tools">
+      <div class="seg" id="libView" role="group" aria-label="Library view"><button type="button" data-view="list" aria-pressed="true">List</button><button type="button" data-view="shelf" aria-pressed="false">Shelf</button></div>
+      <label class="lib-sort" for="libSort"><span>Sort</span><select id="libSort">
+        <option value="sheet">Sheet order</option><option value="title">Title A–Z</option><option value="rating">Rating (high first)</option><option value="year">Year (new first)</option><option value="recent">Recently watched</option><option value="favourite">Favourites first</option>
+      </select></label>
+    </div>
+    <div class="shelf-wrap" id="libShelf" hidden><div class="shelf-rows" id="libShelfRows"></div></div>
+    <div class="table-wrap" id="libListWrap">
       <table class="lib">
         <thead><tr id="libHead"></tr></thead>
         <tbody id="libBody"></tbody>
@@ -1181,6 +1244,8 @@ const OPTS = {
   plan: ['Up next', 'Soon', 'Someday'],
   basedOn: ['Book', 'Film', 'Game', 'Comic', 'Other show', 'True story', 'Original']
 };
+const LIB_VIEW_KEY = 'tv-lib-view';
+function libViewPref() { try { return localStorage.getItem(LIB_VIEW_KEY) === 'shelf' ? 'shelf' : 'list'; } catch (e) { return 'list'; } }
 const state = {
   entries: [],          // 📺 Log rows with eps > 0
   shows: [],            // 📺 rows
@@ -1191,7 +1256,7 @@ const state = {
   settings: { weeklyGoalEps: 7, yearGoalEps: 500, streakMinEps: 1, appName: 'TV Tracker' },
   settingKeys: new Set(), // keys that exist as rows in 📺 Settings
   mcp: null, live: false, busy: false, logDate: null, editing: null, more: null, logN: 2,
-  pickAll: false, lib: { q: '', status: 'All', fav: false, sort: 'sheet', dir: 1, limit: 100, open: null }
+  pickAll: false, lib: { q: '', status: 'All', fav: false, sort: 'sheet', dir: 1, limit: 100, slimit: 60, open: null, view: libViewPref(), cap: 0 }
 };
 
 /* ---------- show columns, mapped by header name (never by position) ---------- */
@@ -1765,9 +1830,13 @@ const LIB_COLS = [
   { k: 'genre', label: 'Genre', sm: true }, { k: 'platform', label: 'Platform', sm: true }, { k: 'year', label: 'Year', num: true, sm: true },
   { k: 'favourite', label: 'Fav', fav: true }
 ];
+let lwMap = new Map();   // showId -> latest logged date, rebuilt at the start of each library render
+const lastSeenOn = b => lwMap.get(String(b.id)) || toDate(b.finished) || toDate(b.started) || '';
+const SORT_DIR = { sheet: 1, title: 1, rating: -1, year: -1, recent: -1, favourite: -1 };
 const sortKey = (b, k) => {
   if (k === 'sheet') return b._row;
   if (k === 'favourite') return toDate(b.favourite) || (favOf(b) ? '0' : '');
+  if (k === 'recent') return lastSeenOn(b);
   if (['rating', 'year'].includes(k)) return b[k] === '' || b[k] == null ? -1 : toNum(b[k]);
   return String(b[k] || '').toLowerCase();
 };
@@ -1787,31 +1856,110 @@ function renderLibrary() {
     + `<button class="chip chip-fav" type="button" data-favfilter aria-pressed="${L.fav}"><span class="fvico" data-on="true" aria-hidden="true">${FAV_SVG}</span><span class="cl">Favourites</span><span class="n">${fmt(state.shows.filter(favOf).length)}</span></button>`
     + [...STATUSES, ...extra].map(st => chip(st, counts[st] || 0)).join('');
   $('libHead').innerHTML = LIB_COLS.map(c => `<th scope="col" data-k="${c.k}" class="${c.num ? 'num ' : ''}${c.sm ? 'hide-sm' : ''}${c.fav ? ' fav-th' : ''}" ${L.sort === c.k ? `aria-sort="${L.dir > 0 ? 'ascending' : 'descending'}"` : ''}>${c.label}</th>`).join('');
+  const shelf = L.view === 'shelf';
+  $('libListWrap').hidden = shelf; $('libShelf').hidden = !shelf;
+  document.querySelectorAll('#libView button').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.view === L.view)));
+  const sortSel = $('libSort'), sv = SORT_DIR[L.sort] === L.dir ? L.sort : '';
+  if (!sv && !sortSel.querySelector('option[value=""]')) sortSel.add(new Option('Column order', ''), 0);
+  if (sv) sortSel.querySelector('option[value=""]')?.remove();
+  sortSel.value = sv;
   body.textContent = '';
   if (!state.live) {
-    body.innerHTML = `<tr><td colspan="${LIB_COLS.length}" class="muted" style="padding:18px">${esc(emptyMsg())}</td></tr>`;
+    const msg = emptyMsg();
+    if (shelf) $('libShelfRows').innerHTML = `<p class="muted shelf-empty">${esc(msg)}</p>`;
+    else body.innerHTML = `<tr><td colspan="${LIB_COLS.length}" class="muted" style="padding:18px">${esc(msg)}</td></tr>`;
     $('libCount').textContent = ''; $('libMore').hidden = true; $('libSheetOrder').hidden = true; return;
   }
+  lwMap = new Map();
+  for (const e of state.entries) if (e.date && e.date > (lwMap.get(String(e.showId)) || '')) lwMap.set(String(e.showId), e.date);
   const rows = libFiltered().sort((a, b) => { const x = sortKey(a, L.sort), y = sortKey(b, L.sort); return (x < y ? -1 : x > y ? 1 : 0) * L.dir; });
-  for (const b of rows.slice(0, L.limit)) {
-    const tr = document.createElement('tr');
-    tr.className = 'row';
-    tr.dataset.id = b.id; tr.tabIndex = 0;
-    tr.setAttribute('aria-selected', String(spOpenId() === b.id));
-    const cells = {
-      title: '<span class="t"></span>' + (b.basedOn ? `<span class="bo" title="Based on: ${esc(b.basedOn)}">${esc(b.basedOn)}</span>` : ''), rating: b.rating === '' ? '' : esc(b.rating),
-      status: b.status ? `<span class="pill" data-s="${esc(b.status)}">${esc(b.status)}</span>` : '',
-      genre: esc(b.genre), platform: esc(b.platform), year: esc(b.year), favourite: favBtn(b, 'row')
-    };
-    tr.innerHTML = LIB_COLS.map(c => `<td class="${c.num ? 'num tnum ' : ''}${c.sm ? 'hide-sm' : ''}${c.fav ? ' fav-td' : ''}">${cells[c.k]}</td>`).join('');
-    tr.querySelector('.t').textContent = b.title;
-    body.appendChild(tr);
+  const lim = shelf ? L.slimit : L.limit;
+  if (shelf) renderShelf(rows.slice(0, lim), rows.length);
+  else {
+    for (const b of rows.slice(0, lim)) {
+      const tr = document.createElement('tr');
+      tr.className = 'row';
+      tr.dataset.id = b.id; tr.tabIndex = 0;
+      tr.setAttribute('aria-selected', String(spOpenId() === b.id));
+      const cells = {
+        title: '<span class="t"></span>' + (b.basedOn ? `<span class="bo" title="Based on: ${esc(b.basedOn)}">${esc(b.basedOn)}</span>` : ''), rating: b.rating === '' ? '' : esc(b.rating),
+        status: b.status ? `<span class="pill" data-s="${esc(b.status)}">${esc(b.status)}</span>` : '',
+        genre: esc(b.genre), platform: esc(b.platform), year: esc(b.year), favourite: favBtn(b, 'row')
+      };
+      tr.innerHTML = LIB_COLS.map(c => `<td class="${c.num ? 'num tnum ' : ''}${c.sm ? 'hide-sm' : ''}${c.fav ? ' fav-td' : ''}">${cells[c.k]}</td>`).join('');
+      tr.querySelector('.t').textContent = b.title;
+      body.appendChild(tr);
+    }
+    if (!rows.length) body.innerHTML = `<tr><td colspan="${LIB_COLS.length}" class="muted" style="padding:18px">No shows match.</td></tr>`;
   }
-  if (!rows.length) body.innerHTML = `<tr><td colspan="${LIB_COLS.length}" class="muted" style="padding:18px">No shows match.</td></tr>`;
-  $('libCount').textContent = `Showing ${fmt(Math.min(L.limit, rows.length))} of ${fmt(rows.length)} shows` + (L.sort === 'sheet' ? ' · in sheet order' : '');
-  $('libMore').hidden = rows.length <= L.limit;
+  $('libCount').textContent = `Showing ${fmt(Math.min(lim, rows.length))} of ${fmt(rows.length)} shows` + (L.sort === 'sheet' ? ' · in sheet order' : '');
+  $('libMore').hidden = rows.length <= lim;
+  $('libMore').textContent = shelf ? 'Show 60 more' : 'Show 100 more';
   $('libSheetOrder').hidden = L.sort === 'sheet';
 }
+
+/* ---------- shelf view: box sets standing on ledges, and the posters / generated covers they wear ---------- */
+const hashStr = t => { let h = 2166136261; for (const c of String(t)) { h ^= c.codePointAt(0); h = Math.imul(h, 16777619); } return h >>> 0; };
+const posterOk = u => spIsHttps(String(u || '').trim());
+const TV_GLYPH = '<svg class="cv-tv" viewBox="0 0 24 20" aria-hidden="true" focusable="false"><rect x="2" y="6" width="20" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 2.2 12 6l4-3.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+// A cover made from the title: a gradient picked by a hash of the title, mixed from the theme's own tokens (never more than 24% accent over --raise, so --fg text always reads)
+function coverHtml(b) {
+  const h = hashStr(b.title), p1 = 12 + h % 13, p2 = 12 + (h >>> 5) % 13, ang = 120 + (h >>> 10) % 70;
+  const meta = [b.year, b.genre].filter(Boolean).join(' · ');
+  return `<span class="cv" aria-hidden="true" style="--p1:${p1}%;--p2:${p2}%;--ang:${ang}deg">${TV_GLYPH}<span class="cv-t">${esc(b.title)}</span><span class="cv-m">${esc(meta || 'TV show')}</span></span>`;
+}
+function posterBlock(b, cls, large) {
+  const u = String(b.poster || '').trim();
+  let img = '';
+  if (posterOk(u)) {
+    const big = large && u.includes('/medium_portrait/') ? u.replace('/medium_portrait/', '/original_untouched/') : '';
+    img = `<img class="${cls}" src="${esc(big || u)}"${big ? ` data-fb="${esc(u)}"` : ''} alt="${esc(b.title)}" loading="lazy" decoding="async" draggable="false">`;
+  }
+  return coverHtml(b) + img;
+}
+function shelfBox(b, tab) {
+  const fav = favOf(b), pr = b.status === 'Watching' ? progressOf(b) : null;
+  const label = `${b.title}${b.status ? ', ' + b.status : ''}${fav ? ', favourite' : ''}`;
+  return `<button class="bx" type="button" data-id="${esc(b.id)}"${b.status ? ` data-s="${esc(b.status)}"` : ''} tabindex="${tab ? 0 : -1}" aria-pressed="${spOpenId() === b.id}" aria-label="${esc(label)}" title="${esc(b.title)}">`
+    + `<span class="bx-spine" aria-hidden="true"></span><span class="bx-face">${posterBlock(b, 'bx-img', false)}`
+    + (fav ? `<span class="bx-fav" data-on="true" aria-hidden="true">${FAV_SVG}</span>` : '')
+    + (pr ? `<span class="bx-prog" aria-hidden="true"><i style="width:${Math.round(pr.pct)}%"></i></span>` : '') + '</span></button>';
+}
+// How many boxes fit in a row, from the width of the shelf
+function shelfCap() {
+  const w = $('libShelfRows').clientWidth || 0;
+  if (!w) return state.lib.cap || 3;
+  const phone = w < 480, min = phone ? 96 : 130, gap = phone ? 12 : 20;
+  return { cap: Math.max(2, Math.floor((w + gap) / (min + gap))), gap }.cap;
+}
+function renderShelf(list, total) {
+  const L = state.lib, box = $('libShelfRows'), prev = document.activeElement;
+  const refocus = prev && prev.classList && prev.classList.contains('bx') && box.contains(prev) ? prev.dataset.id : null;
+  if (!list.length) { box.innerHTML = '<p class="muted shelf-empty">No shows match.</p>'; return; }
+  const cap = shelfCap(), phone = (box.clientWidth || 0) < 480; L.cap = cap;
+  const rove = list.some(b => b.id === L.rove) ? L.rove : list[0].id;
+  let html = '';
+  for (let i = 0; i < list.length; i += cap)
+    html += `<div class="shelf-row" style="--cap:${cap};--gap:${phone ? 12 : 20}px"><div class="shelf-boxes">${list.slice(i, i + cap).map(b => shelfBox(b, b.id === rove)).join('')}</div><div class="ledge" aria-hidden="true"></div></div>`;
+  box.innerHTML = html;
+  if (refocus) { const el = box.querySelector(`.bx[data-id="${CSS.escape(refocus)}"]`); if (el) el.focus({ preventScroll: true }); }
+}
+// Keep the rows matched to the width (the floating panel docking on the left narrows the shelf)
+{
+  let t = 0;
+  new ResizeObserver(() => {
+    clearTimeout(t);
+    t = setTimeout(() => { if (state.lib.view === 'shelf' && state.live && !$('libShelf').hidden && $('libShelfRows').clientWidth && shelfCap() !== state.lib.cap) renderLibrary(); }, 120);
+  }).observe($('libShelf'));
+}
+// Capturing: image load errors do not bubble. A poster that will not load gives way to the generated cover underneath (same box, so nothing shifts)
+document.addEventListener('error', e => {
+  const im = e.target;
+  if (!im || im.tagName !== 'IMG') return;
+  if (im.dataset.fb) { const fb = im.dataset.fb; delete im.dataset.fb; im.src = fb; return; }
+  if (im.classList.contains('bx-img') || im.closest('.sp-poster') || im.closest('.fp-cand')) im.remove();
+}, true);
+
 /* ---------- floatPanel: a small generic floating card (design: the shared float-panel component) ----------
    floatPanel.open(html, { label, returnTo, onClose, guard }) shows the card (or swaps its content when already open) and moves focus to the
    element marked data-fp-title. close() hides it, runs onClose and puts focus back on returnTo (an element, or a function that finds one).
@@ -1900,14 +2048,15 @@ function spFieldHtml(f, val, show) {
     const v = f.type === 'date' ? (toDate(val) || '') : f.type === 'number' ? (val === '' ? '' : (Number.isFinite(parseFloat(val)) ? toNum(val) : '')) : val;
     ctl = `<input id="${id}" name="${f.k}" type="${f.type || 'text'}" value="${esc(v)}"${f.type === 'number' ? ' inputmode="decimal" step="any"' : ''}${f.req ? ' required' : ''}${f.ph ? ` placeholder="${esc(f.ph)}"` : ''}${f.k === 'poster' ? ' autocomplete="off" spellcheck="false" aria-describedby="spPosterErr"' : ''}>`;
   }
-  return `<div class="field ${f.w || ''}"><label for="${id}">${esc(lab)}</label>${ctl}${f.k === 'poster' ? '<div class="sp-err" id="spPosterErr" role="alert" hidden></div>' : ''}</div>`;
+  if (f.k === 'poster') return `<div class="field ${f.w || ''}"><label for="${id}">${esc(lab)}</label><div class="fp-row">${ctl}<button class="btn" type="button" id="spFind">Find poster</button></div><div class="sp-err" id="spPosterErr" role="alert" hidden></div><div class="fp-out" id="spFindOut" role="status" aria-live="polite"></div></div>`;
+  return `<div class="field ${f.w || ''}"><label for="${id}">${esc(lab)}</label>${ctl}</div>`;
 }
 function spHtml(show) {
   const src = show || sp.defaults;
   const form = FORM.map(f => f.sec ? `<div class="sec-label">${f.sec}</div>` : spFieldHtml(f, String(src[f.k] ?? '').trim(), show)).join('');
   return `<div class="sp">
     <div class="sp-scroll">
-      <div class="sp-head"><h3 data-fp-title>${esc(show ? show.title : 'Add a show')}</h3>${show ? favPill(show, 'panel') : ''}</div>
+      <div class="sp-head">${show ? `<div class="sp-poster" id="spPoster" data-key="${esc(JSON.stringify([show.title, show.poster, show.year, show.genre]))}">${posterBlock(show, 'sp-img', true)}</div>` : ''}<div class="sp-hd"><h3 data-fp-title>${esc(show ? show.title : 'Add a show')}</h3>${show ? favPill(show, 'panel') : ''}</div></div>
       <div class="sp-meta muted small">${show ? 'ID ' + esc(show.id) : 'A new ID is given when you save'}</div>
       <div class="sp-det" id="spDet">${show ? spDetailsHtml(show) : ''}</div>
       <form class="sp-form" id="showForm" novalidate autocomplete="off">${form}</form>
@@ -1950,9 +2099,51 @@ function spChanges() {
 const spDirty = () => floatPanel.isOpen() && !!$('showForm') && Object.keys(spChanges()).length > 0;
 function spMsg(text, err) { const m = $('dlgMsg'); if (!m) return; m.textContent = text || ''; m.dataset.err = err ? '1' : ''; }
 function spPosterErr(text) { const e = $('spPosterErr'), i = $('f-poster'); if (!e) return; e.hidden = !text; e.textContent = text || ''; if (text) i.setAttribute('aria-invalid', 'true'); else i.removeAttribute('aria-invalid'); }
+// The little poster beside the title: the saved poster, or whatever is typed in the Poster link box once it is an https link
+function spPreview(b) {
+  const box = $('spPoster'); if (!box) return;
+  const key = JSON.stringify([b.title, b.poster, b.year, b.genre]);
+  if (box.dataset.key === key) return;
+  box.dataset.key = key; box.innerHTML = posterBlock(b, 'sp-img', true);
+}
+const spTyped = () => { const f = $('showForm'); return f ? { ...(sp.show || {}), title: f.elements.title.value.trim() || (sp.show || {}).title, poster: f.elements.poster.value.trim() } : null; };
+// Find poster: TVmaze search. Only works where the page may call other websites (the GitHub Pages site); in the claude.ai page fetch is blocked.
+async function spFindPoster() {
+  const out = $('spFindOut'), btn = $('spFind'), title = $('f-title').value.trim();
+  if (!out) return;
+  if (!title) { out.innerHTML = '<p class="fp-note">Type the title first.</p>'; return; }
+  btn.disabled = true; out.innerHTML = '<p class="fp-note">Searching…</p>';
+  let list;
+  try {
+    const res = await fetch('https://api.tvmaze.com/search/shows?q=' + encodeURIComponent(title));
+    if (!res.ok) throw { http: res.status };
+    list = await res.json();
+  } catch (err) {
+    if ($('spFindOut') !== out) return;
+    btn.disabled = false;
+    out.innerHTML = err && err.http ? `<p class="fp-note">The poster search didn’t work (error ${esc(err.http)}). Try again, or paste an image link.</p>`
+      : '<p class="fp-note">Finding posters works on the website version. Paste an image link instead.</p>';
+    return;
+  }
+  if ($('spFindOut') !== out) return;
+  btn.disabled = false;
+  const found = (Array.isArray(list) ? list : []).map(x => x && x.show).filter(x => x && x.image && posterOk(x.image.medium)).slice(0, 6);
+  if (!found.length) { out.innerHTML = `<p class="fp-note">No posters found for “${esc(title)}”. Try another spelling, or paste an image link.</p>`; return; }
+  out.innerHTML = '<ul class="fp-cands">' + found.map(x => `<li><button class="fp-cand" type="button" data-url="${esc(x.image.medium)}"><img src="${esc(x.image.medium)}" alt="" loading="lazy" decoding="async"><span class="fp-nm">${esc(x.name)}</span><span class="fp-yr">${esc(String(x.premiered || '').slice(0, 4) || 'year unknown')}</span></button></li>`).join('') + '</ul>';
+}
+document.addEventListener('click', e => {
+  const f = e.target.closest && e.target.closest('#spFind, .fp-cand'); if (!f) return;
+  if (f.id === 'spFind') { spFindPoster(); return; }
+  const inp = $('f-poster'); if (!inp) return;
+  inp.value = f.dataset.url; inp.dispatchEvent(new Event('input', { bubbles: true })); inp.dispatchEvent(new Event('change', { bubbles: true }));
+  $('spFindOut').innerHTML = '<p class="fp-note">Poster link filled in. Press Save to keep it.</p>';
+  inp.focus({ preventScroll: true });
+});
+document.addEventListener('change', e => { if (e.target.id === 'f-poster' || e.target.id === 'f-title') { const t = spTyped(); if (t && (t.poster === '' || posterOk(t.poster))) spPreview(t); } });
 function markSelected() {
   const id = spOpenId(); state.lib.open = id;
   document.querySelectorAll('#libBody tr.row').forEach(tr => tr.setAttribute('aria-selected', String(tr.dataset.id === id)));
+  document.querySelectorAll('#libShelfRows .bx').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.id === id)));
 }
 // Run action now, or after "Discard changes?" is answered when the form holds unsaved changes
 function spAsk(action) {
@@ -2012,7 +2203,7 @@ async function saveShowDialog(e) {
       const b = await addShow(data);
       setStatus('live', `Added “${b.title}” with ID ${b.id}`);
       renderAll();
-      const ret = () => document.querySelector(`#libBody tr.row[data-id="${b.id}"]`);
+      const ret = libRet(b.id);
       spShow(b, ret);
       spMsg('Added.');
     }
@@ -2030,6 +2221,7 @@ function spRefresh(force) {
   sp.show = s;
   const h = $('fpanel-title'); if (h && h.textContent !== s.title) h.textContent = s.title;
   $('spDet').innerHTML = spDetailsHtml(s);
+  if (!wasDirty) spPreview(s);
   const pill = document.querySelector('.fpanel .sp-head .favpill'); if (pill) pill.setAttribute('aria-pressed', String(favOf(s)));
   if (!wasDirty) spFill(s);
   else { // keep what is typed, but follow the favourite toggled from the pill unless the form's own toggle was used
@@ -2503,7 +2695,7 @@ $('homePanel').addEventListener('click', e => {
   const s = showById(b.dataset.open); if (s) openShowDialog(s);
 });
 $('homeFavAll').addEventListener('click', () => {
-  state.lib.fav = true; state.lib.status = 'All'; state.lib.q = ''; state.lib.limit = 100; state.lib.open = null;
+  state.lib.fav = true; state.lib.status = 'All'; state.lib.q = ''; state.lib.limit = 100; state.lib.slimit = 60; state.lib.open = null;
   $('libSearch').value = '';
   showTab('library');
 });
@@ -3406,7 +3598,7 @@ function renderSoon() {
 }
 $('csPipe').addEventListener('click', e => {
   const b = e.target.closest('[data-pipe]'); if (!b) return;
-  Object.assign(state.lib, { status: b.dataset.pipe, fav: false, q: '', limit: 100, open: null }); $('libSearch').value = '';
+  Object.assign(state.lib, { status: b.dataset.pipe, fav: false, q: '', limit: 100, slimit: 60, open: null }); $('libSearch').value = '';
   showTab('library');
 });
 $('csList').addEventListener('click', e => { const b = e.target.closest('[data-open]'); if (b) { const s = showById(b.dataset.open); if (s) openShowDialog(s); } });
@@ -3510,11 +3702,11 @@ function showTab(name) {
 }
 for (const t of TABS) $('tab-' + t).addEventListener('click', () => showTab(t));
 let searchT;
-$('libSearch').addEventListener('input', e => { clearTimeout(searchT); searchT = setTimeout(() => { state.lib.q = e.target.value; state.lib.limit = 100; renderLibrary(); }, 150); });
+$('libSearch').addEventListener('input', e => { clearTimeout(searchT); searchT = setTimeout(() => { state.lib.q = e.target.value; state.lib.limit = 100; state.lib.slimit = 60; renderLibrary(); }, 150); });
 $('libChips').addEventListener('click', e => {
   const c = e.target.closest('.chip'); if (!c) return;
-  if (c.dataset.favfilter != null) { state.lib.fav = !state.lib.fav; state.lib.limit = 100; renderLibrary(); return; }
-  state.lib.status = c.dataset.st; state.lib.limit = 100; renderLibrary(); });
+  if (c.dataset.favfilter != null) { state.lib.fav = !state.lib.fav; state.lib.limit = 100; state.lib.slimit = 60; renderLibrary(); return; }
+  state.lib.status = c.dataset.st; state.lib.limit = 100; state.lib.slimit = 60; renderLibrary(); });
 $('libHead').addEventListener('click', e => {
   const th = e.target.closest('th'); if (!th) return; const k = th.dataset.k, L = state.lib;
   const first = ['rating', 'year', 'favourite'].includes(k) ? -1 : 1;
@@ -3525,10 +3717,11 @@ $('libHead').addEventListener('click', e => {
 });
 $('libSheetOrder').addEventListener('click', () => { state.lib.sort = 'sheet'; state.lib.dir = 1; renderLibrary(); });
 // A row selects the show and opens the panel (another row swaps it; the same row again closes it)
+const libRet = id => () => document.querySelector(`#libBody tr.row[data-id="${id}"], #libShelfRows .bx[data-id="${id}"]`);
 function libSelect(tr) {
   const id = tr.dataset.id, show = showById(id); if (!show) return;
   if (spOpenId() === id) { floatPanel.close(); return; }
-  openShowDialog(show, { returnTo: () => document.querySelector(`#libBody tr.row[data-id="${id}"]`) });
+  openShowDialog(show, { returnTo: libRet(id) });
 }
 $('libBody').addEventListener('click', e => {
   if (e.target.closest('[data-fav]')) return;   // the heart button toggles the favourite; it must not select the row (see the document handler)
@@ -3540,7 +3733,32 @@ $('libBody').addEventListener('keydown', e => {
   if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); libSelect(tr); }
   else if (e.key === 'Escape' && floatPanel.isOpen()) { e.preventDefault(); floatPanel.close(); }
 });
-$('libMore').addEventListener('click', () => { state.lib.limit += 100; renderLibrary(); });
+$('libMore').addEventListener('click', () => { if (state.lib.view === 'shelf') state.lib.slimit += 60; else state.lib.limit += 100; renderLibrary(); });
+// List | Shelf (remembered on this device) and the sort select
+$('libView').addEventListener('click', e => {
+  const b = e.target.closest('button[data-view]'); if (!b || b.dataset.view === state.lib.view) return;
+  state.lib.view = b.dataset.view;
+  try { localStorage.setItem(LIB_VIEW_KEY, state.lib.view); } catch (err) {}
+  renderLibrary();
+});
+$('libSort').addEventListener('change', e => {
+  const k = e.target.value; if (!(k in SORT_DIR)) return;
+  Object.assign(state.lib, { sort: k, dir: SORT_DIR[k], limit: 100, slimit: 60 }); renderLibrary();
+});
+// Shelf boxes: click or Enter / Space opens the panel; arrows rove across the rows; Escape closes the panel
+$('libShelfRows').addEventListener('click', e => { const bx = e.target.closest('.bx'); if (bx) libSelect(bx); });
+$('libShelfRows').addEventListener('keydown', e => {
+  const bx = e.target.closest && e.target.closest('.bx'); if (!bx || e.target !== bx) return;
+  if (e.key === 'Escape') { if (floatPanel.isOpen()) { e.preventDefault(); floatPanel.close(); } return; }
+  const all = [...$('libShelfRows').querySelectorAll('.bx')], i = all.indexOf(bx), cap = state.lib.cap || 1;
+  const to = { ArrowRight: i + 1, ArrowLeft: i - 1, ArrowDown: i + cap, ArrowUp: i - cap, Home: 0, End: all.length - 1 }[e.key];
+  if (to === undefined) return;
+  e.preventDefault();
+  const lastRow = Math.floor((all.length - 1) / cap) * cap;
+  const t = all[e.key === 'ArrowDown' && i >= lastRow ? i : Math.max(0, Math.min(all.length - 1, to))];   // Down on the last row stays put; Down above a short last row lands on its last box
+  if (!t || t === bx) return;
+  bx.tabIndex = -1; t.tabIndex = 0; state.lib.rove = t.dataset.id; t.focus();
+});
 $('addShowBtn').addEventListener('click', () => { if (!state.live) { notice(emptyMsg(), 'error'); return; } if (floatPanel.isOpen() && !sp.show) { $('fpanel-title').focus({ preventScroll: true }); return; } openShowDialog(null); });
 // The panel is built on demand, so its form and buttons are handled here
 document.addEventListener('submit', e => { if (e.target.id === 'showForm') saveShowDialog(e); });

@@ -109,6 +109,7 @@ async function open(viewport, label, prep, extra = {}) {
     if (u.startsWith('http://tv.test/')) return route.fulfill({ contentType: 'text/html', body: SHELL });
     if (u.includes('cdnjs.cloudflare.com')) return route.fulfill({ contentType: 'application/javascript', body: CHART_STUB });
     if (u.includes('fonts.googleapis.com') || u.includes('fonts.gstatic.com')) return route.fulfill({ contentType: 'text/css', body: '' });
+    if (route.request().resourceType() === 'image') return route.fulfill({ contentType: 'image/svg+xml', body: '<svg xmlns="http://www.w3.org/2000/svg" width="2" height="3"/>' });   // poster previews (made-up example links) get a tiny picture
     return route.abort();
   });
   await page.exposeFunction('__fakeCall', (server, tool, input) => {
