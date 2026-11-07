@@ -158,7 +158,8 @@ const homeFavIds = page => page.$$eval('#homeFav li[data-id]', els => els.map(e 
 const homeLast = page => page.$$eval('#homeLast li', els => els.map(li => ({ id: li.querySelector('button') && li.querySelector('button').dataset.open, t: li.querySelector('.t') && li.querySelector('.t').textContent, m: li.querySelector('.m') ? li.querySelector('.m').textContent : '' })));
 const vWrites = sheet => sheet.writes.filter(w => w.tool === 'update_values');
 const favWait = page => page.waitForTimeout(80);
-const idRead = sheet => { const i = sheet.calls.findIndex(c => c.tool === 'update_values'); return i > 0 && sheet.calls.slice(0, i).some(c => c.tool === 'get_values' && /^'📺'!M1:M\d*$/.test(c.input.range)) && sheet.calls.slice(0, i).some(c => c.tool === 'get_values' && /^'📺'!A2:V2$/.test(c.input.range)); };
+const favSaved = page => page.waitForFunction(() => state.busy === false && document.getElementById('dlgSave').textContent === 'Save' && /Saved|No changes/.test(document.getElementById('dlgMsg').textContent));
+const idRead = sheet => { const i = sheet.calls.findIndex(c => c.tool === 'update_values'); return i > 0 && sheet.calls.slice(0, i).some(c => c.tool === 'get_values' && /^'📺'!M1:M\d*$/.test(c.input.range)) && sheet.calls.slice(0, i).some(c => c.tool === 'get_values' && /^'📺'!A2:Y2$/.test(c.input.range)); };
 const THEMES_13 = ['default', 'hannibal', 'ripley', 'madmen', 'blackadder', 'saul', 'deadwood', 'inbetween', 'chernobyl', 'sopranos', 'succession', 'fleabag', 'arcane'];
 const FAVS = ['3', '22', '2', '38', '20', '4'];
 
@@ -230,10 +231,10 @@ for (const id of THEMES_13) {
   const t = await open({ width: 1280, height: 900 }, '1280', null, { dsf: 3 }); const { page } = t;
   await page.click('#tab-library');
   await page.click('#libBody tr.row[data-id="3"] .t');
-  const box = await page.evaluate(() => { const a = document.querySelector('#libBody tr.row[data-id="3"]').getBoundingClientRect(), d = document.querySelector('#libBody tr.detail').getBoundingClientRect(), b = document.querySelector('#libBody tr.row[data-id="5"]').getBoundingClientRect(); return { x: Math.round(a.right - 360), y: Math.round(a.top + scrollY - 4), w: 360, h: Math.round(b.bottom - a.top + 8) }; });
+  const box = await page.evaluate(() => { const a = document.querySelector('#libBody tr.row[data-id="3"]').getBoundingClientRect(), b = document.querySelector('#libBody tr.row[data-id="5"]').getBoundingClientRect(); return { x: Math.round(a.right - 360), y: Math.round(a.top + scrollY - 4), w: 360, h: Math.round(b.bottom - a.top + 8) }; });
   await page.screenshot({ path: `${SHOTS}/fav-sticker-closeup.png`, fullPage: true, clip: { x: box.x, y: box.y, width: box.w, height: box.h } });
-  const pillBox = await page.$eval('.det-acts', e => { const r = e.getBoundingClientRect(); return { x: r.left, y: r.top + scrollY, w: 300, h: r.height }; });
-  await page.screenshot({ path: `${SHOTS}/fav-sticker-pill.png`, fullPage: true, clip: { x: pillBox.x, y: pillBox.y - 4, width: pillBox.w, height: pillBox.h + 8 } });
+  const pillBox = await page.$eval('.fpanel .sp-head', e => { const r = e.getBoundingClientRect(); return { x: r.left, y: r.top, w: r.width, h: r.height }; });
+  await page.screenshot({ path: `${SHOTS}/fav-sticker-pill.png`, clip: { x: pillBox.x, y: pillBox.y - 4, width: pillBox.w, height: pillBox.h + 8 } });
   await t.ctx.close();
 }
 
@@ -252,7 +253,7 @@ for (const id of THEMES_13) {
   check('Last 5: distinct, newest first (Bluebell, Alpha, Gull from the log), then Finished dates (Cinder, Birch)', JSON.stringify(l.map(x => x.id)) === JSON.stringify(['5', '3', '22', '6', '4']) && new Set(l.map(x => x.id)).size === 5, l);
   check('Last 5: "S1 · E8 · Yesterday", "S2 · E5 · Yesterday" (last logged episode), "S4 · E8 · d Mon yy", then "Finished 4 Apr 25"', l[0].m === 'S1 · E8 · Yesterday' && l[1].m === 'S2 · E5 · Yesterday' && /^S4 · E8 · \d{1,2} [A-Z][a-z]{2} \d{2}$/.test(l[2].m) && l[3].m === 'Finished 4 Apr 25' && l[4].m === 'Finished 3 Mar 25', l);
   await page.click('#homeLast li button >> nth=0');
-  check('Tapping a recent show opens its Library edit dialog', await page.evaluate(() => document.getElementById('showDlg').open && document.getElementById('f-title').value === 'Bluebell Row'));
+  check('Tapping a recent show opens its show panel', await page.evaluate(() => !!document.querySelector('.fpanel') && document.getElementById('f-title').value === 'Bluebell Row'));
   await t.ctx.close();
 }
 { // 10/10 Watched with no date fill the rest; a log row from today reads "Today" and replaces the older Gull entry
@@ -314,14 +315,14 @@ for (const id of THEMES_13) {
   await page.click(`#libBody tr.row[data-id="${rowId}"] .fav`);
   await favWait(page);
   const w2 = vWrites(sheet);
-  check('Favourite from a Library row: exactly one update_values, column V, today\'s date, and the row does not open', sheet.writes.length === 1 && w2.length === 1 && w2[0].range === `'📺'!V${r5}` && w2[0].values[0][0] === TODAY && await page.evaluate(() => !document.querySelector('#libBody tr.open')), sheet.writes);
+  check('Favourite from a Library row: exactly one update_values, column V, today\'s date, and the row does not open', sheet.writes.length === 1 && w2.length === 1 && w2[0].range === `'📺'!V${r5}` && w2[0].values[0][0] === TODAY && await page.evaluate(() => !document.querySelector('.fpanel')), sheet.writes);
   check('...sticker pressed, focus stays on it, status says added', await page.evaluate(() => { const b = document.querySelector('#libBody tr.row[data-id="5"] .fav'); return b.getAttribute('aria-pressed') === 'true' && document.activeElement === b && /added to Favourites/.test(document.getElementById('statusText').textContent); }));
   sheet.clearWrites();
   await page.click('#libBody tr.row[data-id="5"] .t');
-  await page.click('#libBody tr.detail .favpill');
+  await page.click('.fpanel .sp-head .favpill');
   await favWait(page);
-  check('Expanded details pill (on) turns it off with one blank write to V', sheet.writes.length === 1 && sheet.writes[0].range === `'📺'!V${r5}` && sheet.writes[0].values[0][0] === '' && await page.evaluate(() => document.querySelector('#libBody tr.detail .favpill').getAttribute('aria-pressed') === 'false'), sheet.writes);
-  check('Details show the Favourite date as "d Mon yy" when on', await (async () => { await page.click('#libBody tr.detail .favpill'); await favWait(page); return page.evaluate(() => /Favourite/.test(document.querySelector('#libBody tr.detail .kv').textContent) && /\d{1,2} [A-Z][a-z]{2} \d{2}/.test([...document.querySelectorAll('#libBody tr.detail dt')].filter(d => d.textContent === 'Favourite').map(d => d.nextSibling.textContent).join())); })());
+  check('Panel favourite pill (on) turns it off with one blank write to V, and the form toggle follows', sheet.writes.length === 1 && sheet.writes[0].range === `'📺'!V${r5}` && sheet.writes[0].values[0][0] === '' && await page.evaluate(() => document.querySelector('.fpanel .sp-head .favpill').getAttribute('aria-pressed') === 'false' && document.querySelector('.fpanel [data-favform]').getAttribute('aria-pressed') === 'false' && document.getElementById('f-favourite').value === ''), sheet.writes);
+  check('Details show the Favourite date as "d Mon yy" when on', await (async () => { await page.click('.fpanel .sp-head .favpill'); await favWait(page); return page.evaluate(() => /\d{1,2} [A-Z][a-z]{2} \d{2}/.test([...document.querySelectorAll('.fpanel .kv dt')].filter(d => d.textContent === 'Favourite').map(d => d.nextSibling.textContent).join())); })());
   check('no console errors', t.errors.length === 0, t.errors);
   await t.ctx.close();
 }
@@ -355,19 +356,18 @@ for (const id of THEMES_13) {
 {
   const t = await open({ width: 1280, height: 900 }); const { page, sheet } = t;
   await page.click('#tab-library');
-  await page.click('#libBody tr.row[data-id="3"] .t'); await page.click('[data-edit="3"]');
-  check('Edit dialog: Favourite is a toggle pill (pressed for a favourite), not a date field', await page.evaluate(() => { const b = document.querySelector('#dlgBody .favpill'); return b && b.getAttribute('aria-pressed') === 'true' && b.getAttribute('aria-label') === 'Favourite: Alpha Station' && document.getElementById('f-favourite').type === 'hidden'; }));
+  await page.click('#libBody tr.row[data-id="3"] .t');
+  check('Panel form: Favourite is a toggle pill (pressed for a favourite), not a date field', await page.evaluate(() => { const b = document.querySelector('#showForm .favpill'); return b && b.getAttribute('aria-pressed') === 'true' && /^Favourite/.test(b.getAttribute('aria-label')) && /Alpha Station/.test(b.getAttribute('aria-label')) && document.getElementById('f-favourite').type === 'hidden'; }));
   sheet.clearWrites();
-  await page.click('#dlgSave'); await page.waitForFunction(() => !document.getElementById('showDlg').open);
-  check('Saving the dialog without touching it writes nothing (the favourite date round-trips)', sheet.writes.length === 0, sheet.writes);
-  await page.click('[data-edit="3"]');
-  await page.click('#dlgBody .favpill');
-  check('Toggling in the dialog writes nothing until Save', sheet.writes.length === 0 && await page.evaluate(() => document.getElementById('f-favourite').value === ''));
-  await page.click('#dlgSave'); await page.waitForFunction(() => !document.getElementById('showDlg').open);
+  await page.click('#dlgSave'); await favSaved(page);
+  check('Saving the panel without touching it writes nothing (the favourite date round-trips)', sheet.writes.length === 0, sheet.writes);
+  await page.click('#showForm .favpill');
+  check('Toggling in the panel form writes nothing until Save', sheet.writes.length === 0 && await page.evaluate(() => document.getElementById('f-favourite').value === ''));
+  await page.click('#dlgSave'); await favSaved(page);
   check('Save after switching off: exactly one blank write to V of that row', sheet.writes.length === 1 && sheet.writes[0].range === `'📺'!V${sheet.rowOfId(3)}` && sheet.writes[0].values[0][0] === '', sheet.writes);
   sheet.clearWrites();
-  await page.click('#libBody tr.row[data-id="8"] .t'); await page.click('[data-edit="8"]');
-  await page.click('#dlgBody .favpill'); await page.click('#dlgSave'); await page.waitForFunction(() => !document.getElementById('showDlg').open);
+  await page.click('#libBody tr.row[data-id="8"] .t');
+  await page.click('#showForm .favpill'); await page.click('#dlgSave'); await favSaved(page);
   check('Save after switching on: one write to V with today\'s date', sheet.writes.length === 1 && sheet.writes[0].range === `'📺'!V${sheet.rowOfId(8)}` && sheet.writes[0].values[0][0] === TODAY, sheet.writes);
   check('no console errors', t.errors.length === 0, t.errors);
   await t.ctx.close();

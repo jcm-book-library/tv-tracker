@@ -262,9 +262,9 @@ for (const th of Object.keys(THEMES)) {
   const row0 = await page.evaluate(() => { const li = document.querySelector('#drillList li'); return { t: li.querySelector('.t').textContent, m: li.querySelector('.m').textContent, pill: !!li.querySelector('.pill'), pillS: li.querySelector('.pill').dataset.s }; });
   check('Drill row shows title, rating, status chip, year, platform', row0.pill && /\d{4}/.test(row0.m) && /HBO|Netflix|Plex|Stan|Prime/.test(row0.m) && ['Watched', 'Rewatch'].includes(row0.pillS), row0);
   await page.click('#drillList li button >> nth=0');
-  check('Clicking a show opens the Library edit dialog for it', await page.evaluate(n => !document.getElementById('drillDlg').open && document.getElementById('showDlg').open && document.getElementById('f-title').value === n, row0.t), row0);
-  await page.click('#dlgClose');
-  check('Closing the edit dialog returns focus to the tile', await page.evaluate(() => document.activeElement.dataset.fk === 'tile:Shows watched'));
+  check('Clicking a show opens the show panel for it (the drill closes first)', await page.evaluate(n => !document.getElementById('drillDlg').open && !!document.querySelector('.fpanel') && document.getElementById('f-title').value === n, row0.t), row0);
+  await page.click('.fpanel-x');
+  check('Closing the panel returns focus to the tile', await page.evaluate(() => document.activeElement.dataset.fk === 'tile:Shows watched'));
   await page.waitForFunction(() => document.activeElement && document.activeElement.dataset.fk === 'tile:Shows watched', null, { timeout: 3000 });
   await page.keyboard.press('Enter');
   check('Enter on a focused tile opens its drill; Escape closes it and focus returns', await (async () => { await page.waitForFunction(() => document.getElementById('drillDlg').open, null, { timeout: 2000 }).catch(() => {}); const o = (await drillInfo(page)).open; await page.keyboard.press('Escape'); await page.waitForFunction(() => !document.getElementById('drillDlg').open); await page.waitForFunction(() => document.activeElement.dataset.fk === 'tile:Shows watched', null, { timeout: 1500 }).catch(() => {}); return o && await page.evaluate(() => document.activeElement.dataset.fk === 'tile:Shows watched') || (console.log('DBG', o,  await page.evaluate(() => document.activeElement.outerHTML.slice(0, 120))), false); })());
@@ -322,7 +322,7 @@ for (const th of Object.keys(THEMES)) {
   d = await drillInfo(page);
   check('Drill: clicking today in the calendar lists that day\'s episodes by show', d.open && d.rows.join() === 'Alpha Station,Bluebell Row' && d.sub.startsWith('2 episodes · 2 shows') && /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun) \d{1,2} [A-Z][a-z]{2} \d{2}$/.test(d.title), d);
   await page.click('#drillList li button >> nth=0');
-  check('Drill from an episode row opens that show\'s edit dialog and focus returns to the calendar day', await (async () => { const ok = await page.evaluate(() => document.getElementById('showDlg').open && document.getElementById('f-title').value === 'Alpha Station'); await page.keyboard.press('Escape'); await page.waitForFunction(() => !document.getElementById('showDlg').open); return ok && await page.evaluate(d => document.activeElement.dataset.fk === 'day:' + d, TODAY); })());
+  check('Drill from an episode row opens that show\'s panel and focus returns to the calendar day', await (async () => { const ok = await page.evaluate(() => !!document.querySelector('.fpanel') && document.getElementById('f-title').value === 'Alpha Station'); await page.keyboard.press('Escape'); await page.waitForFunction(() => !document.querySelector('.fpanel')); return ok && await page.evaluate(d => document.activeElement.dataset.fk === 'day:' + d, TODAY); })());
   check('Every drill and dialog opened above made zero sheet calls (reads or writes)', sheet.calls.length === 0 && sheet.writes.length === 0, sheet.calls);
   check('no console errors during drills', t.errors.length === 0, t.errors);
   await t.ctx.close();

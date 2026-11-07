@@ -125,6 +125,20 @@ input[type="number"]{font-variant-numeric:tabular-nums}
 .lib-bar input:focus,.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);outline:none}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
 .chip{border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:999px;padding:4px 12px;font-size:13px;font-weight:600}
+/* Library chips: one fixed size, rows centred as a group (about 6 per row on a laptop, 3 on a phone) */
+#libChips{justify-content:center;--cw:160px;--ch:38px}
+#libChips .chip{flex:none;width:var(--cw);height:var(--ch);display:inline-flex;align-items:center;justify-content:center;gap:0;padding:2px 8px;line-height:1.15;text-align:center;min-width:0}
+#libChips .chip .cl{min-width:0;overflow-wrap:anywhere}
+#libChips .chip .n{flex:none}
+#libChips .chip-fav .fvico{flex:none}
+@media (max-width:560px){
+  #libChips{--cw:112px;--ch:44px;gap:6px}
+  #libChips .chip{font-size:12px;padding:2px 5px}
+  #libChips .chip[data-st]:not([data-st="All"])::before{width:7px;height:7px;margin-right:4px;flex:none}
+  #libChips .chip .n{margin-left:3px}
+  #libChips .chip-fav .fvico{margin-right:4px}
+  #libChips .chip-fav .fv{width:19px;height:13px}
+}
 .chip[aria-pressed="true"]{background:color-mix(in srgb,var(--accent) 24%,var(--surface));border-color:var(--accent);color:var(--fg)}
 .chip[data-st]:not([data-st="All"])::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--sc);margin-right:6px}
 .chip .n{font-variant-numeric:tabular-nums;opacity:.7;margin-left:4px;font-weight:500}
@@ -136,7 +150,10 @@ table.lib{width:100%;border-collapse:collapse;font-size:14px;min-width:620px}
 .lib td{padding:9px 10px;border-top:1px solid var(--line);vertical-align:top}
 .lib tbody tr.row{cursor:pointer}
 .lib tbody tr.row:hover td{background:color-mix(in srgb,var(--accent) 6%,var(--surface))}
-.lib tr.open td{background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+.lib tr.row[aria-selected="true"] td{background:color-mix(in srgb,var(--accent) 12%,var(--surface))}
+.lib tr.row[aria-selected="true"] td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+.lib tr.row:focus-visible{outline-offset:-2px}
+.bo{display:inline-block;vertical-align:middle;margin-left:6px;font-size:10px;line-height:1.2;font-weight:600;letter-spacing:.02em;padding:1px 6px;border-radius:999px;border:1px solid var(--line);color:var(--muted);background:transparent;white-space:nowrap}
 .lib .t{font-weight:600;line-height:1.3;overflow-wrap:anywhere}
 .pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;white-space:nowrap;border:1px solid var(--sb,var(--line));color:var(--sc,var(--muted));background:color-mix(in srgb,var(--sc,#8a87a0) 14%,#16141f)}
 [data-s="Watching"],[data-st="Watching"]{--sc:#8fb8f2;--sb:#34507a}
@@ -148,9 +165,9 @@ table.lib{width:100%;border-collapse:collapse;font-size:14px;min-width:620px}
 [data-s="Rewatch"],[data-st="Rewatch"]{--sc:#dba8ec;--sb:#5e3f6c}
 [data-s="DNF"],[data-st="DNF"]{--sc:#f29a9a;--sb:#6b3a3a}
 [data-s="Paused"],[data-st="Paused"]{--sc:#b3b0c2;--sb:#4a475c}
-.detail td{padding:4px 16px 16px;cursor:default}
 .kv{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;font-size:13px;margin:0}
 .kv dt{color:var(--muted)} .kv dd{margin:0;overflow-wrap:anywhere}
+.kv a{color:var(--fg);text-decoration:underline}
 .lib-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:12px;font-size:13px;color:var(--muted);flex-wrap:wrap}
 
 /* dialogs */
@@ -261,7 +278,7 @@ body::after{opacity:var(--grain);mix-blend-mode:overlay;background-image:url("da
 #themeName{max-width:11em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .status{justify-content:flex-end}
 @media (max-width:560px){#themeName{display:none}.status{width:100%;justify-content:flex-start}.tools{margin-left:auto}.hdin{padding-block:12px}.lockup{--mk:34px}.jm-wordmark{font-size:var(--bsm)}}
-.thememenu{position:fixed;z-index:60;width:min(300px,calc(100vw - 16px));max-height:min(72vh,540px);overflow:auto;background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:var(--rc);box-shadow:0 12px 32px var(--shade);padding:6px}
+.thememenu{position:fixed;z-index:120;width:min(300px,calc(100vw - 16px));max-height:min(72vh,540px);overflow:auto;background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:var(--rc);box-shadow:0 12px 32px var(--shade);padding:6px}
 .thememenu[hidden]{display:none}
 .thememenu .mhead{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:700;padding:8px 10px 4px}
 .thememenu button{all:unset;box-sizing:border-box;width:100%;cursor:pointer;display:grid;grid-template-columns:18px 14px minmax(0,1fr) auto;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--rc);font-size:14px;color:var(--fg)}
@@ -439,6 +456,47 @@ body::after{opacity:var(--grain);mix-blend-mode:overlay;background-image:url("da
   .lib td.fav-td .fav{margin:-6px -6px}
   .favpill,.chip-fav{min-height:44px}
 }
+
+/* Floating show panel (docked on the left on wide screens, a bottom sheet on phones) */
+:root{--fp-w:380px;--fp-gap:16px;--fp-top:96px}
+.fpanel{position:fixed;z-index:100;left:16px;top:var(--fp-top);width:var(--fp-w);max-height:calc(100vh - var(--fp-top) - 16px);display:flex;flex-direction:column;background:var(--raise);color:var(--fg);border:1px solid var(--line);border-radius:16px;box-shadow:0 28px 56px -12px var(--shade),0 6px 18px var(--shade);animation:fpin .18s ease-out}
+.fpanel-body{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+.fpanel-x{position:absolute;top:8px;right:8px;z-index:2;width:40px;height:40px;padding:0;display:grid;place-items:center;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--fg);font-size:22px;line-height:1;cursor:pointer}
+.fpanel-x:hover{border-color:var(--fg)}
+.fpanel-grab{display:none;flex:none;width:40px;height:5px;border-radius:3px;background:var(--line);margin:8px auto 0}
+.fpanel [data-fp-title]:focus{outline:none}
+@keyframes fpin{from{opacity:0;transform:translateX(-24px)}to{opacity:1;transform:none}}
+@keyframes fpup{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@media (min-width:901px){body.fp-open .wrap{padding-left:max(16px,calc(var(--fp-w) + var(--fp-gap) * 2 - max(0px,(100vw - 1180px) / 2)))}}
+@media (min-width:901px) and (max-width:1180px){body.fp-open .hide-sm{display:none}body.fp-open table.lib{min-width:0}}
+@media (max-width:900px){
+  .fpanel{left:8px;right:8px;top:auto;bottom:0;width:auto;max-height:70vh;border-radius:16px 16px 0 0;border-bottom:0;animation-name:fpup}
+  .fpanel-grab{display:block}
+  body.fp-open .totop{display:none}
+  body.fp-open .wrap{padding-bottom:min(70vh,640px)}
+}
+@media (prefers-reduced-motion:reduce){.fpanel{animation:none}}
+.sp{display:flex;flex-direction:column;min-height:0;flex:1 1 auto}
+.sp-scroll{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;padding:16px 16px 12px}
+.sp-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding-right:44px}
+.sp-head h3{margin:0;font-family:var(--fp);font-weight:var(--pweight);font-size:19px;line-height:1.25;overflow-wrap:anywhere;flex:1 1 140px;min-width:0}
+.sp-meta{margin:2px 0 10px}
+.sp-det{margin-bottom:14px}
+.sp-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 10px;border-top:1px solid var(--line);padding-top:12px}
+.sp-form .sec-label{margin-top:4px}
+.sp-form .field.w2,.sp-form .field.w4{grid-column:1/-1}
+.sp-form .field input[aria-invalid="true"]{border-color:var(--danger)}
+.sp-err{font-size:12px;color:var(--fg);border-left:3px solid var(--danger);padding-left:6px}
+.sp-foot{flex:none;border-top:1px solid var(--line);background:var(--raise);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));border-radius:0 0 16px 16px}
+.sp-act{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.sp-msg{font-size:13px;color:var(--muted);min-width:0;overflow-wrap:anywhere}
+.sp-msg[data-err="1"]{color:var(--fg);border-left:3px solid var(--danger);padding-left:6px}
+.sp-act .btns{display:flex;gap:8px;flex:none}
+.sp-guard{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.sp-guard[hidden],.sp-act[hidden]{display:none}
+.sp-guard b{font-size:14px}
+.sp-foot .btn{min-height:40px}
+@media (max-width:560px){.sp-foot .btn{min-height:44px}.sp-scroll{padding:8px 14px 12px}}
 
 /* Tools and Discover */
 .tool-input{width:100%;font:inherit;font-size:15px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:var(--rc);padding:9px 12px;min-height:40px}
@@ -817,14 +875,6 @@ body::after{opacity:var(--grain);mix-blend-mode:overlay;background-image:url("da
   </form>
 </dialog>
 
-<dialog id="showDlg" aria-labelledby="dlgTitle">
-  <form id="showForm" method="dialog">
-    <div class="dlg-head"><h2 id="dlgTitle">Edit show</h2><button class="btn" type="button" id="dlgClose">Close</button></div>
-    <div class="dlg-body" id="dlgBody"></div>
-    <div class="dlg-foot"><span class="muted" id="dlgMsg" style="font-size:13px;align-self:center"></span><span><button class="btn btn-primary" type="submit" id="dlgSave">Save</button></span></div>
-  </form>
-</dialog>
-
 <button type="button" class="totop" id="toTop" aria-label="Back to top" hidden><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 16V4M4.5 9.5 10 4l5.5 5.5"/></svg></button>
 
 <script>
@@ -1128,7 +1178,8 @@ const OPTS = {
   howToWatch: ['NA', 'Owned', 'To Purchase', 'Subscription', 'Pirate'],
   genre: ['Action', 'Animation', 'Comedy', 'Crime', 'Documentary', 'Drama', 'Fantasy', 'Historical', 'Horror', 'Mystery', 'Sci-Fi', 'Sitcom', 'Thriller'],
   platform: ['Apple TV', 'Disney+', 'HBO', 'Netflix', 'Plex', 'Prime', 'Stan', 'Physical', 'Paramount'],
-  plan: ['Up next', 'Soon', 'Someday']
+  plan: ['Up next', 'Soon', 'Someday'],
+  basedOn: ['Book', 'Film', 'Game', 'Comic', 'Other show', 'True story', 'Original']
 };
 const state = {
   entries: [],          // 📺 Log rows with eps > 0
@@ -1146,7 +1197,8 @@ const state = {
 /* ---------- show columns, mapped by header name (never by position) ---------- */
 const SHOW_KEYS = { title: 'title', rating: 'rating', status: 'status', howtowatch: 'howToWatch', genre: 'genre', platform: 'platform',
   starring: 'starring', releasedate: 'releaseDate', year: 'year', totalseasons: 'totalSeasons', totaleps: 'totalEps', notes: 'notes',
-  id: 'id', season: 'season', episode: 'episode', started: 'started', finished: 'finished', plan: 'plan', upnext: 'upNext', why: 'why', sorted: 'sorted', favourite: 'favourite' };
+  id: 'id', season: 'season', episode: 'episode', started: 'started', finished: 'finished', plan: 'plan', upnext: 'upNext', why: 'why', sorted: 'sorted', favourite: 'favourite',
+  basedon: 'basedOn', sourcetitle: 'sourceTitle', poster: 'poster' };
 const normH = h => String(h ?? '').replace(/\(.*?\)/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
 const keyOfHeader = h => SHOW_KEYS[normH(h)] || null;
 const NUM_FIELDS = ['rating', 'year', 'totalSeasons', 'totalEps', 'season', 'episode', 'upNext'];
@@ -1463,6 +1515,7 @@ function renderAll() {
   if (!$('view-dashboard').hidden) renderDashboard();
   if (!$('view-tools').hidden) renderTools();
   if (!$('view-discover').hidden) renderDiscover();
+  spRefresh();
   setWordmark(state.settings.appName || 'TV Tracker');
   document.title = state.settings.appName || 'TV Tracker';
 }
@@ -1501,7 +1554,7 @@ async function refresh() {
   $('refreshBtn').disabled = true;
   try {
     const [shows, log, seasons, settings] = await Promise.all([
-      readRange(`${T_SHOWS}!A2:V`),
+      readRange(`${T_SHOWS}!A2:Y`),
       readRange(`${T_LOG}!A1:I`),
       readRange(`${T_SEASONS}!A1:H`),
       readRange(`${T_SETTINGS}!A1:C`)
@@ -1566,7 +1619,7 @@ function cellValue(field, v) {
   return "'" + v; // keep text as text
 }
 async function showHeaderNow() {
-  const h = ((await readRange(`${T_SHOWS}!A2:V2`))[0] || []).map(x => String(x).trim());
+  const h = ((await readRange(`${T_SHOWS}!A2:Y2`))[0] || []).map(x => String(x).trim());
   return h;
 }
 async function findShowRow(id) {
@@ -1729,8 +1782,10 @@ function renderLibrary() {
   const counts = { All: state.shows.length };
   for (const b of state.shows) counts[b.status] = (counts[b.status] || 0) + 1;
   const extra = Object.keys(counts).filter(k => k !== 'All' && k && !STATUSES.includes(k));
-  $('libChips').innerHTML = ['All', ...STATUSES, ...extra].map(st => `<button class="chip" type="button" data-st="${esc(st)}" aria-pressed="${L.status === st}">${esc(st)}<span class="n">${fmt(counts[st] || 0)}</span></button>`).join('')
-    + `<button class="chip chip-fav" type="button" data-favfilter aria-pressed="${L.fav}"><span class="fvico" data-on="true" aria-hidden="true">${FAV_SVG}</span>Favourites<span class="n">${fmt(state.shows.filter(favOf).length)}</span></button>`;
+  const chip = (st, n) => `<button class="chip" type="button" data-st="${esc(st)}" aria-pressed="${L.status === st}"><span class="cl">${esc(st)}</span><span class="n">${fmt(n)}</span></button>`;
+  $('libChips').innerHTML = chip('All', counts.All)
+    + `<button class="chip chip-fav" type="button" data-favfilter aria-pressed="${L.fav}"><span class="fvico" data-on="true" aria-hidden="true">${FAV_SVG}</span><span class="cl">Favourites</span><span class="n">${fmt(state.shows.filter(favOf).length)}</span></button>`
+    + [...STATUSES, ...extra].map(st => chip(st, counts[st] || 0)).join('');
   $('libHead').innerHTML = LIB_COLS.map(c => `<th scope="col" data-k="${c.k}" class="${c.num ? 'num ' : ''}${c.sm ? 'hide-sm' : ''}${c.fav ? ' fav-th' : ''}" ${L.sort === c.k ? `aria-sort="${L.dir > 0 ? 'ascending' : 'descending'}"` : ''}>${c.label}</th>`).join('');
   body.textContent = '';
   if (!state.live) {
@@ -1740,119 +1795,247 @@ function renderLibrary() {
   const rows = libFiltered().sort((a, b) => { const x = sortKey(a, L.sort), y = sortKey(b, L.sort); return (x < y ? -1 : x > y ? 1 : 0) * L.dir; });
   for (const b of rows.slice(0, L.limit)) {
     const tr = document.createElement('tr');
-    tr.className = 'row' + (L.open === b.id ? ' open' : '');
-    tr.dataset.id = b.id;
+    tr.className = 'row';
+    tr.dataset.id = b.id; tr.tabIndex = 0;
+    tr.setAttribute('aria-selected', String(spOpenId() === b.id));
     const cells = {
-      title: '<span class="t"></span>', rating: b.rating === '' ? '' : esc(b.rating),
+      title: '<span class="t"></span>' + (b.basedOn ? `<span class="bo" title="Based on: ${esc(b.basedOn)}">${esc(b.basedOn)}</span>` : ''), rating: b.rating === '' ? '' : esc(b.rating),
       status: b.status ? `<span class="pill" data-s="${esc(b.status)}">${esc(b.status)}</span>` : '',
       genre: esc(b.genre), platform: esc(b.platform), year: esc(b.year), favourite: favBtn(b, 'row')
     };
     tr.innerHTML = LIB_COLS.map(c => `<td class="${c.num ? 'num tnum ' : ''}${c.sm ? 'hide-sm' : ''}${c.fav ? ' fav-td' : ''}">${cells[c.k]}</td>`).join('');
     tr.querySelector('.t').textContent = b.title;
     body.appendChild(tr);
-    if (L.open === b.id) body.appendChild(detailRow(b));
   }
   if (!rows.length) body.innerHTML = `<tr><td colspan="${LIB_COLS.length}" class="muted" style="padding:18px">No shows match.</td></tr>`;
   $('libCount').textContent = `Showing ${fmt(Math.min(L.limit, rows.length))} of ${fmt(rows.length)} shows` + (L.sort === 'sheet' ? ' · in sheet order' : '');
   $('libMore').hidden = rows.length <= L.limit;
   $('libSheetOrder').hidden = L.sort === 'sheet';
 }
-function detailRow(b) {
-  const tr = document.createElement('tr');
-  tr.className = 'detail';
-  const td = document.createElement('td');
-  td.colSpan = LIB_COLS.length;
-  const p = b.season || b.episode ? `S${b.season || 1} · E${b.episode || 0}` : '';
-  const kv = [['Genre', b.genre], ['Platform', b.platform], ['Year', b.year], ['How to watch', b.howToWatch], ['Starring', b.starring], ['Release date', b.releaseDate],
-    ['Seasons', b.totalSeasons], ['Episodes', b.totalEps], ['Progress', p], ['Started', fmtDate(b.started)], ['Finished', fmtDate(b.finished)],
-    ['Plan', b.plan ? b.plan + (b.plan === 'Up next' && b.upNext ? ' #' + b.upNext : '') : (b.upNext ? '#' + b.upNext : '')],
-    ['Why', b.why], ['Notes', b.notes], ['Sorted', fmtDate(b.sorted)], ['Favourite', fmtDate(b.favourite)], ['ID', b.id]].filter(([, v]) => v);
-  td.innerHTML = '<dl class="kv"></dl><div class="det-acts"><button class="btn btn-primary" type="button" data-edit="' + esc(b.id) + '">Edit show</button>' + favPill(b, 'det') + '</div>';
-  const dl = td.querySelector('.kv');
-  for (const [k, v] of kv) { const dt = document.createElement('dt'), dd = document.createElement('dd'); dt.textContent = k; dd.textContent = v; dl.append(dt, dd); }
-  tr.appendChild(td);
-  return tr;
-}
+/* ---------- floatPanel: a small generic floating card (design: the shared float-panel component) ----------
+   floatPanel.open(html, { label, returnTo, onClose, guard }) shows the card (or swaps its content when already open) and moves focus to the
+   element marked data-fp-title. close() hides it, runs onClose and puts focus back on returnTo (an element, or a function that finds one).
+   guard() runs first for the close button and Escape; it returns false to keep the card open (close({ force: true }) skips it).
+   Wide screens: docked on the left, <body> gets class fp-open so the page makes room. Phones (900px and narrower): a bottom sheet. */
+const floatPanel = (() => {
+  let el = null, body = null, cur = null, last = '';
+  const resolve = r => { const t = typeof r === 'function' ? r() : r; return t && t.isConnected ? t : null; };
+  function paint(html) {
+    if (html === last) return;
+    last = html; body.innerHTML = html;
+    const h = body.querySelector('[data-fp-title]');
+    if (h) { h.id = 'fpanel-title'; h.tabIndex = -1; el.setAttribute('aria-labelledby', 'fpanel-title'); el.removeAttribute('aria-label'); }
+    else { el.removeAttribute('aria-labelledby'); el.setAttribute('aria-label', cur.label || 'Details'); }
+  }
+  function build() {
+    el = document.createElement('div'); el.className = 'fpanel'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'false');
+    el.innerHTML = '<div class="fpanel-grab" aria-hidden="true"></div><button class="fpanel-x" type="button" aria-label="Close details">×</button><div class="fpanel-body"></div>';
+    body = el.querySelector('.fpanel-body');
+    el.querySelector('.fpanel-x').addEventListener('click', () => api.close());
+    el.addEventListener('keydown', e => { if (e.key === 'Escape' && !e.defaultPrevented) { e.preventDefault(); e.stopPropagation(); api.close(); } });
+    document.body.appendChild(el); document.body.classList.add('fp-open');
+  }
+  const api = {
+    open(html, o = {}) {
+      cur = o; last = '';
+      if (!el) build();
+      paint(html);
+      const h = body.querySelector('[data-fp-title]'); if (h) h.focus({ preventScroll: true });
+    },
+    close(o = {}) {
+      if (!el) return;
+      const c = cur || {};
+      if (!o.force && c.guard && c.guard() === false) return;
+      el.remove(); el = body = cur = null; last = ''; document.body.classList.remove('fp-open');
+      if (c.onClose) c.onClose();
+      const t = resolve(c.returnTo); if (t) t.focus({ preventScroll: true });
+    },
+    isOpen: () => !!el,
+    root: () => el
+  };
+  return api;
+})();
 
-/* ---------- edit / add dialog ---------- */
+/* ---------- show panel: details + edit/add form for one show (opened by every "edit this show" action) ---------- */
 const FORM = [
   { sec: 'Show' }, { k: 'title', w: 'w2', req: true }, { k: 'status', type: 'select' }, { k: 'rating', type: 'number', label: 'Rating (/10)' },
   { k: 'genre', type: 'select' }, { k: 'platform', type: 'select' }, { k: 'howToWatch', type: 'select', label: 'How to watch' }, { k: 'year', type: 'number' },
   { k: 'starring', w: 'w2' }, { k: 'releaseDate', label: 'Release date' }, { k: 'plan', type: 'select' }, { k: 'favourite', type: 'fav', w: 'w2' },
+  { sec: 'Source' }, { k: 'basedOn', type: 'select', label: 'Based on' }, { k: 'sourceTitle', label: 'Source title' }, { k: 'poster', w: 'w2', label: 'Poster link', ph: 'https://…' },
   { sec: 'Progress' }, { k: 'totalSeasons', type: 'number', label: 'Total seasons' }, { k: 'totalEps', type: 'number', label: 'Total episodes' },
   { k: 'season', type: 'number' }, { k: 'episode', type: 'number' },
   { k: 'started', type: 'date' }, { k: 'finished', type: 'date' }, { k: 'upNext', type: 'number', label: 'Up next #' }, { k: 'sorted', type: 'date' },
   { sec: 'Notes' }, { k: 'why', w: 'w4', label: 'Why it\'s on the list' }, { k: 'notes', type: 'textarea', w: 'w4' }
 ];
-let editing = null;
-function openShowDialog(show) {
-  editing = show;
-  $('dlgTitle').textContent = show ? 'Edit show' : 'Add a show';
-  $('dlgMsg').textContent = show ? `ID ${show.id}` : 'A new ID is given when you save';
-  $('dlgMsg').dataset.err = '';
-  const body = $('dlgBody'); body.textContent = '';
-  for (const f of FORM) {
-    if (f.sec) { const d = document.createElement('div'); d.className = 'sec-label'; d.textContent = f.sec; body.appendChild(d); continue; }
-    const wrap = document.createElement('div');
-    wrap.className = 'field ' + (f.w || '');
-    const id = 'f-' + f.k;
-    if (f.type === 'fav') { // a toggle, not a date field: the date is today's when switched on (or the existing one), blank when off
-      const cur = show ? (toDate(show.favourite) || '') : '';
-      wrap.classList.add('fav-field');
-      wrap.innerHTML = `<span class="flabel">Favourite</span><input type="hidden" id="${id}" name="${f.k}" value="${esc(cur)}"><button class="favpill" type="button" data-favform="${esc(cur)}" aria-pressed="${cur !== ''}" aria-label="Favourite: ${esc(show ? show.title : 'this show')}">${FAV_SVG}Favourite</button>`;
-      body.appendChild(wrap);
-      continue;
-    }
-    const lab = document.createElement('label');
-    lab.htmlFor = id; lab.textContent = f.label || (f.k[0].toUpperCase() + f.k.slice(1));
-    let el;
-    const val = show ? (show[f.k] || '') : (f.k === 'status' ? 'Watchlist' : '');
-    if (f.type === 'select') {
-      el = document.createElement('select');
-      const opts = ['', ...OPTS[f.k]];
-      if (val && !opts.includes(val)) opts.push(val); // never wipe a value that isn't in the list
-      for (const o of opts) { const op = document.createElement('option'); op.value = o; op.textContent = o || '–'; el.appendChild(op); }
-    } else if (f.type === 'textarea') el = document.createElement('textarea');
-    else { el = document.createElement('input'); el.type = f.type || 'text'; if (f.type === 'number') { el.inputMode = 'decimal'; el.step = 'any'; } }
-    el.id = id; el.name = f.k;
-    el.value = f.type === 'date' ? (toDate(val) || '') : f.type === 'number' ? (val === '' ? '' : (Number.isFinite(parseFloat(val)) ? toNum(val) : '')) : val;
-    if (f.req) el.required = true;
-    wrap.append(lab, el);
-    body.appendChild(wrap);
+// sp.show = the show being edited (null = adding), sp.defaults = what a new show's form starts from, sp.pending = action waiting on "Discard changes?"
+const sp = { show: null, defaults: {}, base: {}, ret: null, fromDrill: false, pending: null };
+const spOpenId = () => (floatPanel.isOpen() && sp.show ? sp.show.id : null);
+const spIsHttps = v => /^https:\/\/\S+$/i.test(v);
+function spDetailsHtml(b) {
+  const prog = b.season || b.episode ? `S${b.season || 1} · E${b.episode || 0}` : '';
+  const plan = b.plan ? b.plan + (b.plan === 'Up next' && b.upNext ? ' #' + b.upNext : '') : (b.upNext ? '#' + b.upNext : '');
+  const src = [b.basedOn, b.sourceTitle].filter(Boolean).join(' · ');
+  const poster = b.poster ? (spIsHttps(b.poster) ? `<a href="${esc(b.poster)}" target="_blank" rel="noopener noreferrer">Open poster</a>` : esc(b.poster)) : '';
+  const rows = [['Status', pillHtml(b.status)], ['Rating', b.rating !== '' ? esc(b.rating) + '/10' : ''], ['Genre', esc(b.genre)], ['Platform', esc(b.platform)],
+    ['How to watch', esc(b.howToWatch)], ['Year', esc(b.year)], ['Starring', esc(b.starring)], ['Release date', esc(b.releaseDate)],
+    ['Seasons', esc(b.totalSeasons)], ['Episodes', esc(b.totalEps)], ['Progress', esc(prog)], ['Started', esc(fmtDate(b.started))], ['Finished', esc(fmtDate(b.finished))],
+    ['Plan', esc(plan)], ['Why', esc(b.why)], ['Notes', esc(b.notes)], ['Based on', esc(src)], ['Poster', poster], ['Favourite', esc(fmtDate(b.favourite))]]
+    .filter(([, v]) => v);
+  return '<dl class="kv">' + rows.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('') + '</dl>';
+}
+function spFieldHtml(f, val, show) {
+  const id = 'f-' + f.k;
+  if (f.type === 'fav') { // a toggle, not a date field: the date is today's when switched on (or the existing one), blank when off
+    const cur = toDate(val) || '';
+    return `<div class="field fav-field ${f.w || ''}"><span class="flabel">Favourite</span><input type="hidden" id="${id}" name="${f.k}" value="${esc(cur)}"><button class="favpill" type="button" data-favform="${esc(cur)}" aria-pressed="${cur !== ''}" aria-label="Favourite (saved with Save): ${esc(show ? show.title : 'this show')}">${FAV_SVG}Favourite</button></div>`;
   }
-  $('showDlg').showModal();
+  const lab = f.label || (f.k[0].toUpperCase() + f.k.slice(1));
+  let ctl;
+  if (f.type === 'select') {
+    const opts = ['', ...OPTS[f.k]];
+    if (val && !opts.includes(val)) opts.push(val); // never wipe a value that isn't in the list
+    ctl = `<select id="${id}" name="${f.k}">${opts.map(o => `<option value="${esc(o)}"${o === val ? ' selected' : ''}>${esc(o || '–')}</option>`).join('')}</select>`;
+  } else if (f.type === 'textarea') ctl = `<textarea id="${id}" name="${f.k}">${esc(val)}</textarea>`;
+  else {
+    const v = f.type === 'date' ? (toDate(val) || '') : f.type === 'number' ? (val === '' ? '' : (Number.isFinite(parseFloat(val)) ? toNum(val) : '')) : val;
+    ctl = `<input id="${id}" name="${f.k}" type="${f.type || 'text'}" value="${esc(v)}"${f.type === 'number' ? ' inputmode="decimal" step="any"' : ''}${f.req ? ' required' : ''}${f.ph ? ` placeholder="${esc(f.ph)}"` : ''}${f.k === 'poster' ? ' autocomplete="off" spellcheck="false" aria-describedby="spPosterErr"' : ''}>`;
+  }
+  return `<div class="field ${f.w || ''}"><label for="${id}">${esc(lab)}</label>${ctl}${f.k === 'poster' ? '<div class="sp-err" id="spPosterErr" role="alert" hidden></div>' : ''}</div>`;
+}
+function spHtml(show) {
+  const src = show || sp.defaults;
+  const form = FORM.map(f => f.sec ? `<div class="sec-label">${f.sec}</div>` : spFieldHtml(f, String(src[f.k] ?? '').trim(), show)).join('');
+  return `<div class="sp">
+    <div class="sp-scroll">
+      <div class="sp-head"><h3 data-fp-title>${esc(show ? show.title : 'Add a show')}</h3>${show ? favPill(show, 'panel') : ''}</div>
+      <div class="sp-meta muted small">${show ? 'ID ' + esc(show.id) : 'A new ID is given when you save'}</div>
+      <div class="sp-det" id="spDet">${show ? spDetailsHtml(show) : ''}</div>
+      <form class="sp-form" id="showForm" novalidate autocomplete="off">${form}</form>
+    </div>
+    <div class="sp-foot">
+      <div class="sp-guard" id="spGuard" role="group" aria-label="Unsaved changes" hidden><b>Discard changes?</b><span class="btns" style="display:flex;gap:8px"><button class="btn" type="button" id="spKeep">Keep editing</button><button class="btn btn-primary" type="button" id="spDiscard">Discard</button></span></div>
+      <div class="sp-act" id="spAct"><span class="sp-msg" id="dlgMsg" role="status" aria-live="polite"></span><span class="btns"><button class="btn" type="button" id="spCancel">Cancel</button><button class="btn btn-primary" type="submit" id="dlgSave" form="showForm">Save</button></span></div>
+    </div>
+  </div>`;
+}
+function spSetFav(val) {
+  const cur = toDate(val) || '', b = document.querySelector('.fpanel [data-favform]'); if (!b) return;
+  $('f-favourite').value = cur; b.dataset.favform = cur; b.setAttribute('aria-pressed', String(cur !== ''));
+}
+// Put the show's saved values into the form controls (used after a save, a refresh, or when nothing has been typed)
+function spFill(show) {
+  const f = $('showForm'); if (!f) return;
+  const src = show || sp.defaults;
+  for (const fd of FORM) {
+    if (!fd.k) continue;
+    const el = f.elements[fd.k]; if (!el) continue;
+    const val = String(src[fd.k] ?? '').trim();
+    if (fd.type === 'fav') { spSetFav(val); continue; }
+    if (fd.type === 'select' && val && ![...el.options].some(o => o.value === val)) el.add(new Option(val, val));
+    el.value = fd.type === 'date' ? (toDate(val) || '') : fd.type === 'number' ? (val === '' ? '' : (Number.isFinite(parseFloat(val)) ? String(toNum(val)) : '')) : val;
+  }
+  sp.base = spData();
+}
+function spData() { const f = $('showForm').elements, d = {}; for (const fd of FORM) if (fd.k) d[fd.k] = f[fd.k].value.trim(); return d; }
+// The form values that differ from what the form started with (sp.base: the show as loaded, or a new show's starting values)
+function spChanges() {
+  const data = spData(), changed = {};
+  for (const [k, v] of Object.entries(data)) {
+    const old = String(sp.base[k] ?? '');
+    const same = NUM_FIELDS.includes(k) ? (old === '' && v === '') || (old !== '' && v !== '' && toNum(old) === toNum(v)) : old === v;
+    if (!same) changed[k] = v;
+  }
+  return changed;
+}
+const spDirty = () => floatPanel.isOpen() && !!$('showForm') && Object.keys(spChanges()).length > 0;
+function spMsg(text, err) { const m = $('dlgMsg'); if (!m) return; m.textContent = text || ''; m.dataset.err = err ? '1' : ''; }
+function spPosterErr(text) { const e = $('spPosterErr'), i = $('f-poster'); if (!e) return; e.hidden = !text; e.textContent = text || ''; if (text) i.setAttribute('aria-invalid', 'true'); else i.removeAttribute('aria-invalid'); }
+function markSelected() {
+  const id = spOpenId(); state.lib.open = id;
+  document.querySelectorAll('#libBody tr.row').forEach(tr => tr.setAttribute('aria-selected', String(tr.dataset.id === id)));
+}
+// Run action now, or after "Discard changes?" is answered when the form holds unsaved changes
+function spAsk(action) {
+  if (!spDirty()) { action(); return; }
+  sp.pending = action;
+  $('spGuard').hidden = false; $('spAct').hidden = true; $('spKeep').focus({ preventScroll: true });
+}
+function spKeepEditing() {
+  sp.pending = null; $('spGuard').hidden = true; $('spAct').hidden = false;
+  const first = Object.keys(spChanges())[0], el = first && $('showForm').elements[first];
+  (el && el.type !== 'hidden' ? el : $('dlgSave')).focus({ preventScroll: true });
+}
+function spShow(show, ret) {
+  sp.show = show; sp.pending = null;
+  const fromDrill = sp.fromDrill;
+  floatPanel.open(spHtml(show), {
+    label: show ? show.title : 'Add a show', returnTo: ret,
+    guard: () => { if (!$('spGuard')) return true; if (!$('spGuard').hidden) { spKeepEditing(); return false; } if (!spDirty()) return true; spAsk(() => floatPanel.close({ force: true })); return false; },
+    onClose: () => { sp.show = null; sp.pending = null; markSelected(); if (fromDrill) restoreDrillFocus(); }
+  });
+  sp.base = spData();
+  markSelected();
+}
+// Every "edit this show" action comes here. show = null adds a new one (opts.title prefills the title).
+function openShowDialog(show, opts = {}) {
+  const fromDrill = drillToShow; drillToShow = false;
+  if (floatPanel.isOpen() && show && sp.show && sp.show.id === show.id) { $('fpanel-title').focus({ preventScroll: true }); return; }
+  const ret = opts.returnTo || (fromDrill ? null : document.activeElement);
+  const go = () => {
+    sp.defaults = Object.assign({}, ...FORM.filter(f => f.k).map(f => ({ [f.k]: f.k === 'status' ? 'Watchlist' : '' })), opts.title ? { title: opts.title } : {});
+    sp.fromDrill = fromDrill; spShow(show, ret);
+  };
+  if (floatPanel.isOpen()) spAsk(go); else go();
 }
 async function saveShowDialog(e) {
   e.preventDefault();
-  if (!isLive()) { $('dlgMsg').textContent = 'Saving needs the live connection to your sheet.'; return; }
+  if (!isLive()) { spMsg('Saving needs the live connection to your sheet.', true); return; }
   if (state.busy) return;
-  const data = {};
-  for (const f of FORM) if (f.k) data[f.k] = $('showForm').elements[f.k].value.trim();
-  if (!data.title) { $('dlgMsg').textContent = 'A title is needed.'; return; }
-  const btn = $('dlgSave'); btn.disabled = true; btn.textContent = 'Saving…'; state.busy = true;
+  const data = spData();
+  if (!data.title) { spMsg('A title is needed.', true); $('f-title').focus(); return; }
+  const changed = sp.show ? spChanges() : null;
+  spPosterErr('');
+  if ((sp.show ? changed.poster != null : data.poster) && data.poster && !spIsHttps(data.poster)) {
+    spPosterErr('The poster link must start with https://'); spMsg('Not saved: check the poster link.', true); $('f-poster').focus(); return;
+  }
+  const btn = $('dlgSave'); btn.disabled = true; btn.textContent = 'Saving…'; state.busy = true; spMsg('');
   try {
-    if (editing) {
-      const changed = {};
-      for (const [k, v] of Object.entries(data)) {
-        let old = String(editing[k] || '').trim();
-        if (DATE_FIELDS.includes(k)) old = toDate(old) || '';
-        const same = NUM_FIELDS.includes(k) ? (old === '' && v === '') || (old !== '' && v !== '' && toNum(old) === toNum(v)) : old === v;
-        if (!same) changed[k] = v;
-      }
+    if (sp.show) {
       const n = Object.keys(changed).length;
-      if (n) await writeShowFields(editing.id, changed);
+      if (n) await writeShowFields(sp.show.id, changed);
       notice('');
       setStatus('live', n ? `Saved ${n} change${n > 1 ? 's' : ''} to “${data.title}”` : 'No changes to save');
+      renderAll();
+      spRefresh(true);
+      spMsg(n ? 'Saved.' : 'No changes to save.');
     } else {
       const b = await addShow(data);
-      state.lib.open = b.id;
       setStatus('live', `Added “${b.title}” with ID ${b.id}`);
+      renderAll();
+      const ret = () => document.querySelector(`#libBody tr.row[data-id="${b.id}"]`);
+      spShow(b, ret);
+      spMsg('Added.');
     }
-    $('showDlg').close();
-    renderAll();
   } catch (err) {
-    $('dlgMsg').textContent = (err && err.code && err.code !== 'tool_error') ? explain(err) : 'Not saved: ' + (err.message || 'unknown problem') + '.';
-  } finally { state.busy = false; btn.disabled = false; btn.textContent = 'Save'; }
+    spMsg((err && err.code && err.code !== 'tool_error') ? explain(err) : 'Not saved: ' + (err.message || 'unknown problem') + '.', true);
+  } finally { state.busy = false; const b2 = $('dlgSave'); if (b2) { b2.disabled = false; b2.textContent = 'Save'; } }
+}
+// Bring the open panel in line with the data after a render (a refresh, a favourite toggle, a save). The form is only touched when nothing is typed.
+function spRefresh(force) {
+  if (!floatPanel.isOpen() || !$('showForm')) return;
+  if (!sp.show) return;
+  const s = showById(sp.show.id);
+  if (!s) { floatPanel.close({ force: true }); return; }
+  const wasDirty = !force && spDirty();
+  sp.show = s;
+  const h = $('fpanel-title'); if (h && h.textContent !== s.title) h.textContent = s.title;
+  $('spDet').innerHTML = spDetailsHtml(s);
+  const pill = document.querySelector('.fpanel .sp-head .favpill'); if (pill) pill.setAttribute('aria-pressed', String(favOf(s)));
+  if (!wasDirty) spFill(s);
+  else { // keep what is typed, but follow the favourite toggled from the pill unless the form's own toggle was used
+    const fb = document.querySelector('.fpanel [data-favform]');
+    if (fb && $('f-favourite').value === sp.base.favourite) { spSetFav(s.favourite); sp.base.favourite = $('f-favourite').value; }
+  }
 }
 
 /* ---------- Plan: Up next / Soon / Someday ---------- */
@@ -2216,7 +2399,7 @@ function deckPick(s, tier, why) {
   } else { planUI.deckSkipped.add(s.id); renderDeck(); }   // Skip writes nothing
 }
 document.addEventListener('keydown', e => {
-  if ($('view-plan').hidden || /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName) || document.querySelector('dialog[open]')) return;
+  if ($('view-plan').hidden || /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName) || document.querySelector('dialog[open]') || floatPanel.isOpen()) return;
   const i = ['1', '2', '3', '4'].indexOf(e.key);
   if (i < 0) return;
   const b = document.querySelectorAll('#deckBody .deck-btns button')[i];
@@ -2445,7 +2628,6 @@ function restoreDrillFocus() {
 }
 $('drillClose').addEventListener('click', () => $('drillDlg').close());
 $('drillDlg').addEventListener('close', () => { if (drillNext) { drillNext = false; return; } restoreDrillFocus(); });
-$('showDlg').addEventListener('close', () => { if (drillToShow) { drillToShow = false; restoreDrillFocus(); } });
 function makeDrill(el, spec, fk) {
   el.dataset.click = '';
   if (fk) el.dataset.fk = fk;
@@ -2791,7 +2973,7 @@ $('whereList').addEventListener('click', e => {
   if (!e.target.closest('[data-addlib]')) return;
   if (!state.live) { notice(emptyMsg(), 'error'); return; }
   const typed = $('whereQ').value.trim();
-  openShowDialog(null); $('f-title').value = typed;
+  openShowDialog(null, { title: typed });
 });
 
 /* ----- 3. Stalled shows ----- */
@@ -3342,17 +3524,33 @@ $('libHead').addEventListener('click', e => {
   renderLibrary();
 });
 $('libSheetOrder').addEventListener('click', () => { state.lib.sort = 'sheet'; state.lib.dir = 1; renderLibrary(); });
+// A row selects the show and opens the panel (another row swaps it; the same row again closes it)
+function libSelect(tr) {
+  const id = tr.dataset.id, show = showById(id); if (!show) return;
+  if (spOpenId() === id) { floatPanel.close(); return; }
+  openShowDialog(show, { returnTo: () => document.querySelector(`#libBody tr.row[data-id="${id}"]`) });
+}
 $('libBody').addEventListener('click', e => {
-  if (e.target.closest('[data-fav]')) return;   // the heart button toggles the favourite; it must not open the row (see the document handler)
-  const ed = e.target.closest('[data-edit]');
-  if (ed) { openShowDialog(showById(ed.dataset.edit)); return; }
-  const tr = e.target.closest('tr.row'); if (!tr) return;
-  state.lib.open = state.lib.open === tr.dataset.id ? null : tr.dataset.id; renderLibrary();
+  if (e.target.closest('[data-fav]')) return;   // the heart button toggles the favourite; it must not select the row (see the document handler)
+  const tr = e.target.closest('tr.row'); if (tr) libSelect(tr);
+});
+$('libBody').addEventListener('keydown', e => {
+  const tr = e.target.closest && e.target.closest('tr.row');
+  if (!tr || e.target !== tr) return;
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); libSelect(tr); }
+  else if (e.key === 'Escape' && floatPanel.isOpen()) { e.preventDefault(); floatPanel.close(); }
 });
 $('libMore').addEventListener('click', () => { state.lib.limit += 100; renderLibrary(); });
-$('addShowBtn').addEventListener('click', () => { if (!state.live) { notice(emptyMsg(), 'error'); return; } openShowDialog(null); });
-$('showForm').addEventListener('submit', saveShowDialog);
-$('dlgClose').addEventListener('click', () => $('showDlg').close());
+$('addShowBtn').addEventListener('click', () => { if (!state.live) { notice(emptyMsg(), 'error'); return; } if (floatPanel.isOpen() && !sp.show) { $('fpanel-title').focus({ preventScroll: true }); return; } openShowDialog(null); });
+// The panel is built on demand, so its form and buttons are handled here
+document.addEventListener('submit', e => { if (e.target.id === 'showForm') saveShowDialog(e); });
+document.addEventListener('click', e => {
+  const b = e.target.closest && e.target.closest('#spCancel, #spKeep, #spDiscard'); if (!b) return;
+  if (b.id === 'spCancel') floatPanel.close({ force: true });
+  else if (b.id === 'spKeep') spKeepEditing();
+  else { const a = sp.pending; sp.pending = null; if ($('spGuard')) { $('spGuard').hidden = true; $('spAct').hidden = false; } if (a) a(); }
+});
+document.addEventListener('input', e => { if (e.target.id === 'f-poster') spPosterErr(''); });
 $('refreshBtn').addEventListener('click', () => state.google && !google_.valid() ? googleConnect() : refresh());
 document.querySelectorAll('.logday button').forEach(b => b.addEventListener('click', () => setLogDay(addDays(today(), Number(b.dataset.day)))));
 $('logDate').addEventListener('change', e => setLogDay(toDate(e.target.value)));

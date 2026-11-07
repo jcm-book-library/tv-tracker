@@ -290,8 +290,8 @@ for (const th of THEMES3) {
   const nf = await verdict('Zebra Lane');
   check('No match says "Not in your library" with an Add to Library button', nf.length === 1 && /Not in your library/.test(nf[0]) && /Add to Library/.test(nf[0]), nf);
   await page.click('[data-addlib]');
-  const dlg = await page.evaluate(() => ({ open: document.getElementById('showDlg').open, title: document.getElementById('dlgTitle').textContent, val: document.getElementById('f-title').value }));
-  check('Add to Library opens the add dialog prefilled with the typed title', dlg.open && dlg.title === 'Add a show' && dlg.val === 'Zebra Lane', dlg);
+  const dlg = await page.evaluate(() => ({ open: !!document.querySelector('.fpanel'), title: document.getElementById('fpanel-title').textContent, val: document.getElementById('f-title').value }));
+  check('Add to Library opens the add panel prefilled with the typed title', dlg.open && dlg.title === 'Add a show' && dlg.val === 'Zebra Lane', dlg);
   check('Searching and opening the dialog wrote nothing', onlyReads(sheet));
   check('Where: no console errors, no sideways scroll', t.errors.length === 0 && await noHScroll(page), t.errors);
   await t.ctx.close();
@@ -514,8 +514,8 @@ for (const th of THEMES3) {
   check('Browsing every mode wrote nothing', onlyReads(sheet));
   // Open + Start
   await page.click('#recList .rec:nth-child(2) button'); 
-  check('Open on a watched favourite opens its edit dialog', await page.evaluate(() => document.getElementById('showDlg').open && document.getElementById('dlgTitle').textContent === 'Edit show'));
-  await page.click('#dlgClose');
+  check('Open on a watched favourite opens its show panel', await page.evaluate(() => !!document.querySelector('.fpanel') && !!document.querySelector('#showForm [data-favform][aria-pressed="true"]') && document.getElementById('fpanel-title').textContent === document.getElementById('f-title').value));
+  await page.click('.fpanel-x');
   sheet.clearWrites(); await page.click('#recList .rec:first-child button'); await queueDone(page);
   check('Start watching from a recommendation uses the same writer (status Watching; started/season/episode filled where blank)', cellsOf(sheet).includes(`'📺'!C${rowOf(sheet, idOf('Kestrel Lane'))}='Watching`) && cellsOf(sheet).every(c => /!(C|N|O|P)\d+=/.test(c)), cellsOf(sheet));
   check('Recs: no console errors', t.errors.length === 0, t.errors);
@@ -597,7 +597,7 @@ for (const th of THEMES3) {
   const lib = await page.evaluate(() => ({ shown: !document.getElementById('view-library').hidden, on: document.querySelector('#libChips [data-st="Coming Soon"]').getAttribute('aria-pressed'), rows: document.querySelectorAll('#libBody tr.row').length }));
   check('Tapping a pipeline chip opens the Library filtered to that status', lib.shown && lib.on === 'true' && lib.rows === 4, lib);
   await goTab(page, 'discover'); await page.click('#csList [data-open="33"]');
-  check('Tapping a title opens its edit dialog', await page.evaluate(() => document.getElementById('showDlg').open && document.getElementById('f-title').value === 'Juniper & Co')); await page.click('#dlgClose');
+  check('Tapping a title opens its show panel', await page.evaluate(() => !!document.querySelector('.fpanel') && document.getElementById('f-title').value === 'Juniper & Co')); await page.click('.fpanel-x');
   // links
   await page.fill('#lkTitle', 'The Last of Us');
   const links = await page.$$eval('#lkSearch a', els => els.map(a => [a.textContent, a.href, a.target, a.rel]));
