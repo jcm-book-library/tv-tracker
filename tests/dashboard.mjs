@@ -174,7 +174,7 @@ const closeDrill = async page => { await page.click('#drillClose'); await page.w
 for (const th of Object.keys(THEMES)) {
   for (const [label, vp] of [['390', { width: 390, height: 844 }], ['1280', { width: 1280, height: 900 }]]) {
     const t = await dashOpen(vp, th); const { page } = t;
-    check(`[${th} ${label}] Dashboard tab is last (Log, Library, Plan, Dashboard) and its panel shows`, await page.evaluate(() => [...document.querySelectorAll('.tabs .tab')].map(b => b.textContent).join() === 'Log,Library,Plan,Dashboard' && !document.getElementById('view-dashboard').hidden && document.getElementById('tab-dashboard').getAttribute('aria-selected') === 'true'));
+    check(`[${th} ${label}] Tabs are Log, Library, Plan, Dashboard, Tools, Discover and the Dashboard panel shows`, await page.evaluate(() => [...document.querySelectorAll('.tabs .tab')].map(b => b.textContent).join() === 'Log,Library,Plan,Dashboard,Tools,Discover' && !document.getElementById('view-dashboard').hidden && document.getElementById('tab-dashboard').getAttribute('aria-selected') === 'true'));
     check(`[${th} ${label}] Dashboard renders: 7 tiles, 12-month chart, calendar, bars, actors`, await page.evaluate(() =>
       document.querySelectorAll('#dashTiles .stat').length === 7 && window.__charts.at(-1).data.labels.length === 12 && document.querySelectorAll('#heat .c').length > 300 &&
       document.querySelectorAll('#bingeBars .hbar').length === 4 && document.querySelectorAll('#actList li').length === 4 && document.querySelectorAll('#stBars .hbar').length === 9));
@@ -265,7 +265,8 @@ for (const th of Object.keys(THEMES)) {
   check('Clicking a show opens the Library edit dialog for it', await page.evaluate(n => !document.getElementById('drillDlg').open && document.getElementById('showDlg').open && document.getElementById('f-title').value === n, row0.t), row0);
   await page.click('#dlgClose');
   check('Closing the edit dialog returns focus to the tile', await page.evaluate(() => document.activeElement.dataset.fk === 'tile:Shows watched'));
-    await page.keyboard.press('Enter');
+  await page.waitForFunction(() => document.activeElement && document.activeElement.dataset.fk === 'tile:Shows watched', null, { timeout: 3000 });
+  await page.keyboard.press('Enter');
   check('Enter on a focused tile opens its drill; Escape closes it and focus returns', await (async () => { await page.waitForFunction(() => document.getElementById('drillDlg').open, null, { timeout: 2000 }).catch(() => {}); const o = (await drillInfo(page)).open; await page.keyboard.press('Escape'); await page.waitForFunction(() => !document.getElementById('drillDlg').open); await page.waitForFunction(() => document.activeElement.dataset.fk === 'tile:Shows watched', null, { timeout: 1500 }).catch(() => {}); return o && await page.evaluate(() => document.activeElement.dataset.fk === 'tile:Shows watched') || (console.log('DBG', o,  await page.evaluate(() => document.activeElement.outerHTML.slice(0, 120))), false); })());
 
   const cases = [

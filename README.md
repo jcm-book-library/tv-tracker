@@ -54,3 +54,17 @@ A plain navy **Default** is always one tap away. Source: `design/themes-board.ht
 - Pre-marked 13 favourites on 2026-10-26: Hannibal, Arcane, Breaking Bad, Better Call Saul, Blackadder the Third, Fleabag, Chernobyl,
   Deadwood, Mad Men, Mr Inbetween, Ripley, Succession, The Sopranos.
 - Checked by script: A–U identical to the backup; V holds exactly those 13 dates.
+
+## Stage 5: Tools and Discover
+- Tools tab: Lucky dip by mood, "Where can I watch this?" (search the library, plain-English verdict, Add to Library when missing), Stalled shows (+1 ep, Pause, Call it DNF), Finishing soon, Goal planner (weekly and yearly episode goals, saved to `📺 Settings`), Year in review, and What to watch next (recommendations from your own ratings, five modes).
+- Discover tab: Quote of the day from `📺 Quotes` (with an Add a quote dialog), On this day, Coming soon (next premiere from `📺 Seasons`, plus a status pipeline that opens the Library), and search links.
+- Only the buttons above write to the sheet; browsing, searching and switching modes never do. Tests: `node tests/tools.mjs` (uses `tests/tools-fixture.json`).
+
+## Sheet change 2026-11-07: Based on, Source title, Poster
+- Full copy of `📺` kept as `📺 backup 2026-11-07 (before Poster)`.
+- Added columns W `Based on` (chip dropdown: Book, Film, Game, Comic, Other show, True story, Original), X `Source title` (text) and Y `Poster`.
+  `Based on` and `Source title` are for "this show is an adaptation of…"; a source id can be added later to link to the book, film and game apps.
+- Poster links are TVmaze `medium_portrait` image links (swap `medium_portrait` for `original_untouched` for the large version).
+  Matched by title against TVmaze; 306 of 372 shows filled. Confident matches plus clear ones (sheet typos or renamed shows) were written; wrong or ambiguous
+  matches (e.g. Spawn, Molly, The Transformers, Formula 1, Bait, The Twelve) and specials, stand-up and single episodes with no TVmaze entry were left blank.
+- Checked by script afterwards: A–V identical to the backup, W and X empty, Y equal to the intended list (306 filled, 0 missing, 0 extra, 0 wrong).
