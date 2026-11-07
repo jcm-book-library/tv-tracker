@@ -515,7 +515,7 @@ for (const th of THEMES3) {
   check('Browsing every mode wrote nothing', onlyReads(sheet));
   // Open + Start
   await page.click('#recList .rec:nth-child(2) button'); 
-  check('Open on a watched favourite opens its show panel', await page.evaluate(() => !!document.querySelector('.fpanel') && !!document.querySelector('#showForm [data-favform][aria-pressed="true"]') && document.getElementById('fpanel-title').textContent === document.getElementById('f-title').value));
+  check('Open on a watched favourite opens its show panel', await page.evaluate(() => !!document.querySelector('.fpanel') && document.querySelector('.fpanel .sp-head .favpill').getAttribute('aria-pressed') === 'true' && document.getElementById('fpanel-title').textContent === document.getElementById('f-title').value));
   await page.click('.fpanel-x');
   sheet.clearWrites(); await page.click('#recList .rec:first-child button'); await queueDone(page);
   check('Start watching from a recommendation uses the same writer (status Watching; started/season/episode filled where blank)', cellsOf(sheet).includes(`'📺'!C${rowOf(sheet, idOf('Kestrel Lane'))}='Watching`) && cellsOf(sheet).every(c => /!(C|N|O|P)\d+=/.test(c)), cellsOf(sheet));

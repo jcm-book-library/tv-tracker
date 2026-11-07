@@ -35,7 +35,7 @@ See `CLAUDE.md` for the data model and sheet rules.
   (own fixture `tests/dash-fixture.json`); `node tests/smoke.mjs` still covers the rest.
 
 ## Favourites (2026-10-26)
-- Each show has a Favourite date (column V). The sticker is a TV-remote rubber button with a heart: tap it on a Library row, in the show panel (header pill, or the toggle in its form that is saved with Save) or on the Log tab front page. It writes only that one cell (today's date, or blank to remove).
+- Each show has a Favourite date (column V). The sticker is a TV-remote rubber button with a heart: tap it on a Library row, in the show panel (the header pill; the edit form has no Favourite field) or on the Log tab front page. It writes only that one cell (today's date, or blank to remove).
 - Log tab, top to bottom: Watching now, stat tiles, Episodes per week, Last 5 watched and Favourites (5 that rotate daily; two columns from 900px), then Next Up (Start buttons). Tonight's pick was removed; Recent episodes moved to the Plan tab. Library has a Favourites filter and a sort by favourite date; the Dashboard has a Favourites tile. Tests: `node tests/favourites.mjs`.
 
 ## Themes
@@ -81,7 +81,7 @@ A plain navy **Default** is always one tap away. Source: `design/themes-board.ht
 - Reads cover `A2:Y`; a new show appends a full 25-column row. Writes are unchanged: the row is found by id first, only changed cells are written.
 - Tests: `node tests/library.mjs` (chips, panel, writes, guards, all 13 themes at 390px and 1280px).
 ## Shelf view and posters (2026-11-07)
-- Library has a small **List | Shelf** switch under the chips (remembered on each device) and a Sort box (Sheet order, Title A-Z, Rating, Year, Recently watched, Favourites first; it stays in step with the list's column sort). Search, the chips and Favourites apply to both views.
+- Library has a small **List | Shelf** switch under the chips (remembered on each device) and a Sort box (Sheet order, Title A-Z, Rating, Year, Recently watched, Favourites first; it stays in step with the list's column sort). Search (title, genre, platform, starring, status, Based on and Source title), the chips and Favourites apply to both views.
 - **Shelf** shows upright box sets in rows, each row resting on its own ledge. The number per row follows the width (3 on a phone). Each box has a spine in the status colour, a tiny remote-heart sticker for favourites and a thin progress bar when you are Watching. The first 60 boxes show, then "Show 60 more". Arrow keys move between boxes; Enter or Space opens the show panel, Escape closes it.
 - A box shows the **poster** when the Poster link is set (https only). Without one, or if the picture will not load, it wears a generated cover made from the title (colours from the current theme, readable in every theme).
 - The show panel shows the poster at the top (the large version when the link has `medium_portrait`, falling back to the saved link).

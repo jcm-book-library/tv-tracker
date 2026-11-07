@@ -263,7 +263,7 @@ for (const th of ['default', 'madmen', 'ripley']) {
   await page.click(rowSel(12) + ' .t');
   check('Plan and why show for a planned show', await page.evaluate(() => { const dt = [...document.querySelectorAll('.fpanel .kv dt')].map(x => x.textContent); const dd = [...document.querySelectorAll('.fpanel .kv dd')].map(x => x.textContent); return /Up next #1/.test(dd[dt.indexOf('Plan')]) && /Everyone says/.test(dd[dt.indexOf('Why')]); }));
   const f = await page.evaluate(() => ({ labels: [...document.querySelectorAll('#showForm label, #showForm .flabel')].map(l => l.textContent), based: [...document.querySelectorAll('#f-basedOn option')].map(o => o.value), ph: document.getElementById('f-poster').placeholder }));
-  const want = ['Title', 'Status', 'Rating (/10)', 'Genre', 'Platform', 'How to watch', 'Year', 'Starring', 'Release date', 'Plan', 'Favourite', 'Based on', 'Source title', 'Poster link', 'Total seasons', 'Total episodes', 'Season', 'Episode', 'Started', 'Finished', 'Up next #', 'Sorted', "Why it's on the list", 'Notes'];
+  const want = ['Title', 'Status', 'Rating (/10)', 'Genre', 'Platform', 'How to watch', 'Year', 'Starring', 'Release date', 'Plan', 'Based on', 'Source title', 'Poster link', 'Total seasons', 'Total episodes', 'Season', 'Episode', 'Started', 'Finished', 'Up next #', 'Sorted', "Why it's on the list", 'Notes'];
   check('Form has every old field plus Based on, Source title and Poster link', want.every(w => f.labels.includes(w)) && f.labels.length === want.length, f.labels);
   check('Based on select: blank + the seven values', JSON.stringify(f.based) === JSON.stringify(['', 'Book', 'Film', 'Game', 'Comic', 'Other show', 'True story', 'Original']), f.based);
   await page.click(rowSel(8) + ' .t');
@@ -440,6 +440,54 @@ for (const th of THEMES_13) {
     check(`[${th} ${label}] panel open: no horizontal scroll, panel inside the screen, nothing wider than the panel, chips still equal and centred, no console errors`, m.h && m.inside && m.fit && g.rows.every(r => Math.abs(r.gapL - r.gapR) <= 2) && g.chips.every(c => Math.abs(c.w - g.chips[0].w) < 0.5 && !c.clip) && t.errors.length === 0, { m, errors: t.errors });
     await t.ctx.close();
   }
+}
+
+/* ---------- 11. search also matches Based on and Source title; the favourite lives only in the panel pill ---------- */
+for (const [label, vp] of VPS) {
+  const t = await openLib(vp, label); const { page, sheet } = t;
+  const rowIds = () => page.evaluate(() => [...document.querySelectorAll('#libBody tr.row')].map(r => r.dataset.id));
+  const shelfIds = () => page.evaluate(() => [...document.querySelectorAll('#libShelfRows .bx')].map(r => r.dataset.id || r.getAttribute('data-id')));
+  const want = (key, re) => page.evaluate(([k, src]) => state.shows.filter(s => new RegExp(src, 'i').test(String(s[k] || ''))).map(s => String(s.id)), [key, re.source]);
+  sheet.clearWrites();
+  await page.fill('#libSearch', 'alpha papers'); await page.waitForTimeout(350);
+  let ids = await rowIds(), exp = await want('sourceTitle', /alpha papers/);
+  check(`[${label}] search by Source title finds the show (list)`, exp.length > 0 && ids.join() === exp.join() && ids.includes('3'), { ids, exp });
+  await page.fill('#libSearch', 'BOOK'); await page.waitForTimeout(350);
+  ids = await rowIds(); exp = await page.evaluate(() => state.shows.filter(s => /book/i.test(s.basedOn || '') || /book/i.test(s.sourceTitle || '') || [s.title, s.genre, s.platform, s.starring, s.status].some(v => /book/i.test(String(v || '')))).map(s => String(s.id)));
+  check(`[${label}] search by Based on value (case-insensitive) finds it`, ids.includes('3') && ids.join() === exp.join(), { ids, exp });
+  await page.fill('#libSearch', 'true story'); await page.waitForTimeout(350);
+  check(`[${label}] "true story" finds the True story show`, (await rowIds()).includes('8'));
+  await page.click('#libView [data-view="shelf"]');
+  check(`[${label}] same search applies to the shelf view`, (await shelfIds()).includes('8'));
+  await page.fill('#libSearch', 'alpha papers'); await page.waitForTimeout(350);
+  check(`[${label}] shelf: Source title search finds the show`, (await shelfIds()).includes('3'));
+  await page.fill('#libSearch', 'qqqzzz'); await page.waitForTimeout(350);
+  check(`[${label}] non-matching word: empty state on the shelf`, await page.evaluate(() => document.querySelectorAll('#libShelfRows .bx').length === 0 && /No shows match/.test(document.getElementById('libShelfRows').textContent)));
+  await page.click('#libView [data-view="list"]');
+  check(`[${label}] non-matching word: empty state in the list`, (await rowIds()).length === 0 && await page.evaluate(() => /No shows match/.test(document.getElementById('libBody').textContent)));
+  check(`[${label}] searching makes no sheet writes`, sheet.writes.length === 0, sheet.writes);
+  const ph = await page.evaluate(() => { const i = document.getElementById('libSearch'); return { ph: i.placeholder, fit: i.scrollWidth <= i.clientWidth + 1, w: i.getBoundingClientRect().width, hscroll: document.scrollingElement.scrollWidth <= innerWidth }; });
+  check(`[${label}] placeholder mentions adaptation and the box does not clip or scroll sideways`, /adaptation/.test(ph.ph) && ph.hscroll, ph);
+  if (label === '390') {
+    const fits = await page.evaluate(() => { const i = document.getElementById('libSearch'), c = document.createElement('canvas').getContext('2d'), cs = getComputedStyle(i); c.font = `${cs.fontSize} ${cs.fontFamily}`; return c.measureText(i.placeholder).width <= i.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight); });
+    check('[390] placeholder text fits on one line in the search box', fits);
+  }
+  check(`[${label}] no console errors`, t.errors.length === 0, t.errors);
+  await t.ctx.close();
+}
+{
+  const t = await openLib({ width: 1280, height: 900 }, '1280'); const { page, sheet } = t;
+  await page.click(rowSel(5) + ' .t');
+  check('Edit form has no Favourite control (no toggle, no hidden field)', await page.evaluate(() => !document.querySelector('#showForm .favpill, #showForm [data-favform], #f-favourite') && !('favourite' in document.getElementById('showForm').elements)));
+  await page.fill('#f-notes', 'typed note'); sheet.clearWrites();
+  await page.click('.fpanel .sp-head .favpill');
+  await page.waitForFunction(() => document.querySelector('.fpanel .sp-head .favpill').getAttribute('aria-pressed') === 'true'); await page.waitForTimeout(150);
+  check('Pill after the form is edited: exactly one V write, typed text kept', sheet.writes.length === 1 && sheet.writes[0].range === `'📺'!V${sheet.rowOfId(5)}` && await page.evaluate(() => document.getElementById('f-notes').value === 'typed note'), sheet.writes);
+  sheet.clearWrites();
+  await page.fill('#f-rating', '7'); await page.click('#dlgSave'); await saved(page);
+  check('Saving the form with other changes writes no column V cell', sheet.writes.length > 0 && sheet.writes.every(w => !/!V\d+$/.test(w.range)), wcells(sheet));
+  check('no console errors', t.errors.length === 0, t.errors);
+  await t.ctx.close();
 }
 
 await browser.close();

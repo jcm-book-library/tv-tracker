@@ -506,7 +506,6 @@ body::after{opacity:var(--grain);mix-blend-mode:overlay;background-image:url("da
 .det-acts{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .lib th.fav-th{text-align:center}
 .lib td.fav-td{text-align:center;width:1%;padding-block:4px}
-.fav-field{display:flex;flex-direction:column;align-items:flex-start;gap:6px}
 @media (max-width:560px){
   .fav{min-width:44px;min-height:44px}
   .lib td.fav-td .fav{margin:-6px -6px}
@@ -738,7 +737,7 @@ body::after{opacity:var(--grain);mix-blend-mode:overlay;background-image:url("da
 
   <div id="view-library" role="tabpanel" aria-labelledby="tab-library" hidden>
     <div class="lib-bar">
-      <input type="search" id="libSearch" placeholder="Search title, genre, platform or starring" aria-label="Search shows">
+      <input type="search" id="libSearch" placeholder="Search shows or adaptations" aria-label="Search shows">
       <button class="btn btn-primary" id="addShowBtn" type="button">Add show</button>
     </div>
     <div class="chips" id="libChips" role="group" aria-label="Status"></div>
@@ -1844,7 +1843,7 @@ function libFiltered() {
   const L = state.lib, q = L.q.toLowerCase();
   return state.shows.filter(b =>
     (L.status === 'All' || b.status === L.status) && (!L.fav || favOf(b)) &&
-    (!q || [b.title, b.genre, b.platform, b.starring, b.status].some(v => String(v || '').toLowerCase().includes(q))));
+    (!q || [b.title, b.genre, b.platform, b.starring, b.status, b.basedOn, b.sourceTitle].some(v => String(v || '').toLowerCase().includes(q))));
 }
 function renderLibrary() {
   const L = state.lib, body = $('libBody');
@@ -2008,7 +2007,7 @@ const floatPanel = (() => {
 const FORM = [
   { sec: 'Show' }, { k: 'title', w: 'w2', req: true }, { k: 'status', type: 'select' }, { k: 'rating', type: 'number', label: 'Rating (/10)' },
   { k: 'genre', type: 'select' }, { k: 'platform', type: 'select' }, { k: 'howToWatch', type: 'select', label: 'How to watch' }, { k: 'year', type: 'number' },
-  { k: 'starring', w: 'w2' }, { k: 'releaseDate', label: 'Release date' }, { k: 'plan', type: 'select' }, { k: 'favourite', type: 'fav', w: 'w2' },
+  { k: 'starring', w: 'w2' }, { k: 'releaseDate', label: 'Release date' }, { k: 'plan', type: 'select' },
   { sec: 'Source' }, { k: 'basedOn', type: 'select', label: 'Based on' }, { k: 'sourceTitle', label: 'Source title' }, { k: 'poster', w: 'w2', label: 'Poster link', ph: 'https://…' },
   { sec: 'Progress' }, { k: 'totalSeasons', type: 'number', label: 'Total seasons' }, { k: 'totalEps', type: 'number', label: 'Total episodes' },
   { k: 'season', type: 'number' }, { k: 'episode', type: 'number' },
@@ -2033,10 +2032,6 @@ function spDetailsHtml(b) {
 }
 function spFieldHtml(f, val, show) {
   const id = 'f-' + f.k;
-  if (f.type === 'fav') { // a toggle, not a date field: the date is today's when switched on (or the existing one), blank when off
-    const cur = toDate(val) || '';
-    return `<div class="field fav-field ${f.w || ''}"><span class="flabel">Favourite</span><input type="hidden" id="${id}" name="${f.k}" value="${esc(cur)}"><button class="favpill" type="button" data-favform="${esc(cur)}" aria-pressed="${cur !== ''}" aria-label="Favourite (saved with Save): ${esc(show ? show.title : 'this show')}">${FAV_SVG}Favourite</button></div>`;
-  }
   const lab = f.label || (f.k[0].toUpperCase() + f.k.slice(1));
   let ctl;
   if (f.type === 'select') {
@@ -2067,10 +2062,6 @@ function spHtml(show) {
     </div>
   </div>`;
 }
-function spSetFav(val) {
-  const cur = toDate(val) || '', b = document.querySelector('.fpanel [data-favform]'); if (!b) return;
-  $('f-favourite').value = cur; b.dataset.favform = cur; b.setAttribute('aria-pressed', String(cur !== ''));
-}
 // Put the show's saved values into the form controls (used after a save, a refresh, or when nothing has been typed)
 function spFill(show) {
   const f = $('showForm'); if (!f) return;
@@ -2079,7 +2070,6 @@ function spFill(show) {
     if (!fd.k) continue;
     const el = f.elements[fd.k]; if (!el) continue;
     const val = String(src[fd.k] ?? '').trim();
-    if (fd.type === 'fav') { spSetFav(val); continue; }
     if (fd.type === 'select' && val && ![...el.options].some(o => o.value === val)) el.add(new Option(val, val));
     el.value = fd.type === 'date' ? (toDate(val) || '') : fd.type === 'number' ? (val === '' ? '' : (Number.isFinite(parseFloat(val)) ? String(toNum(val)) : '')) : val;
   }
@@ -2224,10 +2214,6 @@ function spRefresh(force) {
   if (!wasDirty) spPreview(s);
   const pill = document.querySelector('.fpanel .sp-head .favpill'); if (pill) pill.setAttribute('aria-pressed', String(favOf(s)));
   if (!wasDirty) spFill(s);
-  else { // keep what is typed, but follow the favourite toggled from the pill unless the form's own toggle was used
-    const fb = document.querySelector('.fpanel [data-favform]');
-    if (fb && $('f-favourite').value === sp.base.favourite) { spSetFav(s.favourite); sp.base.favourite = $('f-favourite').value; }
-  }
 }
 
 /* ---------- Plan: Up next / Soon / Someday ---------- */
@@ -2624,12 +2610,6 @@ function refocusFav(fk) {
 document.addEventListener('click', e => {
   const b = e.target.closest('button[data-fav]');
   if (b) { e.preventDefault(); toggleFav(showById(b.dataset.fav)); return; }
-  const f = e.target.closest('button[data-favform]');
-  if (f) { // edit dialog: just flips the form value; Save writes it with the other changes
-    const inp = $('f-favourite'), on = f.getAttribute('aria-pressed') !== 'true';
-    inp.value = on ? (f.dataset.favform || today()) : '';
-    f.setAttribute('aria-pressed', String(on));
-  }
 });
 
 // Five favourites a day: ordered by a hash of (date, id), so the pick is stable all day, changes tomorrow, and does not reshuffle when one is removed
