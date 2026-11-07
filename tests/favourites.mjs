@@ -322,7 +322,7 @@ for (const id of THEMES_13) {
   await page.click('#libBody tr.row[data-id="5"] .t');
   await page.click('.fpanel .sp-head .favpill');
   await favWait(page);
-  check('Panel favourite pill (on) turns it off with one blank write to V, and the form toggle follows', sheet.writes.length === 1 && sheet.writes[0].range === `'📺'!V${r5}` && sheet.writes[0].values[0][0] === '' && await page.evaluate(() => document.querySelector('.fpanel .sp-head .favpill').getAttribute('aria-pressed') === 'false' && document.querySelector('.fpanel [data-favform]').getAttribute('aria-pressed') === 'false' && document.getElementById('f-favourite').value === ''), sheet.writes);
+  check('Panel favourite pill (on) turns it off with one blank write to V', sheet.writes.length === 1 && sheet.writes[0].range === `'📺'!V${r5}` && sheet.writes[0].values[0][0] === '' && await page.evaluate(() => document.querySelector('.fpanel .sp-head .favpill').getAttribute('aria-pressed') === 'false'), sheet.writes);
   check('Details show the Favourite date as "d Mon yy" when on', await (async () => { await page.click('.fpanel .sp-head .favpill'); await favWait(page); return page.evaluate(() => /\d{1,2} [A-Z][a-z]{2} \d{2}/.test([...document.querySelectorAll('.fpanel .kv dt')].filter(d => d.textContent === 'Favourite').map(d => d.nextSibling.textContent).join())); })());
   check('no console errors', t.errors.length === 0, t.errors);
   await t.ctx.close();
@@ -353,23 +353,22 @@ for (const id of THEMES_13) {
   await t.ctx.close();
 }
 
-/* ---------- 9. edit dialog toggle ---------- */
+/* ---------- 9. edit dialog has no Favourite control; the form never writes V ---------- */
 {
   const t = await open({ width: 1280, height: 900 }); const { page, sheet } = t;
   await page.click('#tab-library');
   await page.click('#libBody tr.row[data-id="3"] .t');
-  check('Panel form: Favourite is a toggle pill (pressed for a favourite), not a date field', await page.evaluate(() => { const b = document.querySelector('#showForm .favpill'); return b && b.getAttribute('aria-pressed') === 'true' && /^Favourite/.test(b.getAttribute('aria-label')) && /Alpha Station/.test(b.getAttribute('aria-label')) && document.getElementById('f-favourite').type === 'hidden'; }));
+  check('Panel form has no Favourite control; the header pill is pressed for a favourite', await page.evaluate(() => !document.querySelector('#showForm .favpill, #showForm [data-favform], #f-favourite') && document.querySelector('.fpanel .sp-head .favpill').getAttribute('aria-pressed') === 'true' && /^Favourite: Alpha Station/.test(document.querySelector('.fpanel .sp-head .favpill').getAttribute('aria-label'))));
   sheet.clearWrites();
   await page.click('#dlgSave'); await favSaved(page);
   check('Saving the panel without touching it writes nothing (the favourite date round-trips)', sheet.writes.length === 0, sheet.writes);
-  await page.click('#showForm .favpill');
-  check('Toggling in the panel form writes nothing until Save', sheet.writes.length === 0 && await page.evaluate(() => document.getElementById('f-favourite').value === ''));
+  await page.fill('#f-notes', 'edited via form');
   await page.click('#dlgSave'); await favSaved(page);
-  check('Save after switching off: exactly one blank write to V of that row', sheet.writes.length === 1 && sheet.writes[0].range === `'📺'!V${sheet.rowOfId(3)}` && sheet.writes[0].values[0][0] === '', sheet.writes);
+  check('Saving other changes writes no column V cell', sheet.writes.length > 0 && sheet.writes.every(w => !/!V\d+$/.test(w.range)), sheet.writes);
   sheet.clearWrites();
-  await page.click('#libBody tr.row[data-id="8"] .t');
-  await page.click('#showForm .favpill'); await page.click('#dlgSave'); await favSaved(page);
-  check('Save after switching on: one write to V with today\'s date', sheet.writes.length === 1 && sheet.writes[0].range === `'📺'!V${sheet.rowOfId(8)}` && sheet.writes[0].values[0][0] === TODAY, sheet.writes);
+  await page.fill('#f-notes', 'typed but unsaved');
+  await page.click('.fpanel .sp-head .favpill'); await favWait(page);
+  check('Pill after editing the form: exactly one write, to V of that row, and the typed text stays', sheet.writes.length === 1 && sheet.writes[0].range === `'📺'!V${sheet.rowOfId(3)}` && await page.evaluate(() => document.getElementById('f-notes').value === 'typed but unsaved'), sheet.writes);
   check('no console errors', t.errors.length === 0, t.errors);
   await t.ctx.close();
 }

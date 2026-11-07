@@ -10,7 +10,7 @@ Model use: see "Using models" in the house rules. In this repo, TVmaze episode-c
 ## Sheet: "Entertainment Tracker" `1558jWeUc8gCzQuph6wOVyOocvTBhQf22UuCSXza8klc`
 
 Only touch these tabs: `📺` (sheetId 133341767), `📺 Log` (920000002), `📺 Seasons` (920000003),
-`📺 Quotes` (920000004), `📺 Settings` (920000005). Backups: `📺 backup 2026-10-18` (920000001) `📺 backup 2026-10-26 (before Favourite)` (920000006) and `📺 backup 2026-11-07 (before Poster)` (920000007); never write to them.
+`📺 Quotes` (920000004), `📺 Settings` (920000005). Backups: `📺 backup 2026-10-18` (920000001) `📺 backup 2026-10-26 (before Favourite)` (920000006) `📺 backup 2026-11-07 (before Poster)` (920000007) and `📺 backup 2026-11-07 (before Based on)` (920000008); never write to them.
 Never read or write Books, Reading Log, App Settings, Ratings, Contents, Wishlist, Calibre Review, any "Books backup",
 or other apps' tabs (🎥, 🎮, 🎸 …).
 
