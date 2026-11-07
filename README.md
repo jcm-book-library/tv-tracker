@@ -80,3 +80,11 @@ A plain navy **Default** is always one tap away. Source: `design/themes-board.ht
 - New fields in the form and details: Based on (select), Source title and Poster link (blank or starting with https://, otherwise an inline error and nothing is written). A small Based on chip sits beside the title in the list.
 - Reads cover `A2:Y`; a new show appends a full 25-column row. Writes are unchanged: the row is found by id first, only changed cells are written.
 - Tests: `node tests/library.mjs` (chips, panel, writes, guards, all 13 themes at 390px and 1280px).
+## Shelf view and posters (2026-11-07)
+- Library has a small **List | Shelf** switch under the chips (remembered on each device) and a Sort box (Sheet order, Title A-Z, Rating, Year, Recently watched, Favourites first; it stays in step with the list's column sort). Search, the chips and Favourites apply to both views.
+- **Shelf** shows upright box sets in rows, each row resting on its own ledge. The number per row follows the width (3 on a phone). Each box has a spine in the status colour, a tiny remote-heart sticker for favourites and a thin progress bar when you are Watching. The first 60 boxes show, then "Show 60 more". Arrow keys move between boxes; Enter or Space opens the show panel, Escape closes it.
+- A box shows the **poster** when the Poster link is set (https only). Without one, or if the picture will not load, it wears a generated cover made from the title (colours from the current theme, readable in every theme).
+- The show panel shows the poster at the top (the large version when the link has `medium_portrait`, falling back to the saved link).
+- **Find poster** (next to the Poster link field) searches TVmaze and lists up to 6 matches; picking one only fills the box, and Save writes just that one cell. It works on the GitHub Pages site only.
+- **claude.ai limitation:** the claude.ai page blocks images and calls to other websites, so there posters never appear (covers are shown instead) and Find poster says "Finding posters works on the website version. Paste an image link instead."
+- Tests: `node tests/shelf.mjs` (toggle, rows and ledges, posters and covers, keyboard, sorts and filters, contrast in 13 themes, Find poster, reduced motion).
