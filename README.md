@@ -18,7 +18,7 @@ See `CLAUDE.md` for the data model and sheet rules.
 - `node tests/smoke.mjs`: Playwright smoke test against a fake sheet built from `tests/fixture.json` (390px and 1280px; also covers all 13 themes).
 
 ## Stage 3 (2026-10-24): Plan
-- Plan tab: Up next (about 10, ordered, with a why, Start watching), Soon, Not out yet (by premiere date), backlog in sheet order
+- Plan tab, top to bottom: Up next (about 10, with a why and Start watching; drag the grip handle to reorder, or Space, arrow keys, Space on the keyboard; only changed Up next # cells are written), Sort deck, Soon (with a Future releases section for Coming Soon shows by premiere date), Backlog (10 at a time, Show 10 more), Recent episodes (edit and delete)
   with one-tap Up next / Soon, and a sort deck ranked by how promising each show looks (Someday comes back after a year).
 - Putting a Watchlist show in Up next sets its status to Next Up; taking a Next Up show out sets it back to Watchlist.
 - Dates show as `24 Oct 26` across the app.
@@ -36,7 +36,7 @@ See `CLAUDE.md` for the data model and sheet rules.
 
 ## Favourites (2026-10-26)
 - Each show has a Favourite date (column V). The sticker is a TV-remote rubber button with a heart: tap it on a Library row, in the expanded details, in the edit dialog or on the Log tab front page. It writes only that one cell (today's date, or blank to remove).
-- Log tab front page: Tonight's pick (Up next #1, else the Plan deck's top card), Last 5 watched, and 5 favourites that rotate daily. Library has a Favourites filter and a sort by favourite date; the Dashboard has a Favourites tile. Tests: `node tests/favourites.mjs`.
+- Log tab, top to bottom: Watching now, stat tiles, Episodes per week, Last 5 watched and Favourites (5 that rotate daily; two columns from 900px), then Next Up (Start buttons). Tonight's pick was removed; Recent episodes moved to the Plan tab. Library has a Favourites filter and a sort by favourite date; the Dashboard has a Favourites tile. Tests: `node tests/favourites.mjs`.
 
 ## Themes
 The app wears one show's look for the whole month (no drift): Jan Breaking Bad / Better Call Saul, Feb Deadwood, Mar Mr Inbetween,
@@ -68,3 +68,4 @@ A plain navy **Default** is always one tap away. Source: `design/themes-board.ht
   Matched by title against TVmaze; 306 of 372 shows filled. Confident matches plus clear ones (sheet typos or renamed shows) were written; wrong or ambiguous
   matches (e.g. Spawn, Molly, The Transformers, Formula 1, Bait, The Twelve) and specials, stand-up and single episodes with no TVmaze entry were left blank.
 - Checked by script afterwards: A–V identical to the backup, W and X empty, Y equal to the intended list (306 filled, 0 missing, 0 extra, 0 wrong).
+- A round Back to top button appears bottom-right on every tab after scrolling. Layout tests: `node tests/layout.mjs`.

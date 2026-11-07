@@ -168,23 +168,23 @@ for (const th of ['default', 'madmen', 'hannibal']) {
     const tag = `[${th} ${label}]`;
     const t = await open(vp, label, null, { ls: { 'tv-theme': th } }); const { page, sheet } = t;
     const info = await page.evaluate(() => {
-      const r = id => document.getElementById(id).closest('.home-part').getBoundingClientRect();
-      const a = r('homePickH'), b = r('homeLastH'), c = r('homeFavH'), p = document.getElementById('homePanel').getBoundingClientRect(), st = document.querySelector('.stats').getBoundingClientRect();
-      return { a, b, c, p: { l: p.left, r: p.right, w: p.width, b: p.bottom }, aboveStats: p.bottom <= st.top, stacked: a.left === b.left && b.left === c.left && b.top >= a.bottom - 1 && c.top >= b.bottom - 1,
-        columns: Math.abs(a.top - b.top) < 2 && Math.abs(b.top - c.top) < 2 && a.right <= b.left + 1 && b.right <= c.left + 1, fits: document.getElementById('homePanel').scrollWidth <= document.getElementById('homePanel').clientWidth };
+      const r = id => document.getElementById(id).closest('.panel').getBoundingClientRect();
+      const b = r('homeLastH'), c = r('homeFavH'), p = document.getElementById('homePanel').getBoundingClientRect(), st = document.querySelector('.stats').getBoundingClientRect();
+      return { b, c, p: { l: p.left, r: p.right, w: p.width, b: p.bottom }, belowStats: p.top >= st.bottom, stacked: b.left === c.left && c.top >= b.bottom - 1,
+        columns: Math.abs(b.top - c.top) < 2 && b.right <= c.left + 1 && Math.abs(b.width - c.width) < 2, fits: document.getElementById('homePanel').scrollWidth <= document.getElementById('homePanel').clientWidth };
     });
-    check(`${tag} home panel renders above the stat tiles, full width`, info.aboveStats && info.p.w >= Math.min(vp.width, 1180) - 40, info.p);
-    check(`${tag} home panel layout: ${label === '1280' ? 'three columns' : 'stacked'}`, label === '1280' ? info.columns : info.stacked);
+    check(`${tag} Last 5 / Favourites panels sit below the stat tiles, full width`, info.belowStats && info.p.w >= Math.min(vp.width, 1180) - 40, info.p);
+    check(`${tag} Last 5 / Favourites layout: ${label === '1280' ? 'two equal columns' : 'stacked'}`, label === '1280' ? info.columns : info.stacked);
     check(`${tag} no horizontal scroll`, await noHScroll(page) && info.fits);
-    check(`${tag} pick, 5 recent, 5 favourites all filled`, await page.evaluate(() => !!document.querySelector('#homePick h3') && document.querySelectorAll('#homeLast li button').length === 5 && document.querySelectorAll('#homeFav li[data-id]').length === 5));
+    check(`${tag} 5 recent, 5 favourites both filled`, await page.evaluate(() => document.querySelectorAll('#homeLast li button').length === 5 && document.querySelectorAll('#homeFav li[data-id]').length === 5));
     const small = await page.evaluate(() => {   // small text in the panel is never accent-coloured
       const probe = document.createElement('i'); probe.style.color = 'var(--accent)'; document.body.appendChild(probe); const acc = getComputedStyle(probe).color; probe.remove();
       return [...document.querySelectorAll('#homePanel *')].filter(e => e.childNodes.length && [...e.childNodes].some(n => n.nodeType === 3 && n.textContent.trim()) && parseFloat(getComputedStyle(e).fontSize) <= 14 && getComputedStyle(e).color === acc).map(e => e.className + ':' + e.textContent.slice(0, 20));
     });
-    check(`${tag} small text in the panel is never the accent colour`, small.length === 0, small);
+    check(`${tag} small text in the panels is never the accent colour`, small.length === 0, small);
     if (label === '390') {
       const sm = await page.evaluate(() => [...document.querySelectorAll('#homePanel .fav, #homePanel .btn, #homePanel .hl')].map(e => { const r = e.getBoundingClientRect(); return [e.className, Math.round(r.width), Math.round(r.height)]; }).filter(x => x[2] < 43 || (x[0].includes('fav') && x[1] < 43)));
-      check(`${tag} touch targets in the panel are 44px`, sm.length === 0, sm);
+      check(`${tag} touch targets in the panels are 44px`, sm.length === 0, sm);
     }
     // sticker colours come from the theme
     const col = await page.evaluate(() => {
@@ -206,7 +206,7 @@ for (const th of ['default', 'madmen', 'hannibal']) {
       check(`${tag} Library row stickers are 44px touch targets`, sm.length === 0, sm);
     }
     await page.click('#tab-log');
-    const bottom = await page.evaluate(() => Math.ceil(document.querySelector('.stats').getBoundingClientRect().top + window.scrollY));
+    const bottom = await page.evaluate(() => Math.ceil(document.getElementById('homePanel').getBoundingClientRect().bottom + window.scrollY));
     await page.screenshot({ path: `${SHOTS}/fav-${th}-${label}.png`, fullPage: true, clip: { x: 0, y: 0, width: vp.width, height: Math.min(bottom + 10, 2400) } });
     check(`${tag} no console errors`, t.errors.length === 0, t.errors);
     check(`${tag} opening and looking writes nothing`, sheet.writes.length === 0, sheet.writes);
@@ -237,49 +237,12 @@ for (const id of THEMES_13) {
   await t.ctx.close();
 }
 
-/* ---------- 4. Tonight's pick ---------- */
+/* ---------- 4. Tonight's pick was removed from the Log (layout.mjs covers the new panel set); the deck helpers it used still work ---------- */
 {
-  const t = await open({ width: 1280, height: 900 }); const { page, sheet } = t;
-  const p = await page.evaluate(() => ({ id: document.querySelector('#homePick [data-home="start"]').dataset.id, title: document.querySelector('#homePick h3').textContent, plat: (document.querySelector('#homePick .pchip') || {}).textContent, how: (document.querySelector('#homePick .hp-how') || {}).textContent, why: (document.querySelector('#homePick .hp-why') || {}).textContent, chips: [...document.querySelectorAll('#homePick .why-chip')].map(x => x.textContent), fav: !!document.querySelector('#homePick .fav') }));
-  check("Tonight's pick = Up next #1 (Dune Marshals) with platform, How to Watch, Why, reason chips (max 3)", p.id === '12' && p.title === 'Dune Marshals' && p.plat === 'Apple TV' && p.how === 'NA' && p.why === '“Everyone says it is great”' && p.chips.length > 0 && p.chips.length <= 3 && p.fav, p);
-  await page.click('#homePick [data-home="plan"]');
-  check('"See Plan" switches to the Plan tab', await page.evaluate(() => !document.getElementById('view-plan').hidden && document.getElementById('view-log').hidden));
+  const t = await open({ width: 1280, height: 900 }); const { page } = t;
+  check("Tonight's pick is gone from the Log (no panel, no helper)", await page.evaluate(() => !document.getElementById('homePick') && !/Tonight/.test(document.getElementById('view-log').textContent) && typeof tonightPick === 'undefined'));
+  check('The Plan sort deck still ranks shows (deckQueue and scoreShow are intact)', await page.evaluate(() => deckQueue().length > 0 && deckQueue()[0].score >= deckQueue().at(-1).score));
   await t.ctx.close();
-}
-{ // a Watching show in Up next with the same number never becomes the pick
-  const t = await open({ width: 390, height: 844 }, '', s => { setCell(s, 3, COL.plan, 'Up next'); setCell(s, 3, COL.upNext, '1'); setCell(s, 12, COL.upNext, '1'); }); const { page } = t;
-  const id = await page.$eval('#homePick [data-home="start"]', b => b.dataset.id);
-  check('Tonight\'s pick never picks a Watching show (Alpha, Watching, tagged Up next #1, is skipped)', id === '12' && await page.evaluate(() => showById(document.querySelector('#homePick [data-home="start"]').dataset.id).status !== 'Watching'), id);
-  await t.ctx.close();
-}
-{ // no Up next at all: the top card of the Plan sort deck
-  const t = await open({ width: 390, height: 844 }, '', s => { for (const r of allShows(s)) { if (r[2] === 'Next Up') r[2] = 'Watchlist'; r[COL.plan - 1] = ''; r[COL.upNext - 1] = ''; } }); const { page } = t;
-  const home = await page.$eval('#homePick [data-home="start"]', b => b.dataset.id);
-  const deck = await page.evaluate(() => deckQueue()[0].s.id);
-  const why = await page.$$eval('#homePick .why-chip', x => x.map(c => c.textContent));
-  const deckWhy = await page.evaluate(() => deckQueue()[0].why.slice(0, 3));
-  await page.click('#tab-plan');
-  const card = await page.$eval('#deckBody .deck-card', c => c.dataset.id);
-  check('With no Up next the pick is the top Plan deck card (same show, same reasons), not a Watching show', home === deck && home === card && JSON.stringify(why) === JSON.stringify(deckWhy) && await page.evaluate(id => showById(id).status !== 'Watching', home), { home, deck, card, why, deckWhy });
-  await t.ctx.close();
-}
-{ // nothing plannable
-  const t = await open({ width: 390, height: 844 }, '', s => { for (const r of allShows(s)) if (!['Watching', 'Coming Soon'].includes(r[2])) r[2] = 'Watched'; }); const { page } = t;
-  check('Nothing plannable: empty state, no Start button', await page.evaluate(() => !document.querySelector('#homePick [data-home="start"]') && /Nothing to plan yet/.test(document.getElementById('homePick').textContent) && !!document.querySelector('#homePick [data-home="plan"]')));
-  await t.ctx.close();
-}
-
-/* ---------- 5. Start watching from the home panel writes the same cells as from Plan ---------- */
-{
-  const a = await open({ width: 390, height: 844 }); a.sheet.clearWrites();
-  await a.page.click('#homePick [data-home="start"]'); await queueDone(a.page);
-  const b = await open({ width: 390, height: 844 }); await b.page.click('#tab-plan'); b.sheet.clearWrites();
-  await b.page.click('#upList li[data-id="12"] [data-a="start"]'); await queueDone(b.page);
-  const ca = cells(a.sheet), cb = cells(b.sheet);
-  check('Start watching from the home panel writes exactly the same cells as from Plan', ca.length >= 4 && JSON.stringify(ca) === JSON.stringify(cb), { ca, cb });
-  check('...and all of them are in 📺', a.sheet.writes.every(w => w.range.startsWith("'📺'!")));
-  check('...the next pick is the new Up next #1 (Nectar) and Dune is Watching now', await a.page.evaluate(() => document.querySelector('#homePick [data-home="start"]').dataset.id === '20' && !!document.querySelector('#watching .nb[data-id="12"]')));
-  await a.ctx.close(); await b.ctx.close();
 }
 
 /* ---------- 6. Last 5 watched ---------- */

@@ -165,8 +165,8 @@ for (const [label, vp] of [['390', { width: 390, height: 844 }], ['1280', { widt
     document.querySelectorAll('#upList li').length === 5 && document.querySelectorAll('#cslList li').length === 3 && !!document.querySelector('#deckBody .deck-card') && document.getElementById('upNote').textContent === '5 of 10'));
   check(`[${label}] Plan has no horizontal scroll`, await noHScroll(page));
   check(`[${label}] Plan acts fit inside the viewport`, await page.evaluate(() => [...document.querySelectorAll('#view-plan button, #view-plan li')].every(e => { const r = e.getBoundingClientRect(); return r.width === 0 || (r.left >= -1 && r.right <= window.innerWidth + 1); })));
-  const cols = await page.evaluate(() => { const a = document.getElementById('upH').closest('.panel').getBoundingClientRect(), b = document.getElementById('soonH').closest('.panel').getBoundingClientRect(), d = document.getElementById('deckH').closest('.panel').getBoundingClientRect(); return { sideBySide: b.left > a.left + 100, deckUnderUp: d.left === a.left && d.top > a.top }; });
-  check(`[${label}] Plan layout: ${label === '1280' ? 'two columns (Up next + deck | Soon + backlog)' : 'single column'}`, label === '1280' ? cols.sideBySide && cols.deckUnderUp : !cols.sideBySide, cols);
+  const cols = await page.evaluate(() => { const a = document.getElementById('upH').closest('.panel').getBoundingClientRect(), b = document.getElementById('soonH').closest('.panel').getBoundingClientRect(), d = document.getElementById('deckH').closest('.panel').getBoundingClientRect(); return { sideBySide: b.left > a.left + 100, deckUnderUp: d.left === a.left && d.top > a.top, soonUnderDeck: b.left === a.left && b.top > d.top }; });
+  check(`[${label}] Plan layout: single full-width column (Up next, deck, Soon...)`, !cols.sideBySide && cols.deckUnderUp && cols.soonUnderDeck, cols);
   check(`[${label}] dates render as "d Mon yy"`, await page.evaluate(() => { const re = /^\d{1,2} [A-Z][a-z]{2} \d{2}$/; const prem = [...document.querySelectorAll('#cslList .m span')].map(x => x.textContent).filter(x => x.startsWith('Premieres ')).map(x => x.slice(10)); const rec = [...document.querySelectorAll('#recentList .m')].map(x => x.textContent.split(' · ').pop()).filter(x => !['Today', 'Yesterday'].includes(x)); return prem.length === 2 && prem.every(x => re.test(x)) && rec.length > 0 && rec.every(x => re.test(x)) && re.test(fmtDate('2026-10-19')) && fmtDate('2026-10-19') === '19 Oct 26'; }));
   await page.screenshot({ path: `${SHOTS}/plan-${label}.png`, fullPage: true });
   check(`[${label}] no console errors`, t.errors.length === 0, t.errors);
@@ -296,6 +296,7 @@ for (const [label, vp] of [['390', { width: 390, height: 844 }], ['1280', { widt
 /* ---------- 5. log entry edit + delete, start watching, finish ---------- */
 {
   const t = await open({ width: 390, height: 844 }); const { page, sheet } = t;
+  await page.click('#tab-plan');   // Recent episodes now lives on the Plan tab
   // edit: change season of the oldest-listed entry's episode
   const lis = await page.$$('#recentList li');
   const last = lis[lis.length - 1];
@@ -333,7 +334,8 @@ for (const [label, vp] of [['390', { width: 390, height: 844 }], ['1280', { widt
   check('Deleting a log entry writes eps 0 and source "deleted"', !!colF && !!colH && colF.includes(`!F${oRow} `) && colH.includes(`!H${oRow} `), w);
   check('Delete only updates cells (no row deletion, no appends, row count unchanged)', sheet.writes.every(x => x.tool === 'update_values') && sheet.tabs['📺 Log'].length === before && sheet.calls.every(c => ['get_values', 'update_values'].includes(c.tool)), sheet.calls.map(c => c.tool));
   check('Deleted entry disappears from the app', await page.evaluate(n => ![...document.querySelectorAll('#recentList li')].some(li => Number(li.dataset.row) === n), oRow));
-  // start watching
+  // start watching (Next Up panel, Log tab)
+  await page.click('#tab-log');
   sheet.clearWrites();
   const dune = sheet.rowOfId(12);
   await page.click('#pickList button[data-start="12"]');
@@ -391,10 +393,11 @@ const idReadFirst = sheet => { const i = sheet.calls.findIndex(c => c.tool === '
 {
   const t = await planOpen(); const { page, sheet } = t;
   const nec = sheet.rowOfId(20), pine = sheet.rowOfId(23);
-  await page.click('#upList li[data-id="23"] [data-a="up"]'); await queueDone(page);
-  check('Reordering writes only the two changed Up next # cells', same(cells(sheet), [`'📺'!S${pine}=2`, `'📺'!S${nec}=3`]), cells(sheet));
+  await page.focus('#upList li[data-id="23"] .grip');
+  await page.keyboard.press('Space'); await page.keyboard.press('ArrowUp'); await page.keyboard.press('Space'); await queueDone(page);
+  check('Reordering (keyboard on the drag handle) writes only the two changed Up next # cells', same(cells(sheet), [`'📺'!S${pine}=2`, `'📺'!S${nec}=3`]), cells(sheet));
   check('...and the order flips in the UI', await page.evaluate(() => [...document.querySelectorAll('#upList li')].slice(0, 3).map(li => li.dataset.id).join() === '12,23,20'));
-  check('Top row has Move up disabled', await page.evaluate(() => document.querySelector('#upList li[data-id="12"] [data-a="up"]').disabled));
+  check('The up/down arrow buttons are gone; every kept row has a drag handle, from-status rows have none', await page.evaluate(() => !document.querySelector('#upList [data-a="up"], #upList [data-a="down"]') && document.querySelectorAll('#upList li .grip').length === 3 && ![...document.querySelectorAll('#upList li')].slice(3).some(li => li.querySelector('.grip'))));
   sheet.clearWrites();
   await page.click('#upList li[data-id="23"] [data-a="remove"]'); await queueDone(page);
   check('Removing from Up next clears Plan and #, then renumbers only the shows below it', same(cells(sheet), [`'📺'!R${pine}=`, `'📺'!S${pine}=`, `'📺'!S${nec}=2`]), cells(sheet));
@@ -443,8 +446,8 @@ const idReadFirst = sheet => { const i = sheet.calls.findIndex(c => c.tool === '
 {
   const t = await planOpen(); const { page, sheet } = t;
   const names = await page.$$eval('#cslList .t', e => e.map(x => x.textContent));
-  check('Not out yet is sorted by next premiere, undated last', JSON.stringify(names) === JSON.stringify(['Glass Orchard', 'Fable Heights', 'Iron Lantern']), names);
-  check('Not out yet shows Release Date text and premiere date', await page.evaluate(() => /Nov/.test(document.querySelector('#cslList li .m').textContent) && /Premieres/.test(document.querySelector('#cslList li .m').textContent)));
+  check('Future releases (Soon panel) are sorted by next premiere, undated last', JSON.stringify(names) === JSON.stringify(['Glass Orchard', 'Fable Heights', 'Iron Lantern']), names);
+  check('Future releases show Release Date text and premiere date', await page.evaluate(() => /Nov/.test(document.querySelector('#cslList li .m').textContent) && /Premieres/.test(document.querySelector('#cslList li .m').textContent)));
   check('Coming Soon shows are not in the backlog or deck', await page.evaluate(() => !document.querySelector('#sheetList li[data-id="31"]') && !deckQueue().some(x => x.s.status === 'Coming Soon')));
   // inline why
   const nec = sheet.rowOfId(20);
