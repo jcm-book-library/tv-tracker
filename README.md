@@ -88,3 +88,18 @@ A plain navy **Default** is always one tap away. Source: `design/themes-board.ht
 - **Find poster** (next to the Poster link field) searches TVmaze and lists up to 6 matches; picking one only fills the box, and Save writes just that one cell. It works on the GitHub Pages site only.
 - **claude.ai limitation:** the claude.ai page blocks images and calls to other websites, so there posters never appear (covers are shown instead) and Find poster says "Finding posters works on the website version. Paste an image link instead."
 - Tests: `node tests/shelf.mjs` (toggle, rows and ledges, posters and covers, keyboard, sorts and filters, contrast in 13 themes, Find poster, reduced motion).
+
+## Running the tests and the build
+Needs Node with Playwright and the Chromium at `/opt/pw-browsers/chromium`. Everything runs against fake sheets and made-up shows; nothing touches the real sheet.
+
+```
+python3 tools/build-pages.py      # builds index.html from app.html
+node tests/smoke.mjs              # Log, Library basics, Plan basics, all 13 themes
+node tests/favourites.mjs         # favourites, Last 5 / Favourites panels
+node tests/tools.mjs              # Tools and Discover
+node tests/dashboard.mjs          # Dashboard
+node tests/layout.mjs             # panel order per tab, drag to reorder, back to top
+node tests/library.mjs            # chips, floating panel, search, writes
+node tests/shelf.mjs              # shelf view, posters, Find poster
+```
+Run all of them before a pull request. A handover for the next session is in `HANDOVER.md`.
